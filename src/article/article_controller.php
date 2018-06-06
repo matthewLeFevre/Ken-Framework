@@ -99,16 +99,53 @@ function articleRequest($action, $payload){
     break;
     
     case 'getArticleById':
+      $articleId = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
 
+      if(empty($articleId)) {
+        // empty id error
+        return $error;
+        exit;
+      }
+
+      $articleData = get_article_by_id($articleId);
+      if($articleData != null && $articleData != undefined) {
+        return $success = ['status'=>'success', 'articleData'=> $articleData];
+        exit;
+      }
     break;
+
     case 'get_article_by_title':
+      $articleTitle = filter_var($payload['articleTitle'], FILTER_SANITIZE_STRING);
 
+      if(empty($articleTitle)) {
+        // empty title error
+        return $error;
+        exit;
+      }
+
+      $articleData = get_article_by_title($articleTitle);
+      if($articleData != null && $articleData != undefined) {
+        return $success = ['status'=>'success', 'articleData'=> $articleData];
+        exit;
+      }
     break;
+
     case 'getArticles':
+      $articles = get_articles();
 
+      if($articles != null && $articles != undefined && $articles != FALSE) {
+        return $success = ['status'=>'success', 'articles'=> $articles]
+        exit;
+      }
     break;
-    case 'getNumberOfArticles':
 
+    case 'getNumberOfArticles':
+      $articleNumber = filter_var($payload['articleNumber', FILTER_SANITIZE_STRING]);
+      $articles = get_number_of_articles($articleNumber);
+      if($articles != null && $articles != undefined && $articles != FALSE) {
+        return $success = ['status'=>'success', 'articles'=> $articles]
+        exit;
+      }
     break;
   }
 }
