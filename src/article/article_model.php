@@ -11,7 +11,7 @@ function create_new_article($articleData) {
   $stmt->bindValue(':articleBody',    $articleData['articleBody'],    PDO::PARAM_STR);
   $stmt->bindValue(':articleStatus',  $articleData['articleStatus'],  PDO::PARAM_STR);
   $stmt->bindValue(':articleLink',    $articleData['articleLink'],    PDO::PARAM_STR);
-  $stmt->bindValue(':userId',         $articleData['userId'],         PDO::PARAM_STR);
+  $stmt->bindValue(':userId',         $articleData['userId'],         PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
@@ -53,13 +53,11 @@ function update_article_status($articleData) {
 
 // delete article
 
-function delete_article($articleData) {
+function delete_article($articleId) {
   $db = dbConnect();
-  $sql = 'UPDATE article SET articleStatus= :articleStatus, articleModified = :articleModiefied WHERE articleId = :articleId';
+  $sql = 'DELETE article WHERE articleId = :articleId';
   $stmt = $db->prepare($sql);
-  $stmt->bindValue(':articleStatus',  $articleData['articleStatus'],  PDO::PARAM_STR);
-  $stmt->bindValue(':articleModified',$articleData['articleModified'],PDO::PARAM_STR);
-  $stmt->bindValue(':articleId',      $articleData['articleId'],      PDO::PARAM_STR);
+  $stmt->bindValue(':articleId', $articleId, PDO::PARAM_STR);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();

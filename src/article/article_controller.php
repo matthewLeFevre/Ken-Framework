@@ -91,7 +91,7 @@ function articleRequest($action, $payload){
         exit;
       }
 
-      $deleteArticle = delete_article($payload);
+      $deleteArticle = delete_article($articleId);
       if($deleteArticle == 1) {
         return $success;
         exit;
@@ -101,51 +101,38 @@ function articleRequest($action, $payload){
     case 'getArticleById':
       $articleId = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
 
-      if(empty($articleId)) {
-        // empty id error
+      if (empty($articleId)) {
+        // empty input error
         return $error;
         exit;
       }
 
       $articleData = get_article_by_id($articleId);
-      if($articleData != null && $articleData != undefined) {
-        return $success = ['status'=>'success', 'articleData'=> $articleData];
-        exit;
-      }
+      return $success = ["status"="success", $articleData];
     break;
 
     case 'get_article_by_title':
       $articleTitle = filter_var($payload['articleTitle'], FILTER_SANITIZE_STRING);
 
-      if(empty($articleTitle)) {
-        // empty title error
+      if (empty($articleTitle)) {
+        // empty input error
         return $error;
         exit;
       }
 
       $articleData = get_article_by_title($articleTitle);
-      if($articleData != null && $articleData != undefined) {
-        return $success = ['status'=>'success', 'articleData'=> $articleData];
-        exit;
-      }
+      return $success = ["status"="success", $articleData];
     break;
 
     case 'getArticles':
       $articles = get_articles();
-
-      if($articles != null && $articles != undefined && $articles != FALSE) {
-        return $success = ['status'=>'success', 'articles'=> $articles]
-        exit;
-      }
+      return $success = ["status"=>"success", "articles" => $articles];
     break;
-
+    
     case 'getNumberOfArticles':
-      $articleNumber = filter_var($payload['articleNumber', FILTER_SANITIZE_STRING]);
+      $articleNumber = $payload["articleNumber"];
       $articles = get_number_of_articles($articleNumber);
-      if($articles != null && $articles != undefined && $articles != FALSE) {
-        return $success = ['status'=>'success', 'articles'=> $articles]
-        exit;
-      }
+      return $success = ["status"=>"success", "articles" => $articles];
     break;
   }
 }
