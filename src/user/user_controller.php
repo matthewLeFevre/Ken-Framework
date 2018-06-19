@@ -43,7 +43,7 @@ function userRequest($action, $payload){
       return $loggedOut;
     break;
 
-    case: 'registerUser':
+    case 'registerUser':
       // required parameters
       $userName = filter_var($payload['userName'], FILTER_SANITIZE_STRING);
       $userEmail = filter_var($payload['userEmail'], FILTER_SANITIZE_STRING);
@@ -66,8 +66,8 @@ function userRequest($action, $payload){
       }
 
       // Ensure that password and email are valid and clean
-      $userEmail = check_email($userEmail);
-      $userPasswordCheck = check_password($userPassword);
+      $userEmail = checkEmail($userEmail);
+      $userPasswordCheck = checkPassword($userPassword);
 
       // Ensure no duplicate emails exist in db when new users register
       $userEmailVerify = verify_email($userEmail);

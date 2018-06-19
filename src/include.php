@@ -4,7 +4,9 @@ session_start();
 
 // utilities
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilites/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect_local.php'; // remove if downloading from repo
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/tools.php';
 
 // asset
 
@@ -14,13 +16,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/asset/asset_model.php';
 
 // article 
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/article/article_utilities.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/article/article_utilities.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/article/article_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/article/article_model.php';
 
 // message
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/message/message_utilities.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/message/message_utilities.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/message/message_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/message/group_model.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/message/message_model.php';
@@ -28,13 +30,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/message/user_has_group_model.php'
 
 // post
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/post/post_utilities.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/post/post_utilities.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/post/post_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/post/post_model.php';
 
 // comment
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_utilities.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_utilities.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_model.php';
 

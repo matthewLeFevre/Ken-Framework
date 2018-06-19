@@ -23,7 +23,7 @@ function delete_asset($assetId) {
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
-  return $rowsChanged
+  return $rowsChanged;
 }
 
 function assign_asset($assetData) {
@@ -44,7 +44,7 @@ function assign_asset($assetData) {
   
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':assingedId',  $articleData['assignedId'],  PDO::PARAM_INT);
-  $stmt->bindValue(':assetName',   $articleData['assetId'],     PDO::PARAM_INT);
+  $stmt->bindValue(':assetId',     $articleData['assetId'],     PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();

@@ -31,7 +31,7 @@ function update_article($articleData) {
   $stmt->bindValue(':articleStatus',  $articleData['articleStatus'],  PDO::PARAM_STR);
   $stmt->bindValue(':articleLink',    $articleData['articleLink'],    PDO::PARAM_STR);
   $stmt->bindValue(':articleModified',$articleData['articleModified'],PDO::PARAM_STR);
-  $stmt->bindValue(':articleId',      $articleData['articleId'],      PDO::PARAM_INT;
+  $stmt->bindValue(':articleId',      $articleData['articleId'],      PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
