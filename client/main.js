@@ -9,26 +9,15 @@ fileUpBtn.addEventListener("click", function() {
 
   formData.append('controller', "asset");
   formData.append('action', "createAsset");
+  formData.append('userId', "1");
   formData.append('fileUpload', fileInput.files[0]);
-  const data = {
-    "controller": "",
-    "action": "createAsset",
-    "payload": {
-      "userId": "1",
-      // "file": formData
-    }
 
-  }
   fetch( url, {
     method: 'POST',
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-
-    body: JSON.stringify(data),
+    body: formData,
   })
   .then(response => response.json())
+  .catch(error => console.error('error:', error))
   .then(response => console.log("success:", response));
 
 });

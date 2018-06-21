@@ -7,35 +7,54 @@ $asset_dir = '/server_assets';
 $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
 
 function assetRequest($action, $payload){
+
   switch ($action) {
     case "createAsset":
+
+    // collect needed inputs
       $assetName = $_FILES['fileUpload']['name'];
+      $assetPath = $asset_dir . '/' . $assetName;
+      $assetType = getAssetType($assetName);
+      $assetSize = $_FILES['fileUpload']['size'];
+      $assetStatus = filter_input(INPUT_POST, 'assetStatus', FILTER_SANITIZE_STRING);
+      $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
 
       if(isset($assetName)) {
 
+        // sends error if asset file is missing
         if(empty($assetName)) {
-          return $error = ["status"=>"failure", "message" => "Coudn't find file. asset_controller.php line 20"];
+          return postResp("failure","Coudn't find file. asset_controller.php line 20");
         }
 
-        if(!fileTypeCheck($assetName)) {
-          return $error = ["status"=>"failure", "message" => "Incorrect file type. asset_controller.php line 15"];
+        // sends error if file is an unsupported file type
+        if(!fileTypeCheck($assetName) || !$assetType) {
+          return postResp("failure", "The uploaded file is an inncorrect file type.");
         }
 
         $source = $_FILES['fileUpload']['tmp_name'];
+
+        // sends error if no temporary file name exists
         if($source =="") {
-          return $error = ["status"=>"failure", "message" => "Image tmp_name issue"];
+          return postResp("failure", "Image tmp_name issue. Please contact your web administrator.");
         }
 
-        $target = $asset_dir_path . '/' . $fileName;
+        $target = $asset_dir_path . '/' . $assetName;
 
         $check = move_uploaded_file($source, $target);
 
-        $payload["assetPath"] = $asset_dir . '/' . $assetName;
+        $payload = ["assetPath" => $assetPath, 
+                    "assetName" => $assetName, 
+                    "assetType" => $assetType, 
+                    "assetStatus" => $assetStatus,
+                    "userId" => $userId];
+
+        
 
         $result = create_asset($payload);
 
+        // File successfully uploaded
         if(count($result) == 1) {
-          return $success = ["status"=>"success", "message"=> $assetName . "was uploaded successfully"];
+          return postResp("success", $assetName . "was uploaded successfully");
         }
       }
 

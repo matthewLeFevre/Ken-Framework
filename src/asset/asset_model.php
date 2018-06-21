@@ -2,13 +2,13 @@
 
 function create_asset($assetData) {
   $db = dbConnect();
-  $sql = 'INSERT INTO asset (assetPath, assetName, assetType, assetStatus, articleLink, userId) VALUES (:assetPath, :assetName, :assetType, :assetStatus, :assetLink, :userId)';
+  $sql = 'INSERT INTO asset (assetPath, assetName, assetType, assetStatus, userId) VALUES (:assetPath, :assetName, :assetType, :assetStatus, :userId)';
   $stmt = $db->prepare($sql);
-  $stmt->bindValue(':assetPath',   $articleData['assetPath'],   PDO::PARAM_STR);
-  $stmt->bindValue(':assetName',   $articleData['assetName'],   PDO::PARAM_STR);
-  $stmt->bindValue(':assetType',   $articleData['assetType'],   PDO::PARAM_STR);
-  $stmt->bindValue(':assetStatus', $articleData['assetStatus'], PDO::PARAM_STR);
-  $stmt->bindValue(':userId',      $articleData['userId'],      PDO::PARAM_INT);
+  $stmt->bindValue(':assetPath',   $assetData['assetPath'],   PDO::PARAM_STR);
+  $stmt->bindValue(':assetName',   $assetData['assetName'],   PDO::PARAM_STR);
+  $stmt->bindValue(':assetType',   $assetData['assetType'],   PDO::PARAM_STR);
+  $stmt->bindValue(':assetStatus', $assetData['assetStatus'], PDO::PARAM_STR);
+  $stmt->bindValue(':userId',      $assetData['userId'],      PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();

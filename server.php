@@ -2,6 +2,10 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
+// header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+// header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
+
 // first check for a GET request
 
 $controller = filter_input(INPUT_GET, 'controller', FILTER_SANITIZE_STRING);
@@ -12,21 +16,25 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
   if($action == NULL){
 
     $json_str = file_get_contents('php://input');
-    $reqArr = json_decode($json_str, true);
 
-    $action = $reqArr['action'];
-    $controller = $reqArr['controller'];
-    $payload = $reqArr['payload'];
-    
-    if( empty($action) || 
-        empty($controller)|| 
-        empty($payload)){
+    if(!empty($json_str)) {
+      $reqArr = json_decode($json_str, true);
+      $action = $reqArr['action'];
+      $controller = $reqArr['controller'];
+      $payload = $reqArr['payload'];
       
-      $error = ["status"=> "failure", "message" => "Bad post request. Either the controller action or payload was not sent."];
-      echo json_encode($error);
-      exit;
-    } 
-
+      if( empty($action) || 
+          empty($controller)|| 
+          empty($payload)){
+        echo postResp("failure", "Bad post request. Either the controller action or payload was not sent.");
+        exit;
+      } 
+    }
+    
+    // $file = $_FILES['fileUpload'];
+    $controller = $_POST['controller'];
+    $action = $_POST['action'];
+    $payload = "don't need it";
   }
 
   switch ($controller) {
@@ -49,6 +57,6 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
       echo json_encode(userRequest($action, $payload));
     break;
     default: 
-      echo json_encode($error = ["status"=>"failure", "message"=>"requested controller does not exist"]);
+      echo json_encode(postResp("failure", "The " . $controller . " controller does not exist"));
     break;
   }
