@@ -2,9 +2,13 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
-// header("Access-Control-Allow-Origin: *");
-// header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-// header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
+// for some reason i cannot send a resposne that an image was successfully 
+// uploaded with out running into a cors (cross origin resource sharing) issue
+// I am going have to implement some kind of fix for thsi in the future. 
+// untile then I will be allowing access rendering this application vulnerable to 
+// CSRF (cross-site request forgery)
+
+header("Access-Control-Allow-Origin: *");
 
 // first check for a GET request
 

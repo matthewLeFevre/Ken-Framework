@@ -10,6 +10,7 @@ fileUpBtn.addEventListener("click", function() {
   formData.append('controller', "asset");
   formData.append('action', "createAsset");
   formData.append('userId', "1");
+  formData.append('assetStatus', "saved");
   formData.append('fileUpload', fileInput.files[0]);
 
   fetch( url, {

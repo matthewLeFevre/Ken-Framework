@@ -2,16 +2,15 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
-// asset variables
-$asset_dir = '/server_assets';
-$asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
-
 function assetRequest($action, $payload){
 
   switch ($action) {
     case "createAsset":
+      // asset variables
+      $asset_dir = '/server_assets';
+      $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
 
-    // collect needed inputs
+      // collect needed inputs
       $assetName = $_FILES['fileUpload']['name'];
       $assetPath = $asset_dir . '/' . $assetName;
       $assetType = getAssetType($assetName);
@@ -38,23 +37,28 @@ function assetRequest($action, $payload){
           return postResp("failure", "Image tmp_name issue. Please contact your web administrator.");
         }
 
+        // downlaod file to directory on server
+        // Idealy it would be good to create a directory for each 
+        // user instead of downloading every asset to the main folder
+        // just more to improve on in the future
         $target = $asset_dir_path . '/' . $assetName;
-
         $check = move_uploaded_file($source, $target);
 
+        // Set up payload to create asset row in db
         $payload = ["assetPath" => $assetPath, 
                     "assetName" => $assetName, 
                     "assetType" => $assetType, 
                     "assetStatus" => $assetStatus,
                     "userId" => $userId];
 
-        
-
+        // create the asset
         $result = create_asset($payload);
 
         // File successfully uploaded
         if(count($result) == 1) {
-          return postResp("success", $assetName . "was uploaded successfully");
+          return postResp("success", $assetName . " was uploaded successfully");
+        } else {
+          return postResp("failure", $assetName . " was not uploaded successfully. Please contact your website administrator or try again.");
         }
       }
 
