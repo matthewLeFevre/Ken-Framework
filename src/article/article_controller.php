@@ -20,7 +20,7 @@ function articleRequest($action, $payload){
         empty($articleStatus) ||
         empty($articleLink) ||
         empty($userId)) {
-        return postResp("failure", "One of the required items to create an article has not been provided. Please check all inputs.");
+        return response("failure", "One of the required items to create an article has not been provided. Please check all inputs.");
         exit;
       }
 
@@ -29,9 +29,9 @@ function articleRequest($action, $payload){
 
       // send success or failure message to client
       if($createNewArticle == 1) {
-        return postResp("success", $articleTitle . " was successfully created");
+        return response("success", $articleTitle . " was successfully created");
       } else {
-        return postResp("failure", $articleTitle . " was not successfully created.");
+        return response("failure", $articleTitle . " was not successfully created.");
       }
     break;
 
@@ -52,18 +52,22 @@ function articleRequest($action, $payload){
         empty($articleLink) ||
         empty($articleModified) ||
         empty($articleId)) {
-        return postResp("failure", "One of the required items to create an article has not been provided. Please check all inputs.");
+        return response("failure", "One of the required items to create an article has not been provided. Please check all inputs.");
         exit;
       }
 
       // updates article in db
+      // Since the payload is not filtered this represents a security issue please address this
+      //
+      // 1. create a new named array or replace the values inside the array itself
+      //
       $updateArticle = update_article($payload);
 
       // send success or failure message to client
       if($updateArticle == 1) {
-        return postResp("success", $articleTitle . " was successfully updated");
+        return response("success", $articleTitle . " was successfully updated");
       } else {
-        return postResp("failure", $articleTitle . " was not successfully updated.");
+        return response("failure", $articleTitle . " was not successfully updated.");
       }
     break;
 
@@ -73,18 +77,23 @@ function articleRequest($action, $payload){
 
       // sends error if required inputs are missing
       if(empty($articleId) || empty($articleStatus)) {
-        return postResp("failure", "Either an article was not specified or a status was not provided. Please contact your web administrator.");
+        return response("failure", "Either an article was not specified or a status was not provided. Please contact your web administrator.");
         exit;
       }
 
       // updates article status
+      // updates article in db
+      // Since the payload is not filtered this represents a security issue please address this
+      //
+      // 1. create a new named array or replace the values inside the array itself
+      //
       $updateArticleStatus = update_article_status($payload);
 
       // send success or failure message to client
       if($updateArticleStatus == 1) {
-        return postResp("success", "Article was successfully " . $articleStatus);
+        return response("success", "Article was successfully " . $articleStatus);
       } else {
-        return postResp("failure", "Article was not successfully " . $articleStatus);
+        return response("failure", "Article was not successfully " . $articleStatus);
       }
     break;
 
@@ -93,7 +102,7 @@ function articleRequest($action, $payload){
 
       // sends error if required inputs are missing
       if(empty($articleId)) {
-        return postResp("failure", "Either an article was not specified. Please contact your web administrator.");
+        return response("failure", "Either an article was not specified. Please contact your web administrator.");
         exit;
       }
 
@@ -101,23 +110,23 @@ function articleRequest($action, $payload){
       $deleteArticle = delete_article($articleId);
 
       if($deleteArticle == 1) {
-        return postResp("success", "Article deleted successfully.");
+        return response("success", "Article deleted successfully.");
       } else {
-        return postResp("failure", "Article was not deleted successfully.");
+        return response("failure", "Article was not deleted successfully.");
       }
     break;
     
     case 'getArticleById':
       $articleId = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
 
+      // empty input error
       if (empty($articleId)) {
-        // empty input error
-        return $error;
+        return response("failure", "No articleId was specified.");
         exit;
       }
 
       $articleData = get_article_by_id($articleId);
-      return $success = ["status" => "success", "data" => $articleData];
+      return dataResp("success", $articleData, "Article was retrieved successfully.");
     break;
 
     case 'get_article_by_title':
@@ -125,27 +134,27 @@ function articleRequest($action, $payload){
 
       if (empty($articleTitle)) {
         // empty input error
-        return $error;
+        return response("failure", "No articleTitle was specified.");
         exit;
       }
 
       $articleData = get_article_by_title($articleTitle);
-      return $success = ["status"=> "success", "Data" => $articleData];
+      return dataResp("success", $articleData, "article was retrieved successfully.");
     break;
 
     case 'getArticles':
       $articles = get_articles();
-      return $success = ["status"=>"success", "articles" => $articles];
+      return dataResp("success", $articles, "All articles we retrieved.")
     break;
     
     case 'getNumberOfArticles':
       $articleNumber = $payload["articleNumber"];
       $articles = get_number_of_articles($articleNumber);
-      return $success = ["status"=>"success", "articles" => $articles];
+      return response("success", $articles, "Articles were retrieved successfully");
     break;
 
     default:
-      return $error = ["status" => "failure", "message" => "the specified action has not been defined."];
+      return response("failure", "The specified action has not been defined.");
     break;
   }
 }

@@ -1,2 +1,3 @@
 src/utilities/db_connect_local.php
+src/utilities/controller.php
 server_assets/*

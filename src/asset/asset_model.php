@@ -15,11 +15,11 @@ function create_asset($assetData) {
   return $rowsChanged;
 }
 
-function delete_asset($assetId) {
+function delete_asset($assetData) {
   $db = dbConnect();
   $sql = 'DELETE asset WHERE assetId = :assetId';
   $stmt = $db->prepare($sql);
-  $stmt->bindValue(':assetId', $assetId, PDO::PARAM_STR);
+  $stmt->bindValue(':assetId', $assetData["assetId"], PDO::PARAM_STR);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
@@ -27,29 +27,51 @@ function delete_asset($assetId) {
 }
 
 function assign_asset($assetData) {
+  $table = $assetData["assignedTable"]; 
   $db = dbConnect();
-  
-  if($assetData["assignedTable"] == "article") {
-    $assignedId = $assetData["assignedId"];
-    $sql = 'INSERT INTO article_has_asset (articleId, assetId) VALUES (:assignedId, :assetId)';
-    
-  } elseif ($assetData["assignedTable"] == "post") {
-    $assignedId = $assetData["assignedId"];
-    $sql = 'INSERT INTO post_has_asset (postId, assetId) VALUES (:assignedId, :assetId)';
-
-  } elseif ($asset["assignedTable"] == "message") {
-    $assignedId = $assetData["assignedId"];
-    $sql = 'INSERT INTO message_has_asset (messageId, assetId) VALUES (:assignedId, :assetId)';
-  }
-  
+  $sql = "INSERT INTO" . $table . " (". $table ."Id, assetId) VALUES (:assignedId, :assetId)";
   $stmt = $db->prepare($sql);
-  $stmt->bindValue(':assingedId',  $articleData['assignedId'],  PDO::PARAM_INT);
-  $stmt->bindValue(':assetId',     $articleData['assetId'],     PDO::PARAM_INT);
+  $stmt->bindValue(':assingedId',  $assetData['assignedId'],  PDO::PARAM_INT);
+  $stmt->bindValue(':assetId',     $assetData['assetId'],     PDO::PARAM_INT);  
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
   return $rowsChanged; 
 }
 
-function unassign_asset($unassignAssetData) {}
-function update_asset_status($assetStatus) {}
+function unassign_asset($assetData) {
+  $table = $assetData["assignedTable"];
+  $db = dbConnect();
+  $sql = 'DELETE asset_assignment WHERE assetId = :assetId AND ' . $table . "id = :assignedId";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':assetId', $assetData["assetId"], PDO::PARAM_INT);
+  $stmt->bindValue(':assignedId', $assetData["assignedId"], PDO::PARAM_INT);
+  $stmt->execute();
+  $rowsChanged = $stmt->rowCount();
+  $stmt->closeCursor();
+  return $rowsChanged;
+}
+
+function unassign_asset_all($assetData) {
+  $db = dbConnect();
+  $sql = 'DELETE asset_assignment WHERE assetId = :assetId';
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':assetId', $assetData["assetId"], PDO::PARAM_INT);
+  $stmt->execute();
+  $rowsChanged = $stmt->rowCount();
+  $stmt->closeCursor();
+  return $rowsChanged;
+}
+
+function update_asset_status($assetData) {
+  $db = dbConnect();
+  $sql = 'UPDATE asset SET assetStatus= :assetStatus, assetModified = :assetModiefied WHERE assetId = :assetId';
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':assetStatus',  $articleData['assetStatus'],  PDO::PARAM_STR);
+  $stmt->bindValue(':assetModified',$articleData['assetModified'],PDO::PARAM_STR);
+  $stmt->bindValue(':assetId',      $articleData['assetId'],      PDO::PARAM_INT);
+  $stmt->execute();
+  $rowsChanged = $stmt->rowCount();
+  $stmt->closeCursor();
+  return $rowsChanged;
+}
