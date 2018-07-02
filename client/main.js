@@ -87,3 +87,28 @@ function makeParagraph(length) {
 
   return para;
 }
+
+function testController() {
+  let data = {
+    controller: "testController",
+    action: "test",
+    payload: {
+      conductTest: "blueheron",
+      testPhp: "test success",
+      action: "test",
+    }
+  }
+  let req = {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+
+    body: JSON.stringify(data),
+  }
+
+  fetch(url, req)
+  .then(response => response.json())
+  .then(data => console.log(data));
+}

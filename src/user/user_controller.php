@@ -30,7 +30,7 @@ function userRequest($action, $payload){
       $_SESSION['userData'] = $userData;
 
       // successfully logedin
-      return loginResp(TRUE, $userData, 'success');
+      return dataResp("success", $userData, 'User successfully logged in.');
       exit;
     break;
 

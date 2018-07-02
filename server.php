@@ -9,6 +9,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 // CSRF (cross-site request forgery)
 
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 
 // first check for a GET request
 
@@ -17,12 +19,19 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
 
 // second check for a json post request
 
-  if($action == NULL){
+  if($controller == NULL || $action == NULL){
+
+    if(isset($_POST['controller'])) {
+      $controller = $_POST['controller'];
+      $action = $_POST['action'];
+      $payload = "don't need it";
+    }
 
     $json_str = file_get_contents('php://input');
 
     if(!empty($json_str)) {
       $reqArr = json_decode($json_str, true);
+      
       $action = $reqArr['action'];
       $controller = $reqArr['controller'];
       $payload = $reqArr['payload'];
@@ -30,15 +39,18 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
       if( empty($action) || 
           empty($controller)|| 
           empty($payload)){
-        echo postResp("failure", "Bad post request. Either the controller action or payload was not sent.");
-        exit;
+          echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
+          exit;
       } 
+      
+      // echo json_encode(response("failure", "Some proccess failed."));
+      // exit;
     }
     
     // $file = $_FILES['fileUpload'];
-    $controller = $_POST['controller'];
-    $action = $_POST['action'];
-    $payload = "don't need it";
+    // $controller = $_POST['controller'];
+    // $action = $_POST['action'];
+    // $payload = "don't need it";
   }
 
   switch ($controller) {
@@ -61,6 +73,6 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
       echo json_encode(userRequest($action, $payload));
     break;
     default: 
-      echo json_encode(postResp("failure", "The " . $controller . " controller does not exist"));
+      echo json_encode(response("failure", "The " . $controller . " controller does not exist"));
     break;
   }

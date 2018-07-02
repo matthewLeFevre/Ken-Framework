@@ -15,7 +15,3 @@
     $pattern = '/^(?=.*[[:digit:]])(?=.*[[:punct:]])[[:print:]]{8,}$/';
     return preg_match($pattern, $password);
   }
-
-  function loginResp($logStatus, $userData, $status) {
-    return ["loggedin"=>$logStatus, "userData"=>$userData, "status"=>$status];
-  }

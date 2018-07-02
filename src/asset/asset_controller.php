@@ -76,7 +76,7 @@ function assetRequest($action, $payload){
 
       // send errors if data is missing
       if( empty($payload["assetId"]) || empty($payload["assignedTable"]) || empty($payload["assignedId"])) {
-        return response("failure", "Required data has not been supplied. Please try again.")
+        return response("failure", "Required data has not been supplied. Please try again.");
       }
       $assignAssetStatus = assign_asset($payload);
       if($assignAssetStatus == 1) {
@@ -90,7 +90,7 @@ function assetRequest($action, $payload){
       $assetData["assetId"]  = filter_var($assetData["assetId"], FILTER_SANITIZE_NUMBER_INT);
       $assetData["assigned"] = filter_var($assetData["assignedId"], FILTER_SANITIZE_NUMBER_INT);
       $assetData["assigned"] = filter_var($assetData["assignedTable"], FILTER_SANITIZE_STRING); 
-      if(ckEmpty($payload)) { return ckEmpty($payload)};
+      if(ckEmpty($payload)) { return ckEmpty($payload);}
       $unassignAssetStatus- unassign_asset($payload);
       if($unassignAssetStatus == 1) {
         return response("success", "Asset was unassigned successfully.");
@@ -104,7 +104,7 @@ function assetRequest($action, $payload){
       $payload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
 
       // Check for empty inputs
-      if(ckEmpty($payload)) { return ckEmpty($payload)};
+      if(ckEmpty($payload)) { return ckEmpty($payload);}
 
       $assetChangeStatus = update_asset_status($payload);
 
@@ -117,7 +117,7 @@ function assetRequest($action, $payload){
 
     case "deleteAsset":
       $payload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      if(ckEmpty($payload)) { return ckEmpty($payload)};
+      if(ckEmpty($payload)) { return ckEmpty($payload);}
 
       // before the asset is deleted it should be unassigned
       // from all of its current assignments.

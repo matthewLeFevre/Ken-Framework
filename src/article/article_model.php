@@ -68,7 +68,9 @@ function delete_article($articleId) {
 
 function get_article_by_id($articleId) {
   $db = dbConnect();
-  $sql = "SELECT * FROM article  WHERE articleId = :articleId";
+  $sql = "SELECT * 
+          FROM article 
+          INNER JOIN assigned_asset ON article.articleId=assigned_asset.articleId  WHERE articleId = :articleId";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleId', $articleId, PDO::PARAM_INT);
   $stmt->execute();
