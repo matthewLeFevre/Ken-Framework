@@ -4,10 +4,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 function articleRequest($action, $payload){
 
-  $emptyCheck = chkEmpty($payload);
+  // $emptyCheck = chkEmpty($payload);
 
-  if()
-  $payload = sanitizePayload($payload);
+  // if()
+  // $payload = sanitizePayload($payload);
   
   switch ($action) {
     case 'createArticle':
@@ -149,9 +149,8 @@ function articleRequest($action, $payload){
     break;
     
     case 'getNumberOfArticles':
-      $payload['articleNumber'] = $payload["articleNumber"];
       $articles = get_number_of_articles($payload['articleNumber']);
-      return response("success", $articles, "Articles were retrieved successfully");
+      return dataResp("success", $articles, "Articles were retrieved successfully");
     break;
 
     default:

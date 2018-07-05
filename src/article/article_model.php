@@ -108,10 +108,13 @@ function get_articles() {
 // Implement the number here
 function get_number_of_articles($numberOfArticles) {
   $db = dbConnect();
-  $sql = "SELECT * FROM article ORDER BY articleCreated ASC LIMIT " . $numberOfArticles;
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          ORDER BY articleCreated DESC LIMIT " . $numberOfArticles;
   $stmt = $db->prepare($sql);
   $stmt->execute();
-  $articles = $stmt->fetchAll(PDO::FETCH_NUM);
+  $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
   $stmt->closeCursor();
   return $articles;
 }

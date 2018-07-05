@@ -112,3 +112,36 @@ function testController() {
   .then(response => response.json())
   .then(data => console.log(data));
 }
+
+// Get articles request syntax
+fetch(url + "?controller=article&action=getNumberOfArticles&articleNumber=5")
+.then(response => response.json())
+.then(data => console.log(data));
+
+function assignAsset () {
+  const assignedId = document.getElementById('articleId').value;
+  const assetId = document.getElementById('assetId').value;
+  const assignedTable = "article";
+
+  const data = {
+    controller: "asset",
+    action: "assignAsset",
+    payload: {
+      assignedId: assignedId,
+      assetId: assetId,
+      assignedTable: assignedTable
+    }
+  }
+
+  const myInit = {
+    method: 'POST',
+    headers: {
+      'content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
+  }
+
+  fetch(url, myInit)
+  .then(response => response.json())
+  .then(data => console.log(data));
+}

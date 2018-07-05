@@ -29,9 +29,9 @@ function delete_asset($assetData) {
 function assign_asset($assetData) {
   $table = $assetData["assignedTable"]; 
   $db = dbConnect();
-  $sql = "INSERT INTO" . $table . " (". $table ."Id, assetId) VALUES (:assignedId, :assetId)";
+  $sql = "INSERT INTO asset_assignment (". $table ."Id, assetId) VALUES (:assignedId, :assetId)";
   $stmt = $db->prepare($sql);
-  $stmt->bindValue(':assingedId',  $assetData['assignedId'],  PDO::PARAM_INT);
+  $stmt->bindValue(':assignedId',  $assetData['assignedId'],  PDO::PARAM_INT);
   $stmt->bindValue(':assetId',     $assetData['assetId'],     PDO::PARAM_INT);  
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();

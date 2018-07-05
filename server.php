@@ -55,6 +55,13 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
 
   switch ($controller) {
     case "article":
+    
+      // Check for additional items in query string and add them to payload
+      $articleNumber = filter_input(INPUT_GET, 'articleNumber', FILTER_SANITIZE_NUMBER_INT);
+      if(isset($articleNumber)) {
+        $payload['articleNumber'] = $articleNumber;
+      }
+
       echo json_encode(articleRequest($action, $payload));
     break;
     case "asset":

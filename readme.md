@@ -28,7 +28,7 @@ const myInit = {
   headers: {
     'content-Type': 'application/json'
   },
-  body: JSON.Stringify(data),
+  body: JSON.stringify(data)
 };
 
 fetch("url", myInit)

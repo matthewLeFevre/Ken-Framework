@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema generic
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `generic` ;
 
 -- -----------------------------------------------------
 -- Schema generic
@@ -17,8 +18,6 @@ USE `generic` ;
 -- -----------------------------------------------------
 -- Table `generic`.`user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`user` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`user` (
   `userId` INT NOT NULL AUTO_INCREMENT,
   `userName` VARCHAR(45) NOT NULL,
@@ -36,8 +35,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`group`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`group` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`group` (
   `groupId` INT NOT NULL,
   `groupCreated` DATETIME NOT NULL,
@@ -49,8 +46,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`message`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`message` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`message` (
   `messageId` INT NOT NULL AUTO_INCREMENT,
   `messageBody` VARCHAR(255) NOT NULL,
@@ -76,8 +71,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`post`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`post` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`post` (
   `postId` INT NOT NULL AUTO_INCREMENT,
   `postCreated` DATETIME NOT NULL,
@@ -97,8 +90,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`asset`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`asset` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`asset` (
   `assetId` INT NOT NULL AUTO_INCREMENT,
   `assetPath` VARCHAR(255) NOT NULL,
@@ -106,11 +97,12 @@ CREATE TABLE IF NOT EXISTS `generic`.`asset` (
   `assetType` ENUM('img', 'video', 'document') NOT NULL,
   `assetCreated` DATETIME NOT NULL,
   `assetStatus` ENUM('saved', 'published') NOT NULL,
-  `user_userId` INT NOT NULL,
+  `assetModified` DATETIME NULL,
+  `userId` INT NOT NULL,
   PRIMARY KEY (`assetId`),
-  INDEX `fk_asset_user1_idx` (`user_userId` ASC),
+  INDEX `fk_asset_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_asset_user1`
-    FOREIGN KEY (`user_userId`)
+    FOREIGN KEY (`userId`)
     REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
@@ -120,8 +112,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`user_has_group`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`user_has_group` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`user_has_group` (
   `user_has_groupcol` VARCHAR(45) NOT NULL,
   `user_userId` INT NOT NULL,
@@ -146,8 +136,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`user_has_group1`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`user_has_group1` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`user_has_group1` (
   `user_userId` INT NOT NULL,
   `group_groupId` INT NOT NULL,
@@ -170,8 +158,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`article`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`article` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`article` (
   `articleId` INT NOT NULL AUTO_INCREMENT,
   `articleTitle` VARCHAR(255) NOT NULL,
@@ -197,8 +183,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`comment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`comment` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`comment` (
   `commentId` INT NOT NULL AUTO_INCREMENT,
   `commentCreated` DATETIME NOT NULL,
@@ -231,8 +215,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`userProfileImage`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`userProfileImage` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`userProfileImage` (
   `userProfileImage` INT NOT NULL AUTO_INCREMENT,
   `asset_assetId` INT NOT NULL,
@@ -249,8 +231,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `generic`.`userProfile`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`userProfile` ;
-
 CREATE TABLE IF NOT EXISTS `generic`.`userProfile` (
   `userProfileId` INT NOT NULL AUTO_INCREMENT,
   `table1_userProfileImage` INT NOT NULL,
@@ -273,72 +253,37 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`article_has_asset`
+-- Table `generic`.`asset_assignment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`article_has_asset` ;
-
-CREATE TABLE IF NOT EXISTS `generic`.`article_has_asset` (
-  `article_articleId` INT NOT NULL,
-  `asset_assetId` INT NOT NULL,
-  PRIMARY KEY (`article_articleId`, `asset_assetId`),
-  INDEX `fk_article_has_asset_asset1_idx` (`asset_assetId` ASC),
-  INDEX `fk_article_has_asset_article1_idx` (`article_articleId` ASC),
-  CONSTRAINT `fk_article_has_asset_article1`
-    FOREIGN KEY (`article_articleId`)
-    REFERENCES `generic`.`article` (`articleId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_article_has_asset_asset1`
-    FOREIGN KEY (`asset_assetId`)
+CREATE TABLE IF NOT EXISTS `generic`.`asset_assignment` (
+  `assignmentId` INT NOT NULL AUTO_INCREMENT,
+  `assetId` INT NOT NULL,
+  `post_postId` INT NULL,
+  `messageId` INT NULL,
+  `articleId` INT NULL,
+  PRIMARY KEY (`assignmentId`),
+  INDEX `fk_asset_assignment_asset1_idx` (`assetId` ASC),
+  INDEX `fk_asset_assignment_post1_idx` (`post_postId` ASC),
+  INDEX `fk_asset_assignment_message1_idx` (`messageId` ASC),
+  INDEX `fk_asset_assignment_article1_idx` (`articleId` ASC),
+  CONSTRAINT `fk_asset_assignment_asset1`
+    FOREIGN KEY (`assetId`)
     REFERENCES `generic`.`asset` (`assetId`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `generic`.`post_has_asset`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`post_has_asset` ;
-
-CREATE TABLE IF NOT EXISTS `generic`.`post_has_asset` (
-  `post_postId` INT NOT NULL,
-  `asset_assetId` INT NOT NULL,
-  PRIMARY KEY (`post_postId`, `asset_assetId`),
-  INDEX `fk_post_has_asset_asset1_idx` (`asset_assetId` ASC),
-  INDEX `fk_post_has_asset_post1_idx` (`post_postId` ASC),
-  CONSTRAINT `fk_post_has_asset_post1`
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_asset_assignment_post1`
     FOREIGN KEY (`post_postId`)
     REFERENCES `generic`.`post` (`postId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_post_has_asset_asset1`
-    FOREIGN KEY (`asset_assetId`)
-    REFERENCES `generic`.`asset` (`assetId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `generic`.`message_has_asset`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `generic`.`message_has_asset` ;
-
-CREATE TABLE IF NOT EXISTS `generic`.`message_has_asset` (
-  `message_messageId` INT NOT NULL,
-  `asset_assetId` INT NOT NULL,
-  PRIMARY KEY (`message_messageId`, `asset_assetId`),
-  INDEX `fk_message_has_asset_asset1_idx` (`asset_assetId` ASC),
-  INDEX `fk_message_has_asset_message1_idx` (`message_messageId` ASC),
-  CONSTRAINT `fk_message_has_asset_message1`
-    FOREIGN KEY (`message_messageId`)
+  CONSTRAINT `fk_asset_assignment_message1`
+    FOREIGN KEY (`messageId`)
     REFERENCES `generic`.`message` (`messageId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_message_has_asset_asset1`
-    FOREIGN KEY (`asset_assetId`)
-    REFERENCES `generic`.`asset` (`assetId`)
+  CONSTRAINT `fk_asset_assignment_article1`
+    FOREIGN KEY (`articleId`)
+    REFERENCES `generic`.`article` (`articleId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;

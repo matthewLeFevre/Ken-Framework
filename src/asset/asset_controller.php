@@ -70,6 +70,8 @@ function assetRequest($action, $payload){
     case "assignAsset": 
       // I don't know how great it is to reassign filtered value here
       // At least it will be filtered though
+      // echo json_encode($payload);
+      // break;
       $payload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
       $payload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
       $payload["assignedId"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
@@ -78,7 +80,9 @@ function assetRequest($action, $payload){
       if( empty($payload["assetId"]) || empty($payload["assignedTable"]) || empty($payload["assignedId"])) {
         return response("failure", "Required data has not been supplied. Please try again.");
       }
+
       $assignAssetStatus = assign_asset($payload);
+
       if($assignAssetStatus == 1) {
         return response("success", "Asset successfully assigned");
       } else {
