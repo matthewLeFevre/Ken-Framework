@@ -37,22 +37,24 @@ function userRequest($action, $payload){
     case 'logoutUser':
       session_destroy();
       $loggedOut = ['loggedin'=> FALSE, 'status'=>'success'];
+      // refactor this response
       return loginResp(FALSE, null, 'success');
     break;
 
     case 'registerUser':
+      $filteredPayload = array();
       // required parameters
-      $userName = filter_var($payload['userName'], FILTER_SANITIZE_STRING);
-      $userEmail = filter_var($payload['userEmail'], FILTER_SANITIZE_STRING);
-      $userPassword = filter_var($payload['userPassword'], FILTER_SANITIZE_STRING);
+      $filteredPayload['userName'] = filter_var($payload['userName'], FILTER_SANITIZE_STRING);
+      $filteredPayload['userEmail'] = filter_var($payload['userEmail'], FILTER_SANITIZE_STRING);
+      $filteredPayload['userPassword'] = filter_var($payload['userPassword'], FILTER_SANITIZE_STRING);
 
       // Not required parameters
-      $userFirstName = filter_var($payload['userFirstName'], FILTER_SANITIZE_STRING);
-      $userLastName = filter_var($payload['userLastName'], FILTER_SANITIZE_STRING);
+      $filteredPayload['userFirstName'] = filter_var($payload['userFirstName'], FILTER_SANITIZE_STRING);
+      $filteredPayload['userLastName'] = filter_var($payload['userLastName'], FILTER_SANITIZE_STRING);
 
       // Throw error that user must enter required data
       // before registering an account
-      if( empty($userName) ||
+      if( empty($filteredPayload['userName']) ||
           empty($userEmail) ||
           empty($userPassword)) {
         return response("failure", "Please fill in all required data");
@@ -60,11 +62,11 @@ function userRequest($action, $payload){
       }
 
       // Ensure that password and email are valid and clean
-      $userEmail = checkEmail($userEmail);
-      $userPasswordCheck = checkPassword($userPassword);
+      $filteredPayload['userEmail'] = checkEmail($filteredPayload['userEmail']);
+      $userPasswordCheck = checkPassword($filteredPayload['userPassword']);
 
       // Ensure no duplicate emails exist in db when new users register
-      $userEmailVerify = verify_email($userEmail);
+      $userEmailVerify = verify_email($filteredPayload['userEmail']);
 
       // Throw error that entered email address already exists
       if($userEmailVerify){
@@ -74,7 +76,7 @@ function userRequest($action, $payload){
 
       // hash the password before putting it into the database
       $userPassword = password_hash($userPassword, PASSWORD_DEFAULT);
-      $newRegistrationStatus = register_new_user($payload);
+      $newRegistrationStatus = register_new_user($filteredPayload);
 
       // create custom notification that registration was successful
       if($newRegistrationStatus) {

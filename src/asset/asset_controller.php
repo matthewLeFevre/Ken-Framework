@@ -68,20 +68,17 @@ function assetRequest($action, $payload){
     break;
 
     case "assignAsset": 
-      // I don't know how great it is to reassign filtered value here
-      // At least it will be filtered though
-      // echo json_encode($payload);
-      // break;
-      $payload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      $payload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
-      $payload["assignedId"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
+      $filteredPayload = array();
+      $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+      $filteredPayload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
+      $filteredPayload["assignedId"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
 
       // send errors if data is missing
-      if( empty($payload["assetId"]) || empty($payload["assignedTable"]) || empty($payload["assignedId"])) {
+      if( empty($filteredPayload["assetId"]) || empty($filteredPayload["assignedTable"]) || empty($pfilteredPyload["assignedId"])) {
         return response("failure", "Required data has not been supplied. Please try again.");
       }
 
-      $assignAssetStatus = assign_asset($payload);
+      $assignAssetStatus = assign_asset($filteredPayload);
 
       if($assignAssetStatus == 1) {
         return response("success", "Asset successfully assigned");
@@ -90,12 +87,18 @@ function assetRequest($action, $payload){
       }
     break;
 
+    // Logic that has not yet been implimented correctly
+    // should be retrieving data from payload not assetData
     case "unAssignAsset":
-      $assetData["assetId"]  = filter_var($assetData["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      $assetData["assigned"] = filter_var($assetData["assignedId"], FILTER_SANITIZE_NUMBER_INT);
-      $assetData["assigned"] = filter_var($assetData["assignedTable"], FILTER_SANITIZE_STRING); 
-      if(ckEmpty($payload)) { return ckEmpty($payload);}
-      $unassignAssetStatus- unassign_asset($payload);
+      $filteredPayload = array();
+      $filteredPayload["assetId"]  = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+      $filteredPayload["assigned"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
+      $filteredPayload["assigned"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING); 
+      // Check for empty inputs
+      // chkEmpty() should not be used here
+      // check empty inputs manually
+      if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
+      $unassignAssetStatus- unassign_asset($filteredPayload);
       if($unassignAssetStatus == 1) {
         return response("success", "Asset was unassigned successfully.");
       } else {
@@ -104,13 +107,16 @@ function assetRequest($action, $payload){
     break;
 
     case "changeAssetStatus":
-      $payload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      $payload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
+      $filteredPayload = array();
+      $filteredayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+      $filteredayload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
 
       // Check for empty inputs
-      if(ckEmpty($payload)) { return ckEmpty($payload);}
+      // chkEmpty() should not be used here
+      // check empty inputs manually
+      if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
 
-      $assetChangeStatus = update_asset_status($payload);
+      $assetChangeStatus = update_asset_status($filteredPayload);
 
       if($assetChangeStatus === 1) {
         return response("success", "Asset has been updated successfully");
@@ -120,13 +126,17 @@ function assetRequest($action, $payload){
     break;
 
     case "deleteAsset":
-      $payload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      if(ckEmpty($payload)) { return ckEmpty($payload);}
+      $filteredPayload = $payload; 
+      $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+      // Check for empty inputs
+      // chkEmpty() should not be used here
+      // check empty inputs manually
+      if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
 
       // before the asset is deleted it should be unassigned
       // from all of its current assignments.
 
-      $deleteAssetStatus = delete_asset($payload);
+      $deleteAssetStatus = delete_asset($filteredPayload);
 
       if($deleteAssetStatus === 1) {
         return response("success", "Asset deleted.");
