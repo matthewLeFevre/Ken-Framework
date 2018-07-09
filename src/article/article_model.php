@@ -68,9 +68,10 @@ function delete_article($articleId) {
 
 function get_article_by_id($articleId) {
   $db = dbConnect();
-  $sql = "SELECT * 
-          FROM article 
-          INNER JOIN assigned_asset ON article.articleId=assigned_asset.articleId  WHERE articleId = :articleId";
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          WHERE articleId = :articleId";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleId', $articleId, PDO::PARAM_INT);
   $stmt->execute();
@@ -83,7 +84,10 @@ function get_article_by_id($articleId) {
 
 function get_article_by_title($articleTitle) {
   $db = dbConnect();
-  $sql = "SELECT * FROM article  WHERE articleTitle = :articleTitle";
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          WHERE articleTitle = :articleTitle";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleTitle', $articleTitle, PDO::PARAM_STR);
   $stmt->execute();
@@ -96,7 +100,10 @@ function get_article_by_title($articleTitle) {
 
 function get_articles() {
   $db = dbConnect();
-  $sql = "SELECT * FROM article ORDER BY articleCreated ASC";
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          ORDER BY articleCreated ASC";
   $stmt = $db->prepare($sql);
   $stmt->execute();
   $articleData = $stmt->fetchAll(PDO::FETCH_NAMED);

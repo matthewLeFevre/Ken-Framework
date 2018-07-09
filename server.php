@@ -40,7 +40,28 @@ $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
           empty($payload)){
           echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
           exit;
-      } 
+      }
+
+      // A token is not required for the following requests and tokens are not 
+      // required --currently-- for any get requests. If request is made for 
+      // an aciton other than those in this logic statement a valid token is required.
+      if ($action !== "loginUser" &&
+          $action !== "logoutUser" &&
+          $action !== "registerUser") {
+
+        if(isset($payload["apiToken"])) {
+          $token = $payload["apiToken"];
+          $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING);
+        } else {
+          echo json_encode(response("failure", "No token was submitted with the request. Please log back in and try again or consult your web administrator."));
+          exit;
+        }
+
+        if( $sanitizedToken !== $_SESSION['userData']['apiToken']) {
+          echo json_encode(response("failure", "Invalid token submitted with request. Please consult your web administrator."));
+          exit;
+        }
+      }
     }
   }
 
