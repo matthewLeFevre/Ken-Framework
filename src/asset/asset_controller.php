@@ -2,151 +2,145 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
-function assetRequest($action, $payload){
-  // What if i check for empty inputs at the start of the controller?
-  // if(ckEmpty($payload)) { return ckEmpty($payload)};
-  // might i conditionally sanitize every input at the start of the
-  // controller as well?
-  switch ($action) {
-    case "createAsset":
-      // asset variables
-      $asset_dir = '/server_assets';
-      $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
+$asset = new Controller('asset');
 
-      // collect needed inputs
-      $assetName = $_FILES['fileUpload']['name'];
-      $assetPath = $asset_dir . '/' . $assetName;
-      $assetType = getAssetType($assetName);
-      $assetSize = $_FILES['fileUpload']['size'];
-      $assetStatus = filter_input(INPUT_POST, 'assetStatus', FILTER_SANITIZE_STRING);
-      $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+// passing
+$asset->addAction('createAsset', function($payload){
+  // asset variables
+  $asset_dir = '/server_assets';
+  $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
 
-      if(isset($assetName)) {
+  // collect needed inputs
+  $assetName = $_FILES['fileUpload']['name'];
+  $assetPath = $asset_dir . '/' . $assetName;
+  $assetType = getAssetType($assetName);
+  $assetSize = $_FILES['fileUpload']['size'];
+  $assetStatus = filter_input(INPUT_POST, 'assetStatus', FILTER_SANITIZE_STRING);
+  $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
 
-        // sends error if asset file is missing
-        if(empty($assetName)) {
-          return response("failure","Coudn't find file. asset_controller.php line 20");
-        }
+  if(isset($assetName)) {
 
-        // sends error if file is an unsupported file type
-        if(!fileTypeCheck($assetName) || !$assetType) {
-          return response("failure", "The uploaded file is an inncorrect file type.");
-        }
+    // sends error if asset file is missing
+    if(empty($assetName)) {
+      return response("failure","Coudn't find file. asset_controller.php line 20");
+    }
 
-        $source = $_FILES['fileUpload']['tmp_name'];
+    // sends error if file is an unsupported file type
+    if(!fileTypeCheck($assetName) || !$assetType) {
+      return response("failure", "The uploaded file is an inncorrect file type.");
+    }
 
-        // sends error if no temporary file name exists
-        if($source =="") {
-          return response("failure", "Image tmp_name issue. Please contact your web administrator.");
-        }
+    $source = $_FILES['fileUpload']['tmp_name'];
 
-        // downlaod file to directory on server
-        // Idealy it would be good to create a directory for each 
-        // user instead of downloading every asset to the main folder
-        // just more to improve on in the future
-        $target = $asset_dir_path . '/' . $assetName;
-        $check = move_uploaded_file($source, $target);
+    // sends error if no temporary file name exists
+    if($source =="") {
+      return response("failure", "Image tmp_name issue. Please contact your web administrator.");
+    }
 
-        // Set up payload to create asset row in db
-        $payload = ["assetPath" => $assetPath, 
-                    "assetName" => $assetName, 
-                    "assetType" => $assetType, 
-                    "assetStatus" => $assetStatus,
-                    "userId" => $userId];
+    // downlaod file to directory on server
+    // Idealy it would be good to create a directory for each 
+    // user instead of downloading every asset to the main folder
+    // just more to improve on in the future
+    $target = $asset_dir_path . '/' . $assetName;
+    $check = move_uploaded_file($source, $target);
 
-        // create the asset
-        $result = create_asset($payload);
+    // Set up payload to create asset row in db
+    $payload = ["assetPath" => $assetPath, 
+                "assetName" => $assetName, 
+                "assetType" => $assetType, 
+                "assetStatus" => $assetStatus,
+                "userId" => $userId];
 
-        // File successfully uploaded
-        if(count($result) == 1) {
-          return response("success", $assetName . " was uploaded successfully");
-        } else {
-          return response("failure", $assetName . " was not uploaded successfully. Please contact your website administrator or try again.");
-        }
-      }
+    // create the asset
+    $result = create_asset($payload);
 
-    break;
-
-    case "assignAsset": 
-      $filteredPayload = array();
-      $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      $filteredPayload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
-      $filteredPayload["assignedId"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
-
-      // send errors if data is missing
-      if( empty($filteredPayload["assetId"]) || empty($filteredPayload["assignedTable"]) || empty($pfilteredPyload["assignedId"])) {
-        return response("failure", "Required data has not been supplied. Please try again.");
-      }
-
-      $assignAssetStatus = assign_asset($filteredPayload);
-
-      if($assignAssetStatus == 1) {
-        return response("success", "Asset successfully assigned");
-      } else {
-        return response("failure", "There was an issue assigning the asset.");
-      }
-    break;
-
-    // Logic that has not yet been implimented correctly
-    // should be retrieving data from payload not assetData
-    case "unAssignAsset":
-      $filteredPayload = array();
-      $filteredPayload["assetId"]  = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      $filteredPayload["assigned"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
-      $filteredPayload["assigned"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING); 
-      // Check for empty inputs
-      // chkEmpty() should not be used here
-      // check empty inputs manually
-      if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
-      $unassignAssetStatus- unassign_asset($filteredPayload);
-      if($unassignAssetStatus == 1) {
-        return response("success", "Asset was unassigned successfully.");
-      } else {
-        return response("failure", "There was an issue unassigning the asset.");
-      }
-    break;
-
-    case "changeAssetStatus":
-      $filteredPayload = array();
-      $filteredayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      $filteredayload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
-
-      // Check for empty inputs
-      // chkEmpty() should not be used here
-      // check empty inputs manually
-      if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
-
-      $assetChangeStatus = update_asset_status($filteredPayload);
-
-      if($assetChangeStatus === 1) {
-        return response("success", "Asset has been updated successfully");
-      } else {
-        return response("failure", "Asset was not updated successfully.");
-      }
-    break;
-
-    case "deleteAsset":
-      $filteredPayload = $payload; 
-      $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-      // Check for empty inputs
-      // chkEmpty() should not be used here
-      // check empty inputs manually
-      if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
-
-      // before the asset is deleted it should be unassigned
-      // from all of its current assignments.
-
-      $deleteAssetStatus = delete_asset($filteredPayload);
-
-      if($deleteAssetStatus === 1) {
-        return response("success", "Asset deleted.");
-      } else {
-        return response("failure", "Asset was not deleted.");
-      }
-    break;
-
-    default:
-      return response("failure", "The specified action has not been defined.");
-    break;
+    // File successfully uploaded
+    if(count($result) == 1) {
+      return response("success", $assetName . " was uploaded successfully");
+    } else {
+      return response("failure", $assetName . " was not uploaded successfully. Please contact your website administrator or try again.");
+    }
   }
-}
+});
+
+// passing
+$asset->addAction('assignAsset', function($payload){
+  $filteredPayload = array();
+  $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+  $filteredPayload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
+  $filteredPayload["assignedId"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
+  
+  // send errors if data is missing
+  if( empty($filteredPayload["assetId"]) || empty($filteredPayload["assignedTable"]) || empty($filteredPayload["assignedId"])) {
+    return response("failure", "Required data has not been supplied. Please try again.");
+  }
+
+  $assignAssetStatus = assign_asset($filteredPayload);
+
+  if($assignAssetStatus == 1) {
+    return response("success", "Asset successfully assigned");
+  } else {
+    return response("failure", "There was an issue assigning the asset.");
+  }
+});
+
+// untested
+// Logic that has not yet been implimented correctly
+// should be retrieving data from payload not assetData
+$asset->addAction('unAssignAsset', function($payload){
+  $filteredPayload = array();
+  $filteredPayload["assetId"]  = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+  $filteredPayload["assigned"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
+  $filteredPayload["assigned"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING); 
+  // Check for empty inputs
+  // chkEmpty() should not be used here
+  // check empty inputs manually
+  if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
+  $unassignAssetStatus- unassign_asset($filteredPayload);
+  if($unassignAssetStatus == 1) {
+    return response("success", "Asset was unassigned successfully.");
+  } else {
+    return response("failure", "There was an issue unassigning the asset.");
+  }
+});
+
+// untested
+$asset->addAction('changeAssetStatus', function($payload){
+  $filteredPayload = array();
+  $filteredayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+  $filteredayload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
+
+  // Check for empty inputs
+  // chkEmpty() should not be used here
+  // check empty inputs manually
+  if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
+
+  $assetChangeStatus = update_asset_status($filteredPayload);
+
+  if($assetChangeStatus === 1) {
+    return response("success", "Asset has been updated successfully");
+  } else {
+    return response("failure", "Asset was not updated successfully.");
+  }
+});
+
+// untested
+$asset->addAction('deleteAsset', function($payload){
+  $filteredPayload = $payload; 
+  $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+  // Check for empty inputs
+  // chkEmpty() should not be used here
+  // check empty inputs manually
+  if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
+
+  // before the asset is deleted it should be unassigned
+  // from all of its current assignments.
+
+  $deleteAssetStatus = delete_asset($filteredPayload);
+
+  if($deleteAssetStatus === 1) {
+    return response("success", "Asset deleted.");
+  } else {
+    return response("failure", "Asset was not deleted.");
+  }
+});

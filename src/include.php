@@ -7,6 +7,9 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect_local.php'; // remove if downloading from repo
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/tools.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/generic.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/action.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/controller.php';
 
 // asset
 

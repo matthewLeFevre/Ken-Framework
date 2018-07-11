@@ -1,6 +1,8 @@
 const fileInput = document.getElementById("imageUpload");
 const fileUpBtn = document.getElementById("imageUploadButton");
 const url = 'http://site2/server.php';
+const testUrl = 'http://site2/src/classes/generic.php';
+
 
 
 // image upload
@@ -142,6 +144,28 @@ function assignAsset () {
   }
 
   fetch(url, myInit)
+  .then(response => response.json())
+  .then(data => console.log(data));
+}
+
+
+function oopTest() {
+  const reqStr = doucment.getElementById('ooptest').value;
+  const data = {
+    controller: "test",
+    action: "print",
+    payload: reqStr,
+  }
+
+  const myInit = {
+    method: 'POST',
+    headers: {
+      'content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
+  }
+
+  fetch(testUrl, myInit)
   .then(response => response.json())
   .then(data => console.log(data));
 }

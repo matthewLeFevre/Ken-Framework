@@ -1,9 +1,10 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 class Generic {
 
     // request information
-    private $reqController
+    private $reqController;
     private $reqAction;
     private $payload;
     
@@ -12,15 +13,15 @@ class Generic {
     private $controllers = array();
 
     function __construct($tokenValidation = True) {
-        $this->$tokenValidation = $tokenValidation;
+        $this->tokenValidation = $tokenValidation;
     }
 
     function setTokenValidation($validation) {
-        $this->$tokenValidation = $validation;
+        $this->tokenValidation = $validation;
     }
 
     function getPayload() {
-        return $this->$payload;
+        return $this->payload;
     }
 
     function addController($controller) {
@@ -34,7 +35,7 @@ class Generic {
         $this->reqAction     = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
 
         // POST request Listener
-        if($this->controller == NULL || $this->action == NULL){
+        if($this->reqController == NULL || $this->reqAction == NULL){
 
             // Asset POST Listener
             if(isset($_POST['controller'])) {
@@ -53,7 +54,7 @@ class Generic {
     }
 
     function proccess() {
-        for ($controllers as $controller) {
+        foreach ($this->controllers as $controller) {
             if($controller->getName() === $this->reqController) {
                 echo json_encode($controller->callAction($this->reqAction, $this->payLoad));
                 return;
@@ -86,7 +87,7 @@ class Generic {
             // an aciton other than those in this logic statement a valid token is required.
 
             // Verify that token validation is used on this server
-            $this->setTokenValidation ? true : return;
+            $this->setTokenValidation ? true : exit;
 
             if ($this->reqAction !== "loginUser" &&
                 $this->reqAction !== "logoutUser" &&
@@ -109,48 +110,3 @@ class Generic {
     }
 
 }
-
-// example setup
-
-// add to server file
-$app = new Generic;
-    //-- add controllers
-    $app->addController($user);
-    //-- listen for and proccess requests
-    $app->start();
-
-
-
-// add to seperate file
-$user = new Controller("User");
-$user->addAction("loginUser", function($payload) {
-    $userEmail         = filter_var($payload['userEmail']);
-    $userPassword      = filter_var($payload['password'], FILTER_SANITIZE_STRING);
-    $userEmail         = check_email($userEmail);
-    $userPasswordCheck = check_password($userPassword);
-
-    // throw an error fill in all input fields
-    if(empty($userEmail) || empty($userPassword)) {
-        return response("failure", "Please fill in both your username and password.");
-        exit;
-    }
-
-    $userData  = get_user_by_email($userEmail);
-    $hashCheck = password_verify($userPassword, $userData['userPassword']);
-
-    // throw error wrong password
-    if (!$hashCheck) {
-        return response("Your password or username is incorrect.");
-        exit;
-    }
-
-    $_SESSION['logged_in'] = TRUE;
-    $_SESSION['userData'] = $userData;
-    $_SESSION['userData'] = bin2hex(random_bytes(64));
-
-    // successfully logedin
-    return dataResp("success", $userData, 'User successfully logged in.');
-});
-
-$response = $user->callAction("loginUser", $app->getPayload());
-echo json_encode($response);
