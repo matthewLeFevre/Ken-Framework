@@ -19,6 +19,10 @@ class Generic {
     function setTokenValidation($validation) {
         $this->tokenValidation = $validation;
     }
+    
+    function getTokenValidation() {
+        return $this->tokenValidation;
+    }
 
     function getPayload() {
         return $this->payload;
@@ -48,6 +52,8 @@ class Generic {
             $json_str = file_get_contents('php://input');
 
             $this->validateJsonPost($json_str);
+        } else {
+            $this->payload = $_GET;
         }
 
         $this->proccess();
@@ -56,7 +62,7 @@ class Generic {
     function proccess() {
         foreach ($this->controllers as $controller) {
             if($controller->getName() === $this->reqController) {
-                echo json_encode($controller->callAction($this->reqAction, $this->payLoad));
+                echo json_encode($controller->callAction($this->reqAction, $this->payload));
                 return;
             }
         }
@@ -87,26 +93,25 @@ class Generic {
             // an aciton other than those in this logic statement a valid token is required.
 
             // Verify that token validation is used on this server
-            $this->setTokenValidation ? true : exit;
+            if($this->tokenValidation) {
+                if ($this->reqAction !== "loginUser" &&
+                    $this->reqAction !== "logoutUser" &&
+                    $this->reqAction !== "registerUser") {
 
-            if ($this->reqAction !== "loginUser" &&
-                $this->reqAction !== "logoutUser" &&
-                $this->reqAction !== "registerUser") {
+                    if(isset($this->payload["apiToken"])) {
+                        $token = $this->payload["apiToken"];
+                        $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING);
+                    } else {
+                        echo json_encode(response("failure", "No token was submitted with the request. Please log back in and try again or consult your web administrator."));
+                        return exit;
+                    }
 
-                if(isset($this->payload["apiToken"])) {
-                    $token = $this->payload["apiToken"];
-                    $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING);
-                } else {
-                    echo json_encode(response("failure", "No token was submitted with the request. Please log back in and try again or consult your web administrator."));
-                    return exit;
-                }
-
-                if( $sanitizedToken !== $_SESSION['userData']['apiToken']) {
-                    echo json_encode(response("failure", "Invalid token submitted with request. Please consult your web administrator."));
-                    return exit;
+                    if( $sanitizedToken !== $_SESSION['userData']['apiToken']) {
+                        echo json_encode(response("failure", "Invalid token submitted with request. Please consult your web administrator."));
+                        return exit;
+                    }
                 }
             }
         }
     }
-
 }

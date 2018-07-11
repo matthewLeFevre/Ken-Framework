@@ -28,7 +28,9 @@ $user->addAction('loginUser', function($payload){
 
   $_SESSION['logged_in'] = TRUE;
   $_SESSION['userData'] = $userData;
-  $_SESSION['userData']['apiToken'] = bin2hex(random_bytes(64));
+  if($app->getTokenValidation()) {
+    $_SESSION['userData']['apiToken'] = bin2hex(random_bytes(64));
+  }
 
   // successfully logedin
   return dataResp("success", $userData, 'User successfully logged in.');

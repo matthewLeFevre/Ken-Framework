@@ -9,12 +9,15 @@ class Controller
     function __construct($name) {
         $this->name = $name;
     }
+
     function getName() {
         return $this->name;
     }
+
     function addAction($actionName, $actionFunc) {
         $this->actions[$actionName] = new Action($actionName, $actionFunc);
     }
+
     function callAction($action, $params) {
 
         foreach ($this->actions as $storedAction) {
@@ -24,6 +27,10 @@ class Controller
             }
         }
         return response("failure", "The specified action has not been defined.");
+    }
+
+    function loadAdditionalPayload() {
+        
     }
 }
 
