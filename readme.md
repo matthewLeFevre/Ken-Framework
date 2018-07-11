@@ -1,4 +1,35 @@
-# Extendable PHP Backend
+# php_generic
+
+Server side php architecture/framework. Adapted from an MVC method to coincide with SPAs (Single Page Applications) front end frameworks. Can be extended to meet a variety of needs.
+
+## Install php_generic
+
+First time framework creator here and the only way to have access to ther server is cloning and downloading this repository. Make sure to have [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") installed on your desired operating system.
+
+## Setup
+
+To setup php_generic user the `server.php` as a template or guide. `server.php` is an example of an application including some of the php_generic built in features, these features are optional and do not have to be included in the application.
+
+### Minimum requirements
+
+```php
+<?php
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
+
+$app = new Generic();
+
+// Add controllers to the server
+// $app->addController($your_controller);
+
+$app->start();
+```
+
+### Database Connection
+
+Using the [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") environment ensure that along with PHP mySQL was also installed by clicking on the enviornment icon. Navigate to phpMyAdmin and create a new database with your desired name. If you are using the built in features with php_generic you can simply import the `generic_db.sql` file and configure the `db_connect.php` file to point to your local environment.
+
+# Talking with the front end
 
 ## Preforming Http/Fetch requests
 
