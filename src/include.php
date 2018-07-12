@@ -5,9 +5,12 @@ session_start();
 // utilities
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect_local.php'; // remove if downloading from repo
+// remove if downloading from repo
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect_local.php'; 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/tools.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/generic.php';
+//still trying to figure out a way to break models out into objects
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/model.php'; 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/action.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/controller.php';
 

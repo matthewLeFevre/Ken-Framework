@@ -12,7 +12,7 @@ class Generic {
     private $tokenValidation;
     private $controllers = array();
 
-    function __construct($tokenValidation = True) {
+    function __construct($tokenValidation = TRUE) {
         $this->tokenValidation = $tokenValidation;
     }
 
@@ -53,6 +53,8 @@ class Generic {
 
             $this->validateJsonPost($json_str);
         } else {
+
+            // GET payload if not a POST Request
             $this->payload = $_GET;
         }
 
