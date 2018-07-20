@@ -3,8 +3,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 class Controller
 {
-    public $name;
-    public $actions = array();
+    private $name;
+    private $actions = array();
+    private $tokenValidation;
 
     function __construct($name) {
         $this->name = $name;
@@ -14,8 +15,19 @@ class Controller
         return $this->name;
     }
 
-    function addAction($actionName, $actionFunc) {
-        $this->actions[$actionName] = new Action($actionName, $actionFunc);
+    funciton setTokenValidation($validation) {
+        $this->tokenValidation = $validation;
+        foreach ($this->actions as $storedAction) {
+            $storedAction->setTokenValidation($validation);
+        }
+    }
+
+    function getTokenValidation() {
+        return $this->tokenValidation;
+    }
+
+    function addAction($actionName, $actionFunc, $howToValidate = FALSE) {
+        $this->actions[$actionName] = new Action($actionName, $actionFunc, $howToValidate);
     }
 
     function callAction($action, $params) {

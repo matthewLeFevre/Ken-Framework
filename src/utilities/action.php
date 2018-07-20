@@ -4,12 +4,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 class Action
 {
-    public $name;
-    public $action;
+    private $name;
+    private $action;
+    private $tokenValidation;
+    private $howToValidate;
 
-    function __construct($name, $action) {
+    function __construct($name, $action, $validation) {
         $this->name = $name;
         $this->action = $action;
+        $this->howToValidate = $validation;
+    }
+
+    function setTokenValidation($tokenValidation) {
+        $this->tokenValidation = $tokenValidation;
     }
 
     function getName() {
@@ -17,6 +24,12 @@ class Action
     }
 
     function __call($name, $arguments) {
+        // on all actions that require a user to be authenticated adding token validation
+        // is a smart idea for the purpose of single page applications.
+        if($this->tokenValidation && $this->howToValidate && $_SESSION['userData']['apiToken'] !== $payload['apiToken']) {
+            return response("failure", "Invalid token sent to api, error encountered in ". $this->name." action ,please contact your web administrator");
+            exit;
+        }
         return call_user_func_array($this->action, $arguments);
     }
 }

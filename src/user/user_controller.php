@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 $user = new Controller('user');
 
-// untested
+// Login User -- untested
 $user->addAction('loginUser', function($payload){
   $userEmail         = filter_var($payload['userEmail']);
   $userPassword      = filter_var($payload['password'], FILTER_SANITIZE_STRING);
@@ -28,7 +28,7 @@ $user->addAction('loginUser', function($payload){
 
   $_SESSION['logged_in'] = TRUE;
   $_SESSION['userData'] = $userData;
-  if($app->getTokenValidation()) {
+  if($this->getTokenValidation()) {
     $_SESSION['userData']['apiToken'] = bin2hex(random_bytes(64));
   }
 
@@ -36,14 +36,14 @@ $user->addAction('loginUser', function($payload){
   return dataResp("success", $userData, 'User successfully logged in.');
 });
 
-  // untested
+// Logout User -- untested
 $user->addAction('logoutUser', function($payload){
   session_destroy();
   // refactor this response
-  return loginResp(FALSE, null, 'success');
+  return dataResp('success', ["action"=> "logout"] , 'You have successfully logged out.');
 });
 
-  // untested
+// Register User -- untested
 $user->addAction('registerUser', function($payload){
   $filteredPayload = array();
   // required parameters
@@ -88,10 +88,11 @@ $user->addAction('registerUser', function($payload){
   }
 });
 
-  // unfinished
+// Update User -- unfinished
 $user->addAction('updateUser', function($payload){});
 
-  // unfinished
+// Update User Password -- unfinished
 $user->addAction('updateUserPassword', function($payload){});
 
+// Delete -- User
 $user->addAction('deleteUser', function($payload){});

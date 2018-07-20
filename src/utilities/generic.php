@@ -29,6 +29,11 @@ class Generic {
     }
 
     function addController($controller) {
+        // if token validation has been implemented on the server
+        // implement it in each controller
+        if ($this->tokenValidation) {
+            $controller->setTokenValidation($this->tokenValidation);
+        }
         $this->controllers[$controller->getName()] = $controller;
     }
 

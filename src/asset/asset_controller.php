@@ -4,8 +4,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 $asset = new Controller('asset');
 
-// passing
+// Create Asset -- Retest
 $asset->addAction('createAsset', function($payload){
+
   // asset variables
   $asset_dir = '/server_assets';
   $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
@@ -63,8 +64,9 @@ $asset->addAction('createAsset', function($payload){
   }
 });
 
-// passing
+// Assign Asset -- Retest
 $asset->addAction('assignAsset', function($payload){
+
   $filteredPayload = array();
   $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
   $filteredPayload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
@@ -88,6 +90,7 @@ $asset->addAction('assignAsset', function($payload){
 // Logic that has not yet been implimented correctly
 // should be retrieving data from payload not assetData
 $asset->addAction('unAssignAsset', function($payload){
+
   $filteredPayload = array();
   $filteredPayload["assetId"]  = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
   $filteredPayload["assigned"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
@@ -106,6 +109,7 @@ $asset->addAction('unAssignAsset', function($payload){
 
 // untested
 $asset->addAction('changeAssetStatus', function($payload){
+
   $filteredPayload = array();
   $filteredayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
   $filteredayload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
@@ -126,7 +130,7 @@ $asset->addAction('changeAssetStatus', function($payload){
 
 // untested
 $asset->addAction('deleteAsset', function($payload){
-  $filteredPayload = $payload; 
+  
   $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
   // Check for empty inputs
   // chkEmpty() should not be used here

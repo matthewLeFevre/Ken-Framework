@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 $article = new Controller('article');
 
-// passing
+// Create Article -- passing
 $article->addAction('createArticle', function($payload) {
   // Copy the array to not mutate the data
   // of the original
@@ -36,9 +36,9 @@ $article->addAction('createArticle', function($payload) {
   } else {
     return response("failure", $filteredPayload['articleTitle'] . " was not successfully created.");
   }
-});
+}, TRUE);
 
-// untested
+// Update Article -- untested
 $article->addAction('updateArticle', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleTitle']   = filter_var($payload['articleTitle'],   FILTER_SANITIZE_STRING);
@@ -74,9 +74,9 @@ $article->addAction('updateArticle', function($payload) {
   } else {
     return response("failure", $filteredPayload['articleTitle'] . " was not successfully updated.");
   }
-});
+}, TRUE);
 
-// untested
+// Update Article Status -- untested
 $article->addAction('updateArticleStatus', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId']      = filter_var($payload["articleId"],      FILTER_SANITIZE_NUMBER_INT);
@@ -98,12 +98,19 @@ $article->addAction('updateArticleStatus', function($payload) {
   } else {
     return response("failure", "Article was not successfully " . $filteredPayload['articleStatus']);
   }
-});
+}, TRUE);
 
-// untested
+// Delete Article -- untested
 $article->addAction('deleteArticle', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId'] = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
+
+  // on all actions that require a user to be authenticated adding token validation
+  // is a smart idea for the purpose of single page applications.
+  if($this->getTokenValidation() && $_SESSION['userData']['apiToken'] !== $payload['apiToken']) {
+    return response("failure", "invalid token sent to apir, please contact your web administrator");
+    exit;
+  }
 
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleId'])) {
@@ -119,9 +126,9 @@ $article->addAction('deleteArticle', function($payload) {
   } else {
     return response("failure", "Article was not deleted successfully.");
   }
-});
+}, TRUE);
 
-// untested
+// Get Article By ID -- untested
 $article->addAction('getArticleById', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId'] = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
@@ -136,7 +143,7 @@ $article->addAction('getArticleById', function($payload) {
   return dataResp("success", $filteredPayload['articleData'], "Article was retrieved successfully.");
 });
 
-// untested
+// Get Article By Title -- untested
 $article->addAction('getArticleByTitle', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleTitle'] = filter_var($payload['articleTitle'], FILTER_SANITIZE_STRING);
@@ -151,13 +158,13 @@ $article->addAction('getArticleByTitle', function($payload) {
   return dataResp("success", $articleData, "article was retrieved successfully.");
 });
 
-// untested
+// Get Articles untested
 $article->addAction('getArticles', function($payload) {
   $articles = get_articles();
   return dataResp("success", $articles, "All articles we retrieved.");
 });
 
-// passing
+// Get Specified Number of Articles -- passing
 $article->addAction('getNumberOfArticles', function($payload) {
   $numArticles = filter_var($payload['articleNumber'], FILTER_SANITIZE_NUMBER_INT);
   $articles = get_number_of_articles($numArticles);
