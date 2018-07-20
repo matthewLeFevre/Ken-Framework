@@ -11,7 +11,7 @@
 // Ensure that the password contains proper characters (Optional)
 // possibly need to add an error handler to notify user password does not contain
 // required charachters not sure though
-  function checkPassword(){
+  function checkPassword($password){
     $pattern = '/^(?=.*[[:digit:]])(?=.*[[:punct:]])[[:print:]]{8,}$/';
     return preg_match($pattern, $password);
   }

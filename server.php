@@ -17,10 +17,13 @@ $app = new Generic(FALSE);
 // add controllers
 $app->addController($asset);
 $app->addController($article);
+$app->addController($user);
+
+// unused controllers
 $app->addController($message);
 $app->addController($post);
 $app->addController($comment);
-$app->addController($user);
+
 
 // start server
 $app->start();

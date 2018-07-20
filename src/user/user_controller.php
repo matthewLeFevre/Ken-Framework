@@ -4,7 +4,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 $user = new Controller('user');
 
-// Login User -- untested
+//===========
+// Temporarily disabled the regular expression to check password
+// strength, enable and test the regular expression before
+// deployment
+
+// Login User -- Retest
 $user->addAction('loginUser', function($payload){
   $userEmail         = filter_var($payload['userEmail']);
   $userPassword      = filter_var($payload['password'], FILTER_SANITIZE_STRING);
@@ -43,7 +48,7 @@ $user->addAction('logoutUser', function($payload){
   return dataResp('success', ["action"=> "logout"] , 'You have successfully logged out.');
 });
 
-// Register User -- untested
+// Register User -- Retest
 $user->addAction('registerUser', function($payload){
   $filteredPayload = array();
   // required parameters
@@ -52,21 +57,27 @@ $user->addAction('registerUser', function($payload){
   $filteredPayload['userPassword'] = filter_var($payload['userPassword'], FILTER_SANITIZE_STRING);
 
   // Not required parameters
-  $filteredPayload['userFirstName'] = filter_var($payload['userFirstName'], FILTER_SANITIZE_STRING);
-  $filteredPayload['userLastName'] = filter_var($payload['userLastName'], FILTER_SANITIZE_STRING);
+  if(isset($payload['userFirstName'])) {
+    $filteredPayload['userFirstName'] = filter_var($payload['userFirstName'], FILTER_SANITIZE_STRING);
+  }
+
+  if(isset($payload['userLastName'])) {
+    $filteredPayload['userLastName'] = filter_var($payload['userLastName'], FILTER_SANITIZE_STRING);
+  }
+  
 
   // Throw error that user must enter required data
   // before registering an account
   if( empty($filteredPayload['userName']) ||
-      empty($userEmail) ||
-      empty($userPassword)) {
+      empty($filteredPayload['userEmail']) ||
+      empty($filteredPayload['userPassword'])) {
     return response("failure", "Please fill in all required data");
     exit;
   }
 
   // Ensure that password and email are valid and clean
   $filteredPayload['userEmail'] = checkEmail($filteredPayload['userEmail']);
-  $userPasswordCheck = checkPassword($filteredPayload['userPassword']);
+  // $userPasswordCheck = checkPassword($filteredPayload['userPassword']);
 
   // Ensure no duplicate emails exist in db when new users register
   $userEmailVerify = verify_email($filteredPayload['userEmail']);
@@ -78,12 +89,12 @@ $user->addAction('registerUser', function($payload){
   }
 
   // hash the password before putting it into the database
-  $userPassword = password_hash($userPassword, PASSWORD_DEFAULT);
+  $filteredPayload['userPassword'] = password_hash($filteredPayload['userPassword'], PASSWORD_DEFAULT);
   $newRegistrationStatus = register_new_user($filteredPayload);
 
   // create custom notification that registration was successful
   if($newRegistrationStatus) {
-    return response("success", "Account created successfully. Please login to access your account.");
+    return response("success", filteredPayload['userName'] . " account created successfully. Please login to access your account.");
     exit;
   }
 });

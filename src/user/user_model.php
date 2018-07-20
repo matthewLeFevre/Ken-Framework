@@ -27,13 +27,16 @@
 // register a new user
   function register_new_user($newUserData) {
     $db = dbConnect();
-    $sql = 'INSERT INTO user (userName, userEmail, userPassword, userFirstName, userLastName) VALUES (:userName, :userEmail, :userPassword, :userFirstName, :userLastName)';
+    $sql = 'INSERT INTO user (userName, userEmail, userPassword) VALUES (:userName, :userEmail, :userPassword)';
     $stmt = $db->prepare($sql);
     $stmt->bindValue(':userName',      $newUserData['userName'],      PDO::PARAM_STR);
     $stmt->bindValue(':userEmail',     $newUserData['userEmail'],     PDO::PARAM_STR);
     $stmt->bindValue(':userPassword',  $newUserData['userPassword'],  PDO::PARAM_STR);
-    $stmt->bindValue(':userFirstName', $newUserData['userFirstName'], PDO::PARAM_STR);
-    $stmt->bindValue(':userLastName',  $newUserData['userLastName'],  PDO::PARAM_STR);
+
+    // Optional data not working right currently
+    // $stmt->bindValue(':userFirstName', $newUserData['userFirstName'], PDO::PARAM_STR);
+    // $stmt->bindValue(':userLastName',  $newUserData['userLastName'],  PDO::PARAM_STR);
+    
     $stmt->execute();
     $rowsChanged = $stmt->rowCount();
     $stmt->closeCursor();

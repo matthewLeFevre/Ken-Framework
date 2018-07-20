@@ -39,42 +39,20 @@ class Generic {
 
     function start() {
 
-        // GET request Listener
-        $this->reqController = filter_input(INPUT_GET, 'controller', FILTER_SANITIZE_STRING);
-        $this->reqAction     = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
-
-        // POST request Listener
-        if($this->reqController == NULL || $this->reqAction == NULL){
-
-            // Asset POST Listener
-            if(isset($_POST['controller'])) {
-                $this->reqController = $_POST['controller'];
-                $this->reqAction = $_POST['action'];
-                $this->payload = "don't need it";
-            }
-
-            // JSON POST Listener
-            $json_str = file_get_contents('php://input');
-
-            $this->validateJsonPost($json_str);
-        } else {
-
-            // GET payload if not a POST Request
-            $this->payload = $_GET;
-        }
-
-        $this->proccess();
+        $this->GETListener();
+        $this->POSTListener()
+        
+        echo json_encode($this->proccess());
     }
 
     function proccess() {
         foreach ($this->controllers as $controller) {
             if($controller->getName() === $this->reqController) {
-                echo json_encode($controller->callAction($this->reqAction, $this->payload));
-                return;
+                return $controller->callAction($this->reqAction, $this->payload);
             }
         }
 
-        echo json_encode(response("failure", "The " . $this->reqController . " controller does not exist"));
+        response("failure", "The " . $this->reqController . " controller does not exist");
     }
 
     function validateJsonPost($json_str) {
@@ -119,6 +97,34 @@ class Generic {
                     }
                 }
             }
+        }
+    }
+
+    function GETListener() {
+        // GET request Listener
+        $this->reqController = filter_input(INPUT_GET, 'controller', FILTER_SANITIZE_STRING);
+        $this->reqAction     = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
+    }
+
+    function POSTListener() {
+        // POST request Listener
+        if($this->reqController == NULL || $this->reqAction == NULL){
+
+            // Asset POST Listener
+            if(isset($_POST['controller'])) {
+                $this->reqController = $_POST['controller'];
+                $this->reqAction = $_POST['action'];
+                $this->payload = "don't need it";
+            }
+
+            // JSON POST Listener
+            $json_str = file_get_contents('php://input');
+
+            $this->validateJsonPost($json_str);
+        } else {
+
+            // GET payload if not a POST Request
+            $this->payload = $_GET;
         }
     }
 }
