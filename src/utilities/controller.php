@@ -15,7 +15,7 @@ class Controller
         return $this->name;
     }
 
-    funciton setTokenValidation($validation) {
+    function setTokenValidation($validation) {
         $this->tokenValidation = $validation;
         foreach ($this->actions as $storedAction) {
             $storedAction->setTokenValidation($validation);

@@ -40,7 +40,7 @@ class Generic {
     function start() {
 
         $this->GETListener();
-        $this->POSTListener()
+        $this->POSTListener();
         
         echo json_encode($this->proccess());
     }

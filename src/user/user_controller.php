@@ -12,9 +12,9 @@ $user = new Controller('user');
 // Login User -- Retest
 $user->addAction('loginUser', function($payload){
   $userEmail         = filter_var($payload['userEmail']);
-  $userPassword      = filter_var($payload['password'], FILTER_SANITIZE_STRING);
-  $userEmail         = check_email($userEmail);
-  $userPasswordCheck = check_password($userPassword);
+  $userPassword      = filter_var($payload['userPassword'], FILTER_SANITIZE_STRING);
+  $userEmail         = checkEmail($userEmail);
+  // $userPasswordCheck = checkPassword($userPassword);
 
   // throw an error fill in all input fields
   if(empty($userEmail) || empty($userPassword)) {
@@ -27,18 +27,18 @@ $user->addAction('loginUser', function($payload){
 
   // throw error wrong password
   if (!$hashCheck) {
-    return response("Your password or username is incorrect.");
+    return response("failure", "Your password or username is incorrect.");
     exit;
   }
 
   $_SESSION['logged_in'] = TRUE;
   $_SESSION['userData'] = $userData;
-  if($this->getTokenValidation()) {
+  if($GLOBALS['user']->getTokenValidation()) {
     $_SESSION['userData']['apiToken'] = bin2hex(random_bytes(64));
   }
 
   // successfully logedin
-  return dataResp("success", $userData, 'User successfully logged in.');
+  return dataResp("success", $_SESSION['userData'], 'User successfully logged in.');
 });
 
 // Logout User -- untested
