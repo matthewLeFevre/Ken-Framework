@@ -36,7 +36,7 @@ function createArticle () {
       'articleBody': makeParagraph(6),
       'articleStatus': 'published',
       'articleLink': 'www.google.com',
-      'userId': '1'
+      'userId': '8'
     }
   }
   let req = {

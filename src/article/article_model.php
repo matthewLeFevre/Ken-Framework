@@ -111,6 +111,22 @@ function get_articles() {
   return $articleData;
 }
 
+function get_articles_by_userId($userId) {
+  $db = dbConnect();
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          WHERE article.userId = :userId
+          ORDER BY articleCreated ASC";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+  $stmt->execute();
+  $articleData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $articleData;
+}
+
+
 // get variable articles
 // Implement the number here
 function get_number_of_articles($numberOfArticles) {

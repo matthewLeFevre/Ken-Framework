@@ -9,7 +9,7 @@ $user = new Controller('user');
 // strength, enable and test the regular expression before
 // deployment
 
-// Login User -- Retest
+// Login User -- passing
 $user->addAction('loginUser', function($payload){
   $userEmail         = filter_var($payload['userEmail']);
   $userPassword      = filter_var($payload['userPassword'], FILTER_SANITIZE_STRING);
@@ -41,11 +41,20 @@ $user->addAction('loginUser', function($payload){
   return dataResp("success", $_SESSION['userData'], 'User successfully logged in.');
 });
 
+// Check Login -- untested
+$user->addAction('checkLogin', function($payload){
+  if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+    return dataResp("success", $_SESSION['userData'], 'Welcome back!');
+  } else {
+    return response("failure", "No authenticated users.");
+  }
+});
+
 // Logout User -- untested
 $user->addAction('logoutUser', function($payload){
   session_destroy();
   // refactor this response
-  return dataResp('success', ["action"=> "logout"] , 'You have successfully logged out.');
+  return dataResp('success', ["action" => "logout"] , 'You have successfully logged out.');
 });
 
 // Register User -- Retest

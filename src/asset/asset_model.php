@@ -75,3 +75,13 @@ function update_asset_status($assetData) {
   $stmt->closeCursor();
   return $rowsChanged;
 }
+
+function get_assets_by_userId($userId) {
+  $db = dbConnect();
+  $sql = "SELECT *  FROM asset ORDER BY assetCreated ASC";
+  $stmt = $db->prepare($sql);
+  $stmt->execute();
+  $assetData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $assetData;
+}

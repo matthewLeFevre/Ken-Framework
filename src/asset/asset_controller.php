@@ -148,3 +148,10 @@ $asset->addAction('deleteAsset', function($payload){
     return response("failure", "Asset was not deleted.");
   }
 });
+
+// untested - should use token validation
+$asset->addAction('getAssetsByUserId', function($payload){
+  $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
+  $assets = get_assets_by_userId($userId);
+  return dataResp("success", $assets, "All of your assets were retrieved.");
+});

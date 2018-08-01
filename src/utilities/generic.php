@@ -12,7 +12,7 @@ class Generic {
     private $tokenValidation;
     private $controllers = array();
 
-    function __construct($tokenValidation = TRUE) {
+    function __construct($tokenValidation = FALSE) {
         $this->tokenValidation = $tokenValidation;
     }
 
