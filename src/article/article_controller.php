@@ -140,7 +140,7 @@ $article->addAction('getArticleById', function($payload) {
   }
 
   $articleData = get_article_by_id($filteredPayload['articleId']);
-  return dataResp("success", $filteredPayload['articleData'], "Article was retrieved successfully.");
+  return dataResp("success", $articleData, "Article was retrieved successfully.");
 });
 
 // Get Article By Title -- untested

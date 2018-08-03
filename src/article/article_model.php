@@ -71,7 +71,7 @@ function get_article_by_id($articleId) {
   $sql = "SELECT article.*, asset.*  FROM article
           LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
           LEFT JOIN asset ON aa.assetId = asset.assetId
-          WHERE articleId = :articleId";
+          WHERE article.articleId = :articleId";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleId', $articleId, PDO::PARAM_INT);
   $stmt->execute();
