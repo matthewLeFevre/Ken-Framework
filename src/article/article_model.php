@@ -23,7 +23,7 @@ function create_new_article($articleData) {
 
 function update_article($articleData) {
   $db = dbConnect();
-  $sql = 'UPDATE article SET articleTitle = :articleTitle, articleSummary = :articleSummary, articleBody = :articleBody, articleStatus= :articleStatus, articleLink = :articleLink, articleModified = :articleModiefied WHERE articleId = :articleId';
+  $sql = 'UPDATE article SET articleTitle = :articleTitle, articleSummary = :articleSummary, articleBody = :articleBody, articleStatus= :articleStatus, articleLink = :articleLink, articleModified = :articleModified WHERE articleId = :articleId';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleTitle',   $articleData['articleTitle'],   PDO::PARAM_STR);
   $stmt->bindValue(':articleSummary', $articleData['articleSummary'], PDO::PARAM_STR);

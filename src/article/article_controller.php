@@ -18,10 +18,7 @@ $article->addAction('createArticle', function($payload) {
 
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleTitle']) ||
-    empty($filteredPayload['articleSummary']) ||
-    empty($filteredPayload['articleBody']) ||
     empty($filteredPayload['articleStatus']) ||
-    empty($filteredPayload['articleLink']) ||
     empty($filteredPayload['userId'])) {
     return response("failure", "One of the required items to create an article has not been provided. Please check all inputs.");
     exit;
@@ -69,9 +66,11 @@ $article->addAction('updateArticle', function($payload) {
   $updateArticle = update_article($filteredPayload);
 
   // send success or failure message to client
-  if($updateArticle == 1) {
+  if($updateArticle) {
+    var_dump($updateArticle);
     return response("success", $filteredPayload['articleTitle'] . " was successfully updated");
   } else {
+    var_dump($updateArticle);
     return response("failure", $filteredPayload['articleTitle'] . " was not successfully updated.");
   }
 }, TRUE);

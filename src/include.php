@@ -8,6 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect.php';
 // remove if downloading from repo
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect_local.php'; 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/tools.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/jwt.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/generic.php';
 //still trying to figure out a way to break models out into objects
 // require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/model.php'; 

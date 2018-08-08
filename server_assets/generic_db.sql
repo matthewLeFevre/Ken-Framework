@@ -5,25 +5,24 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema generic
+-- Schema matthil3_courtneyblog
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `generic` ;
 
 -- -----------------------------------------------------
--- Schema generic
+-- Schema matthil3_courtneyblog
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `generic` DEFAULT CHARACTER SET utf8 ;
-USE `generic` ;
+CREATE SCHEMA IF NOT EXISTS `matthil3_courtneyblog` DEFAULT CHARACTER SET utf8 ;
+USE `matthil3_courtneyblog` ;
 
 -- -----------------------------------------------------
--- Table `generic`.`user`
+-- Table `matthil3_courtneyblog`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`user` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`user` (
   `userId` INT NOT NULL AUTO_INCREMENT,
-  `userName` VARCHAR(45) NOT NULL,
+  `userName` VARCHAR(45) NULL,
   `userEmail` VARCHAR(45) NOT NULL,
   `userPassword` VARCHAR(255) NOT NULL,
-  `userIsOnline` ENUM('yes', 'no') NOT NULL,
+  `userIsOnline` ENUM('yes', 'no') NULL,
   `userJoined` DATETIME NOT NULL,
   `userFirstName` VARCHAR(45) NULL,
   `userLastName` VARCHAR(45) NULL,
@@ -33,9 +32,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`group`
+-- Table `matthil3_courtneyblog`.`group`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`group` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`group` (
   `groupId` INT NOT NULL,
   `groupCreated` DATETIME NOT NULL,
   `groupTitle` VARCHAR(45) NULL,
@@ -44,9 +43,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`message`
+-- Table `matthil3_courtneyblog`.`message`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`message` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`message` (
   `messageId` INT NOT NULL AUTO_INCREMENT,
   `messageBody` VARCHAR(255) NOT NULL,
   `messageCreated` VARCHAR(45) NOT NULL,
@@ -57,21 +56,21 @@ CREATE TABLE IF NOT EXISTS `generic`.`message` (
   INDEX `fk_message_user1_idx` (`user_userId` ASC),
   CONSTRAINT `fk_message_group1`
     FOREIGN KEY (`group_groupId`)
-    REFERENCES `generic`.`group` (`groupId`)
+    REFERENCES `matthil3_courtneyblog`.`group` (`groupId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_message_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`post`
+-- Table `matthil3_courtneyblog`.`post`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`post` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`post` (
   `postId` INT NOT NULL AUTO_INCREMENT,
   `postCreated` DATETIME NOT NULL,
   `postModified` DATETIME NOT NULL,
@@ -81,16 +80,16 @@ CREATE TABLE IF NOT EXISTS `generic`.`post` (
   INDEX `fk_post_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_post_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`asset`
+-- Table `matthil3_courtneyblog`.`asset`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`asset` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`asset` (
   `assetId` INT NOT NULL AUTO_INCREMENT,
   `assetPath` VARCHAR(255) NOT NULL,
   `assetName` VARCHAR(45) NOT NULL,
@@ -103,16 +102,16 @@ CREATE TABLE IF NOT EXISTS `generic`.`asset` (
   INDEX `fk_asset_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_asset_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`user_has_group`
+-- Table `matthil3_courtneyblog`.`user_has_group`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`user_has_group` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`user_has_group` (
   `user_has_groupcol` VARCHAR(45) NOT NULL,
   `user_userId` INT NOT NULL,
   `group_groupId` INT NOT NULL,
@@ -122,21 +121,21 @@ CREATE TABLE IF NOT EXISTS `generic`.`user_has_group` (
   UNIQUE INDEX `user_has_groupcol_UNIQUE` (`user_has_groupcol` ASC),
   CONSTRAINT `fk_user_has_group_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_group_group1`
     FOREIGN KEY (`group_groupId`)
-    REFERENCES `generic`.`group` (`groupId`)
+    REFERENCES `matthil3_courtneyblog`.`group` (`groupId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`user_has_group1`
+-- Table `matthil3_courtneyblog`.`user_has_group1`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`user_has_group1` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`user_has_group1` (
   `user_userId` INT NOT NULL,
   `group_groupId` INT NOT NULL,
   PRIMARY KEY (`user_userId`, `group_groupId`),
@@ -144,29 +143,29 @@ CREATE TABLE IF NOT EXISTS `generic`.`user_has_group1` (
   INDEX `fk_user_has_group1_user1_idx` (`user_userId` ASC),
   CONSTRAINT `fk_user_has_group1_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_group1_group1`
     FOREIGN KEY (`group_groupId`)
-    REFERENCES `generic`.`group` (`groupId`)
+    REFERENCES `matthil3_courtneyblog`.`group` (`groupId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`article`
+-- Table `matthil3_courtneyblog`.`article`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`article` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`article` (
   `articleId` INT NOT NULL AUTO_INCREMENT,
   `articleTitle` VARCHAR(255) NOT NULL,
-  `articleSummary` VARCHAR(255) NOT NULL,
+  `articleSummary` VARCHAR(255) NULL,
   `articleCreated` DATETIME NOT NULL,
-  `articleBody` LONGTEXT NOT NULL,
+  `articleBody` LONGTEXT NULL,
   `articleStatus` ENUM('saved', 'published') NOT NULL,
   `articleModified` DATETIME NULL,
-  `articleLink` VARCHAR(255) NOT NULL,
+  `articleLink` VARCHAR(255) NULL,
   `articleLikedNumber` VARCHAR(45) NULL,
   `articleSharedNumber` VARCHAR(45) NULL,
   `userId` INT NOT NULL,
@@ -174,16 +173,16 @@ CREATE TABLE IF NOT EXISTS `generic`.`article` (
   INDEX `fk_article_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_article_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`comment`
+-- Table `matthil3_courtneyblog`.`comment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`comment` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`comment` (
   `commentId` INT NOT NULL AUTO_INCREMENT,
   `commentCreated` DATETIME NOT NULL,
   `commentBody` VARCHAR(255) NOT NULL,
@@ -196,42 +195,42 @@ CREATE TABLE IF NOT EXISTS `generic`.`comment` (
   INDEX `fk_comment_article1_idx` (`article_articleId` ASC),
   CONSTRAINT `fk_comment_post1`
     FOREIGN KEY (`post_postId`)
-    REFERENCES `generic`.`post` (`postId`)
+    REFERENCES `matthil3_courtneyblog`.`post` (`postId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_comment_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_comment_article1`
     FOREIGN KEY (`article_articleId`)
-    REFERENCES `generic`.`article` (`articleId`)
+    REFERENCES `matthil3_courtneyblog`.`article` (`articleId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`userProfileImage`
+-- Table `matthil3_courtneyblog`.`userProfileImage`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`userProfileImage` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`userProfileImage` (
   `userProfileImage` INT NOT NULL AUTO_INCREMENT,
   `asset_assetId` INT NOT NULL,
   PRIMARY KEY (`userProfileImage`),
   INDEX `fk_table1_asset1_idx` (`asset_assetId` ASC),
   CONSTRAINT `fk_table1_asset1`
     FOREIGN KEY (`asset_assetId`)
-    REFERENCES `generic`.`asset` (`assetId`)
+    REFERENCES `matthil3_courtneyblog`.`asset` (`assetId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`userProfile`
+-- Table `matthil3_courtneyblog`.`userProfile`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`userProfile` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`userProfile` (
   `userProfileId` INT NOT NULL AUTO_INCREMENT,
   `table1_userProfileImage` INT NOT NULL,
   `user_userId` INT NOT NULL,
@@ -241,21 +240,21 @@ CREATE TABLE IF NOT EXISTS `generic`.`userProfile` (
   INDEX `fk_userProfile_user1_idx` (`user_userId` ASC),
   CONSTRAINT `fk_userProfile_table11`
     FOREIGN KEY (`table1_userProfileImage`)
-    REFERENCES `generic`.`userProfileImage` (`userProfileImage`)
+    REFERENCES `matthil3_courtneyblog`.`userProfileImage` (`userProfileImage`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_userProfile_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `generic`.`user` (`userId`)
+    REFERENCES `matthil3_courtneyblog`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `generic`.`asset_assignment`
+-- Table `matthil3_courtneyblog`.`asset_assignment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `generic`.`asset_assignment` (
+CREATE TABLE IF NOT EXISTS `matthil3_courtneyblog`.`asset_assignment` (
   `assignmentId` INT NOT NULL AUTO_INCREMENT,
   `assetId` INT NOT NULL,
   `post_postId` INT NULL,
@@ -268,22 +267,22 @@ CREATE TABLE IF NOT EXISTS `generic`.`asset_assignment` (
   INDEX `fk_asset_assignment_article1_idx` (`articleId` ASC),
   CONSTRAINT `fk_asset_assignment_asset1`
     FOREIGN KEY (`assetId`)
-    REFERENCES `generic`.`asset` (`assetId`)
+    REFERENCES `matthil3_courtneyblog`.`asset` (`assetId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_asset_assignment_post1`
     FOREIGN KEY (`post_postId`)
-    REFERENCES `generic`.`post` (`postId`)
+    REFERENCES `matthil3_courtneyblog`.`post` (`postId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_asset_assignment_message1`
     FOREIGN KEY (`messageId`)
-    REFERENCES `generic`.`message` (`messageId`)
+    REFERENCES `matthil3_courtneyblog`.`message` (`messageId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_asset_assignment_article1`
     FOREIGN KEY (`articleId`)
-    REFERENCES `generic`.`article` (`articleId`)
+    REFERENCES `matthil3_courtneyblog`.`article` (`articleId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;

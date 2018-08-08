@@ -31,20 +31,17 @@ $user->addAction('loginUser', function($payload){
     exit;
   }
 
-  $_SESSION['logged_in'] = TRUE;
-  $_SESSION['userData'] = $userData;
   if($GLOBALS['user']->getTokenValidation()) {
-    $_SESSION['userData']['apiToken'] = bin2hex(random_bytes(64));
+    $userData['apiToken'] = generateJWT($userData["userId"]);
   }
-
-  // successfully logedin
-  return dataResp("success", $_SESSION['userData'], 'User successfully logged in.');
+  
+  return dataResp("success", $userData, 'User successfully logged in.');
 });
 
 // Check Login -- untested
 $user->addAction('checkLogin', function($payload){
-  if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
-    return dataResp("success", $_SESSION['userData'], 'Welcome back!');
+  if(isset($GLOBALS['token'])) {
+    return dataResp("success", get_user_by_id(), 'Welcome back!');
   } else {
     return response("failure", "No authenticated users.");
   }
@@ -109,10 +106,10 @@ $user->addAction('registerUser', function($payload){
 });
 
 // Update User -- unfinished
-$user->addAction('updateUser', function($payload){});
+// $user->addAction('updateUser', function($payload){});
 
 // Update User Password -- unfinished
-$user->addAction('updateUserPassword', function($payload){});
+// $user->addAction('updateUserPassword', function($payload){});
 
 // Delete -- User
-$user->addAction('deleteUser', function($payload){});
+// $user->addAction('deleteUser', function($payload){});

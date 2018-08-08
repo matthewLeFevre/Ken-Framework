@@ -85,14 +85,9 @@ class Generic {
 
                     if(isset($this->payload["apiToken"])) {
                         $token = $this->payload["apiToken"];
-                        $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING);
+                        $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING); // I don't think there is any reason to sanitize the token...
                     } else {
                         echo json_encode(response("failure", "No token was submitted with the request. Please log back in and try again or consult your web administrator."));
-                        return exit;
-                    }
-
-                    if( $sanitizedToken !== $_SESSION['userData']['apiToken']) {
-                        echo json_encode(response("failure", "Invalid token submitted with request. Please consult your web administrator."));
                         return exit;
                     }
                 }
