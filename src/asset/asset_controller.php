@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 $asset = new Controller('asset');
 
-// Create Asset -- Retest
+// Create Asset -- Passing
 $asset->addAction('createAsset', function($payload){
 
   // asset variables
@@ -62,7 +62,7 @@ $asset->addAction('createAsset', function($payload){
       return response("failure", $assetName . " was not uploaded successfully. Please contact your website administrator or try again.");
     }
   }
-});
+}, TRUE);
 
 // Assign Asset -- Retest
 $asset->addAction('assignAsset', function($payload){
@@ -84,7 +84,7 @@ $asset->addAction('assignAsset', function($payload){
   } else {
     return response("failure", "There was an issue assigning the asset.");
   }
-});
+}, TRUE);
 
 // untested
 // Logic that has not yet been implimented correctly
@@ -105,7 +105,7 @@ $asset->addAction('unAssignAsset', function($payload){
   } else {
     return response("failure", "There was an issue unassigning the asset.");
   }
-});
+}, TRUE);
 
 // untested
 $asset->addAction('changeAssetStatus', function($payload){
@@ -126,7 +126,7 @@ $asset->addAction('changeAssetStatus', function($payload){
   } else {
     return response("failure", "Asset was not updated successfully.");
   }
-});
+}, TRUE);
 
 // untested
 $asset->addAction('deleteAsset', function($payload){
@@ -147,7 +147,7 @@ $asset->addAction('deleteAsset', function($payload){
   } else {
     return response("failure", "Asset was not deleted.");
   }
-});
+}, TRUE);
 
 // untested - should use token validation
 $asset->addAction('getAssetsByUserId', function($payload){

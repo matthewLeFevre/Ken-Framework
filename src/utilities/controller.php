@@ -31,11 +31,10 @@ class Controller
     }
 
     function callAction($action, $params) {
-
+        
         foreach ($this->actions as $storedAction) {
             if($storedAction->getName() === $action) {
                 return $storedAction->action($params);
-                // return $storedAction($params);
             }
         }
         return response("failure", "The specified action has not been defined.");

@@ -55,7 +55,7 @@ function update_article_status($articleData) {
 
 function delete_article($articleId) {
   $db = dbConnect();
-  $sql = 'DELETE article WHERE articleId = :articleId';
+  $sql = 'DELETE FROM article WHERE articleId = :articleId';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleId', $articleId, PDO::PARAM_STR);
   $stmt->execute();

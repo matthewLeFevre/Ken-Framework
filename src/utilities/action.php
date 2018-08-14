@@ -26,7 +26,7 @@ class Action
     function __call($name, $arguments) {
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
-        if($this->tokenValidation && $this->howToValidate && !verifyToken($payload['apiToken'])) {
+        if($this->tokenValidation && $this->howToValidate && !verifyToken($arguments[0]['apiToken'])) {
             return response("failure", "Invalid token sent to api, error encountered in ". $this->name." action ,please contact your web administrator");
             exit;
         }

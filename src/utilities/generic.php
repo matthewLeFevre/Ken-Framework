@@ -109,7 +109,7 @@ class Generic {
             if(isset($_POST['controller'])) {
                 $this->reqController = $_POST['controller'];
                 $this->reqAction = $_POST['action'];
-                $this->payload = "don't need it";
+                $this->payload = $_POST;
             }
 
             // JSON POST Listener

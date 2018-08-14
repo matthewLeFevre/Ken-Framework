@@ -104,13 +104,6 @@ $article->addAction('deleteArticle', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId'] = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
 
-  // on all actions that require a user to be authenticated adding token validation
-  // is a smart idea for the purpose of single page applications.
-  if($this->getTokenValidation() && $_SESSION['userData']['apiToken'] !== $payload['apiToken']) {
-    return response("failure", "invalid token sent to apir, please contact your web administrator");
-    exit;
-  }
-
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleId'])) {
     return response("failure", "Either an article was not specified. Please contact your web administrator.");
