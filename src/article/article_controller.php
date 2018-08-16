@@ -80,6 +80,7 @@ $article->addAction('updateArticleStatus', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId']      = filter_var($payload["articleId"],      FILTER_SANITIZE_NUMBER_INT);
   $filteredPayload['articleStatus']  = filter_var($payload['articleStatus'],  FILTER_SANITIZE_STRING);
+  $filteredPayload['articleModified'] = date('Y-m-d H:i:s');
 
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleId'] ) || empty($filteredPayload['articleStatus'])) {

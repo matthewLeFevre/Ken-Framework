@@ -70,7 +70,8 @@ class Generic {
                 empty($this->reqController)|| 
                 empty($this->payload)){
                 echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
-                return exit;
+                return; 
+                exit;
             }
 
             // A token is not required for the following requests and tokens are not 
@@ -92,7 +93,12 @@ class Generic {
                     }
                 }
             }
-        }
+        } 
+
+        // else {
+        //     echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
+        //     return exit;
+        // }
     }
 
     function GETListener() {
@@ -107,9 +113,14 @@ class Generic {
 
             // Asset POST Listener
             if(isset($_POST['controller'])) {
-                $this->reqController = $_POST['controller'];
-                $this->reqAction = $_POST['action'];
-                $this->payload = $_POST;
+                if(!isset($_POST['action'])) {
+                    echo(json_encode(response("failure", "The specified controller or action has not been supplied.")));
+                    exit;
+                } else {
+                    $this->reqController = $_POST['controller'];
+                    $this->reqAction = $_POST['action'];
+                    $this->payload = $_POST;
+                }
             }
 
             // JSON POST Listener
@@ -117,7 +128,6 @@ class Generic {
 
             $this->validateJsonPost($json_str);
         } else {
-
             // GET payload if not a POST Request
             $this->payload = $_GET;
         }

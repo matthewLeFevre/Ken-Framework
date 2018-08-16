@@ -1,10 +1,10 @@
 <?php
 
   function base64URLEncode($data) {
-    $urlSageData = strtr(base64_encode($data), '+/', '-_');
-    return rtrim($urlSageData, '=');
+    $urlSafeData = strtr(base64_encode($data), '+/', '-_');
+    return rtrim($urlSafeData, '=');
   }
-  function base64URLDecode(string $data){
+  function base64URLDecode($data){
     $urlUnsafeData = strtr($data, '-_', '+/');
 
     $paddedData = str_pad($urlUnsafeData, strlen($data) % 4, '=', STR_PAD_RIGHT);

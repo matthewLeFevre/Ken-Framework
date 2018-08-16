@@ -100,7 +100,7 @@ $user->addAction('registerUser', function($payload){
 
   // create custom notification that registration was successful
   if($newRegistrationStatus) {
-    return response("success", filteredPayload['userName'] . " account created successfully. Please login to access your account.");
+    return response("success", $filteredPayload['userName'] . " account created successfully. Please login to access your account.");
     exit;
   }
 });

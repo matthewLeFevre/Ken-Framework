@@ -40,7 +40,7 @@ function update_article($articleData) {
 
 function update_article_status($articleData) {
   $db = dbConnect();
-  $sql = 'UPDATE article SET articleStatus= :articleStatus, articleModified = :articleModiefied WHERE articleId = :articleId';
+  $sql = 'UPDATE article SET articleStatus= :articleStatus, articleModified = :articleModified WHERE articleId = :articleId';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleStatus',  $articleData['articleStatus'],  PDO::PARAM_STR);
   $stmt->bindValue(':articleModified',$articleData['articleModified'],PDO::PARAM_STR);

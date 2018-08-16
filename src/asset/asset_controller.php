@@ -19,6 +19,15 @@ $asset->addAction('createAsset', function($payload){
   $assetStatus = filter_input(INPUT_POST, 'assetStatus', FILTER_SANITIZE_STRING);
   $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
 
+  if(empty($assetStatus) || empty($userId)) {
+    return response("failure", "Asset status was not supplied. Please select published or saved.");
+    exit;
+  }
+  if(empty($userId)) {
+    return response("failure", "UserId was not supplied.");
+    exit;
+  }
+
   if(isset($assetName)) {
 
     // sends error if asset file is missing
