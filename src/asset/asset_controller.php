@@ -116,7 +116,7 @@ $asset->addAction('unAssignAsset', function($payload){
   }
 }, TRUE);
 
-// untested
+// retest
 $asset->addAction('updateAssetStatus', function($payload){
 
   $filteredPayload = array();
@@ -137,7 +137,7 @@ $asset->addAction('updateAssetStatus', function($payload){
   }
 }, TRUE);
 
-// untested
+// retest/unfinished - needs to delete resource from server as well
 $asset->addAction('deleteAsset', function($payload){
   $filteredPayload = array();
   $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
@@ -160,4 +160,17 @@ $asset->addAction('getAssetsByUserId', function($payload){
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
   $assets = get_assets_by_userId($userId);
   return dataResp("success", $assets, "All of your assets were retrieved.");
+}, TRUE);
+
+// untested
+$asset->addAction('getPublishedAssetsByUserId', function($payload){
+  $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
+  $assets = get_assets_by_userId($userId);
+  return dataResp("success", $assets, "All of your published assets were retrieved.");
+}, TRUE);
+
+// untested
+$asset->addAction('getPublishedAssets', function($paylaod){
+  $assets = get_published_assets();
+  return dataResp("success", $assets, "All published assets were retrieved.");
 });

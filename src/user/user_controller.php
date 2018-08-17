@@ -54,7 +54,7 @@ $user->addAction('logoutUser', function($payload){
   return dataResp('success', ["action" => "logout"] , 'You have successfully logged out.');
 });
 
-// Register User -- Retest
+// Register User -- passing
 $user->addAction('registerUser', function($payload){
   $filteredPayload = array();
   // required parameters

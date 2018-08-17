@@ -35,7 +35,7 @@ $article->addAction('createArticle', function($payload) {
   }
 }, TRUE);
 
-// Update Article -- untested
+// Update Article -- passing
 $article->addAction('updateArticle', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleTitle']   = filter_var($payload['articleTitle'],   FILTER_SANITIZE_STRING);
@@ -73,7 +73,7 @@ $article->addAction('updateArticle', function($payload) {
   }
 }, TRUE);
 
-// Update Article Status -- untested
+// Update Article Status -- passing
 $article->addAction('updateArticleStatus', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId']      = filter_var($payload["articleId"],      FILTER_SANITIZE_NUMBER_INT);
@@ -98,7 +98,7 @@ $article->addAction('updateArticleStatus', function($payload) {
   }
 }, TRUE);
 
-// Delete Article -- untested
+// Delete Article -- passing
 $article->addAction('deleteArticle', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId'] = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
@@ -119,18 +119,37 @@ $article->addAction('deleteArticle', function($payload) {
   }
 }, TRUE);
 
-// Get Article By ID -- untested
+// Get Article By ID -- passing
 $article->addAction('getArticleById', function($payload) {
   $filteredPayload = array();
   $filteredPayload['articleId'] = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
 
-  // empty input error
   if (empty($filteredPayload['articleId'])) {
     return response("failure", "No articleId was specified.");
     exit;
   }
 
   $articleData = get_article_by_id($filteredPayload['articleId']);
+  return dataResp("success", $articleData, "Article was retrieved successfully.");
+});
+
+// untested
+$article->addAction('getPublishedArticleById', function($payload){
+  $filteredPayload = array();
+  $filteredPayload['articleId'] = filter_var($payload['articleId'], FILTER_SANITIZE_NUMBER_INT);
+
+  if (empty($filteredPayload['articleId'])) {
+    return response("failure", "No articleId was specified.");
+    exit;
+  }
+
+  $articleData = get_article_by_id($filteredPayload['articleId']);
+
+  if($articleData['articleStatus'] === 'saved') {
+    return response("failuare", "Protected resource request denied.");
+    exit;
+  }
+
   return dataResp("success", $articleData, "Article was retrieved successfully.");
 });
 
@@ -149,12 +168,19 @@ $article->addAction('getArticleByTitle', function($payload) {
   return dataResp("success", $articleData, "article was retrieved successfully.");
 });
 
-// Get Articles untested
+// Get Articles passing
 $article->addAction('getArticles', function($payload) {
   $articles = get_articles();
   return dataResp("success", $articles, "All articles we retrieved.");
 });
 
+// untested
+$article->addAction('getPublishedArticles', function($payload){
+  $articles = get_published_articles();
+  return dataResp("success", $articles, "All published articles were retrieved.");
+});
+
+// untested
 $article->addAction('getArticlesByUserId', function($payload) {
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
   $articles = get_articles_by_userId($userId);
@@ -166,4 +192,11 @@ $article->addAction('getNumberOfArticles', function($payload) {
   $numArticles = filter_var($payload['articleNumber'], FILTER_SANITIZE_NUMBER_INT);
   $articles = get_number_of_articles($numArticles);
   return dataResp("success", $articles, "Articles were retrieved successfully");
+});
+
+// untested
+$article->addAction('getNumberOfPublishedArticles', function($payload){
+  $numArticles = filter_var($payload['articleNumber'], FILTER_SANITIZE_NUMBER_INT);
+  $articles = get_number_published_of_articles($numArticles);
+  return dataResp("success", $articles, "Published articles were retrieved successfully");
 });

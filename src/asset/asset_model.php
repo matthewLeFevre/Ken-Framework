@@ -78,7 +78,29 @@ function update_asset_status($assetData) {
 
 function get_assets_by_userId($userId) {
   $db = dbConnect();
-  $sql = "SELECT *  FROM asset ORDER BY assetCreated ASC";
+  $sql = "SELECT *  FROM asset WHERE userId = :userId ORDER BY assetCreated ASC";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+  $stmt->execute();
+  $assetData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $assetData;
+}
+
+function get_published_assets_by_userId($userId) {
+  $db = dbConnect();
+  $sql = "SELECT *  FROM asset WHERE userId = :userId AND assetStatus = 'published' ORDER BY assetCreated ASC";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+  $stmt->execute();
+  $assetData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $assetData;
+}
+
+function get_published_assets() {
+  $db = dbConnect();
+  $sql = "SELECT *  FROM asset WHERE assetStatus = 'published' ORDER BY assetCreated ASC";
   $stmt = $db->prepare($sql);
   $stmt->execute();
   $assetData = $stmt->fetchAll(PDO::FETCH_NAMED);

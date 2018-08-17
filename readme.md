@@ -8,9 +8,21 @@ First time framework creator here and the only way to have access to ther server
 
 ## Setup
 
-To setup php_generic user the `server.php` as a template or guide. `server.php` is an example of an application including some of the php_generic built in features, these features are optional and do not have to be included in the application.
+To setup php_generic use the `server.php` as a template or guide. `server.php` is an example of an application including some of the php_generic built in features, these features are optional and do not have to be included in the application.
 
-### Minimum requirements
+### Database Connection
+
+Using the [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") environment ensure that along with PHP mySQL was also installed by clicking on the enviornment icon. Navigate to PHPMyAdmin and create a new database with your desired name. If you are using the built in features with php_generic you can simply import the `generic_db.sql` file and configure the `db_connect.php` file to point to your local environment.
+
+#### Custom Database Setup
+
+**If you use this method you will be unable to use any of the custom controllers avaliable in php_generic**
+
+After you have installed [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") you can create your own database through PHPMyAdmin or as I like to do it through ERD diagrams avaliable in [MySQL Workbench](https://dev.mysql.com/downloads/workbench/ "MySQL Workbench download") and then importing it into PHPMyAdmin. In order to connect to the database you wil need to add your work enviornment details into the `db_connect.php` file avaliable in the `src/utilities/` directory.
+
+### Minimum Code requirements
+
+To get started with the server all you need to do is create a new instance of the server and run the `start()` method once you have added all of your controllers. The `start()` method will begin to listen for any `GET` or `POST` request that is inbound and it will send it to the corresponding controller or it will throw an error.
 
 ```php
 <?php
@@ -25,11 +37,18 @@ $app = new Generic();
 $app->start();
 ```
 
-### Database Connection
-
-Using the [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") environment ensure that along with PHP mySQL was also installed by clicking on the enviornment icon. Navigate to phpMyAdmin and create a new database with your desired name. If you are using the built in features with php_generic you can simply import the `generic_db.sql` file and configure the `db_connect.php` file to point to your local environment.
 
 # Talking with the front end
+
+php_generic was built to serve SPAs (Single Page Applications like: Angular, React, and Vue apps) it does not control the front end at all like in more traditional MVC frameworks. This means that in development you will have to enable a few headers so that your front end and back end can talk despite being on different domains. These headers are already enabled in the `server.php` file but just to help explain their purpose I will include the code here as well.
+
+```php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
+```
+
+These headers enable the php_generic to share resources with requests from other domains. Do not keep this enabled in production because it poses a significan security risk called CSRF (cross-site request forgery). When using php_generic in production simply swap the `*` for the domain you are using the fron end on, this will whitelist all other domain except the one provided.
 
 ## Preforming Http/Fetch requests
 

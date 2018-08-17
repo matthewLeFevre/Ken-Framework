@@ -11,9 +11,6 @@ $comment->addAction('createComment', function($payload){});
 $comment->addAction('updateComment', function($payload){});
 
 // untested
-$comment->addAction('assignComment', function($payload){});
-
-// untested
 $comment->addAction('deleteComment', function($payload){});
 
 // untested

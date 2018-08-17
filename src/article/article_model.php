@@ -57,7 +57,7 @@ function delete_article($articleId) {
   $db = dbConnect();
   $sql = 'DELETE FROM article WHERE articleId = :articleId';
   $stmt = $db->prepare($sql);
-  $stmt->bindValue(':articleId', $articleId, PDO::PARAM_STR);
+  $stmt->bindValue(':articleId', $articleId, PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
@@ -111,6 +111,20 @@ function get_articles() {
   return $articleData;
 }
 
+function get_published_articles () {
+  $db = dbConnect();
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          WHERE articleStatus = 'published'
+          ORDER BY articleCreated ASC";
+  $stmt = $db->prepare($sql);
+  $stmt->execute();
+  $articleData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $articleData;
+}
+
 function get_articles_by_userId($userId) {
   $db = dbConnect();
   $sql = "SELECT article.*, asset.*  FROM article
@@ -134,6 +148,20 @@ function get_number_of_articles($numberOfArticles) {
   $sql = "SELECT article.*, asset.*  FROM article
           LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
           LEFT JOIN asset ON aa.assetId = asset.assetId
+          ORDER BY articleCreated DESC LIMIT " . $numberOfArticles;
+  $stmt = $db->prepare($sql);
+  $stmt->execute();
+  $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $stmt->closeCursor();
+  return $articles;
+}
+
+function get_number_of_published_articles($numberOfArticles) {
+  $db = dbConnect();
+  $sql = "SELECT article.*, asset.*  FROM article
+          LEFT JOIN asset_assignment AS aa ON article.articleId = aa.articleId
+          LEFT JOIN asset ON aa.assetId = asset.assetId
+          WHERE articleStatus = 'published'
           ORDER BY articleCreated DESC LIMIT " . $numberOfArticles;
   $stmt = $db->prepare($sql);
   $stmt->execute();
