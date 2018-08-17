@@ -117,16 +117,16 @@ $asset->addAction('unAssignAsset', function($payload){
 }, TRUE);
 
 // untested
-$asset->addAction('changeAssetStatus', function($payload){
+$asset->addAction('updateAssetStatus', function($payload){
 
   $filteredPayload = array();
-  $filteredayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-  $filteredayload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
+  $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+  $filteredPayload["assetStatus"] = filter_var($payload["assetStatus"], FILTER_SANITIZE_STRING);
+  $filteredPayload["assetModified"] = date('Y-m-d H:i:s');
 
-  // Check for empty inputs
-  // chkEmpty() should not be used here
-  // check empty inputs manually
-  if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
+  if(empty($filteredPayload['assetId']) || empty($filteredPayload['assetStatus'])) {
+    return response("failure", "please ensure both assetId and assetStatus have values");
+  }
 
   $assetChangeStatus = update_asset_status($filteredPayload);
 
@@ -139,17 +139,14 @@ $asset->addAction('changeAssetStatus', function($payload){
 
 // untested
 $asset->addAction('deleteAsset', function($payload){
-  
+  $filteredPayload = array();
   $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-  // Check for empty inputs
-  // chkEmpty() should not be used here
-  // check empty inputs manually
-  if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
 
-  // before the asset is deleted it should be unassigned
-  // from all of its current assignments.
+  if(empty($filteredPayload['assetId'])) {
+    return response("failure", "please include the assetId in the query.");
+  }
 
-  $deleteAssetStatus = delete_asset($filteredPayload);
+  $deleteAssetStatus = delete_asset($filteredPayload['assetId']);
 
   if($deleteAssetStatus === 1) {
     return response("success", "Asset deleted.");

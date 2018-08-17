@@ -67,10 +67,8 @@ $article->addAction('updateArticle', function($payload) {
 
   // send success or failure message to client
   if($updateArticle) {
-    var_dump($updateArticle);
     return response("success", $filteredPayload['articleTitle'] . " was successfully updated");
   } else {
-    var_dump($updateArticle);
     return response("failure", $filteredPayload['articleTitle'] . " was not successfully updated.");
   }
 }, TRUE);
