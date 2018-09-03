@@ -13,8 +13,8 @@ $article->addAction('createArticle', function($payload) {
   $filteredPayload['articleSummary'] = filter_var($payload['articleSummary'],FILTER_SANITIZE_STRING);
   $filteredPayload['articleBody']    = filter_var($payload['articleBody'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $filteredPayload['articleStatus']  = filter_var($payload['articleStatus'], FILTER_SANITIZE_STRING);
-  $filteredPayload['articleLink']    = filter_var($payload["articleLink"],   FILTER_SANITIZE_STRING);
   $filteredPayload['userId']         = filter_var($payload['userId'],        FILTER_SANITIZE_NUMBER_INT);
+  $filteredPayload['articleImage']   = filter_var($payload['articleImage'],  FILTER_SANITIZE_STRING);
 
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleTitle']) ||
@@ -42,16 +42,15 @@ $article->addAction('updateArticle', function($payload) {
   $filteredPayload['articleSummary'] = filter_var($payload['articleSummary'], FILTER_SANITIZE_STRING);
   $filteredPayload['articleBody']    = filter_var($payload['articleBody'],    FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $filteredPayload['articleStatus']  = filter_var($payload['articleStatus'],  FILTER_SANITIZE_STRING);
-  $filteredPayload['articleLink']    = filter_var($payload["articleLink"],    FILTER_SANITIZE_STRING);
   $filteredPayload['articleModified']= filter_var($payload["articleModified"],FILTER_SANITIZE_STRING);
   $filteredPayload['articleId']      = filter_var($payload["articleId"],      FILTER_SANITIZE_NUMBER_INT);
+  $filteredPayload['articleImage']   = filter_var($payload['articleImage'],  FILTER_SANITIZE_STRING);
 
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleTitle']) ||
     empty($filteredPayload['articleSummary']) ||
     empty($filteredPayload['articleBody']) ||
     empty($filteredPayload['articleStatus']) ||
-    empty($filteredPayload['articleLink']) ||
     empty($filteredPayload['articleModified']) ||
     empty($filteredPayload['articleId'])) {
     return response("failure", "One of the required items to create an article has not been provided. Please check all inputs.");
@@ -197,6 +196,6 @@ $article->addAction('getNumberOfArticles', function($payload) {
 // untested
 $article->addAction('getNumberOfPublishedArticles', function($payload){
   $numArticles = filter_var($payload['articleNumber'], FILTER_SANITIZE_NUMBER_INT);
-  $articles = get_number_published_of_articles($numArticles);
+  $articles = get_number_of_published_articles($numArticles);
   return dataResp("success", $articles, "Published articles were retrieved successfully");
 });

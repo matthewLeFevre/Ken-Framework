@@ -44,8 +44,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/post/post_model.php';
 // comment
 
 // require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_utilities.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_controller.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_model.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_controller.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/comment/comment_model.php';
 
 // user
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/user/user_utilities.php';
