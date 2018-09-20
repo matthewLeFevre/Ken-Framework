@@ -184,7 +184,7 @@ $article->addAction('getArticlesByUserId', function($payload) {
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
   $articles = get_articles_by_userId($userId);
   return dataResp("success", $articles, "All articles we retrieved.");
-});
+}, TRUE);
 
 // Get Specified Number of Articles -- passing
 $article->addAction('getNumberOfArticles', function($payload) {

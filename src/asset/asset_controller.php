@@ -165,7 +165,7 @@ $asset->addAction('getAssetsByUserId', function($payload){
 // untested
 $asset->addAction('getPublishedAssetsByUserId', function($payload){
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
-  $assets = get_assets_by_userId($userId);
+  $assets = get_published_assets_by_userId($userId);
   return dataResp("success", $assets, "All of your published assets were retrieved.");
 }, TRUE);
 
