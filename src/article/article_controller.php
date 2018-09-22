@@ -14,7 +14,7 @@ $article->addAction('createArticle', function($payload) {
   $filteredPayload['articleBody']    = filter_var($payload['articleBody'],   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   $filteredPayload['articleStatus']  = filter_var($payload['articleStatus'], FILTER_SANITIZE_STRING);
   $filteredPayload['userId']         = filter_var($payload['userId'],        FILTER_SANITIZE_NUMBER_INT);
-  $filteredPayload['articleImage']   = filter_var($payload['articleImage'],  FILTER_SANITIZE_STRING);
+  // $filteredPayload['articleImage']   = filter_var($payload['articleImage'],  FILTER_SANITIZE_STRING);
 
   // sends error if required inputs are missing
   if(empty($filteredPayload['articleTitle']) ||
@@ -183,7 +183,7 @@ $article->addAction('getPublishedArticles', function($payload){
 $article->addAction('getArticlesByUserId', function($payload) {
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
   $articles = get_articles_by_userId($userId);
-  return dataResp("success", $articles, "All articles we retrieved.");
+  return dataResp("success", $articles, "All articles were retrieved.");
 }, TRUE);
 
 // Get Specified Number of Articles -- passing

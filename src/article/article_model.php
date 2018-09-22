@@ -4,13 +4,13 @@
 // create article
 function create_new_article($articleData) {
   $db = dbConnect();
-  $sql = 'INSERT INTO article (articleTitle, articleSummary, articleBody, articleStatus, userId, articleImagePath) VALUES (:articleTitle, :articleSummary, :articleBody, :articleStatus, :userId, :articleImagePath)';
+  $sql = 'INSERT INTO article (articleTitle, articleSummary, articleBody, articleStatus, userId) VALUES (:articleTitle, :articleSummary, :articleBody, :articleStatus, :userId)';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleTitle',   $articleData['articleTitle'],   PDO::PARAM_STR);
   $stmt->bindValue(':articleSummary', $articleData['articleSummary'], PDO::PARAM_STR);
   $stmt->bindValue(':articleBody',    $articleData['articleBody'],    PDO::PARAM_STR);
   $stmt->bindValue(':articleStatus',  $articleData['articleStatus'],  PDO::PARAM_STR);
-  $stmt->bindValue(':articleImagePath',    $articleData['articleImage'],    PDO::PARAM_STR);
+  // $stmt->bindValue(':articleImagePath',    $articleData['articleImage'],    PDO::PARAM_STR);
   $stmt->bindValue(':userId',         $articleData['userId'],         PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
@@ -23,7 +23,7 @@ function create_new_article($articleData) {
 
 function update_article($articleData) {
   $db = dbConnect();
-  $sql = 'UPDATE article SET articleTitle = :articleTitle, articleImagePath= :articleImagePath, articleSummary = :articleSummary, articleBody = :articleBody, articleStatus= :articleStatus, articleLink = :articleLink, articleModified = :articleModified WHERE articleId = :articleId';
+  $sql = 'UPDATE article SET articleTitle = :articleTitle, articleSummary = :articleSummary, articleBody = :articleBody, articleStatus= :articleStatus, articleLink = :articleLink, articleModified = :articleModified WHERE articleId = :articleId';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':articleTitle',   $articleData['articleTitle'],   PDO::PARAM_STR);
   $stmt->bindValue(':articleSummary', $articleData['articleSummary'], PDO::PARAM_STR);
@@ -32,7 +32,7 @@ function update_article($articleData) {
   $stmt->bindValue(':articleLink',    $articleData['articleLink'],    PDO::PARAM_STR);
   $stmt->bindValue(':articleModified',$articleData['articleModified'],PDO::PARAM_STR);
   $stmt->bindValue(':articleId',      $articleData['articleId'],      PDO::PARAM_INT);
-  $stmt->bindValue(':articleImagePath',    $articleData['articleImage'],    PDO::PARAM_STR);
+  // $stmt->bindValue(':articleImagePath',    $articleData['articleImage'],    PDO::PARAM_STR);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();

@@ -36,7 +36,58 @@ function createArticle () {
       'articleBody': makeParagraph(6),
       'articleStatus': 'published',
       'articleLink': 'www.google.com',
-      'userId': '8'
+      'articleImage': 'null',
+      'userId': '1'
+    }
+  }
+  let req = {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+
+    body: JSON.stringify(data),
+  }
+
+  fetch(url, req)
+  .then(response => response.json())
+  .then(data => console.log(data));
+}
+
+function createProject () {
+  let data = {
+    controller: "project",
+    action: "createProject",
+    payload: {
+      'projectTitle': makeWord(12),
+      'projectStatus': 'published',
+      'userId': '1'
+    }
+  }
+  let req = {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+
+    body: JSON.stringify(data),
+  }
+
+  fetch(url, req)
+  .then(response => response.json())
+  .then(data => console.log(data));
+}
+
+function createStyleGuide () {
+  let data = {
+    controller: "styleGuide",
+    action: "createStyleGuide",
+    payload: {
+      'styleGuideTitle': makeWord(12),
+      'styleGuideStatus': 'published',
+      'projectId': '11'
     }
   }
   let req = {
@@ -116,7 +167,11 @@ function testController() {
 }
 
 // Get articles request syntax
-fetch(url + "?controller=article&action=getNumberOfArticles&articleNumber=5")
+// fetch(url + "?controller=article&action=getNumberOfArticles&articleNumber=5")
+// .then(response => response.json())
+// .then(data => console.log(data));
+
+fetch(url + "?controller=project&action=getProjectById&projectId=11")
 .then(response => response.json())
 .then(data => console.log(data));
 

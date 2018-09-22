@@ -2,7 +2,7 @@
 
 
 // create message
-function create_new_message($messageData) {
+function create_message($messageData) {
   $db = dbConnect();
   $sql = 'INSERT INTO message ( messageBody, userId, groupId) VALUES (:messageBody, :userId, :groupId)';
   $stmt = $db->prepare($sql);
