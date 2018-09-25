@@ -77,7 +77,9 @@ $project->addAction('getProjectById', function($payload){
     exit;
   }
   $projectData = get_project_by_id($filterLoad['projectId']);
-  return dataResp("success", $projectData, "Project Data was retrieved");
+  $styleGuideData = get_styleGuides_by_projectId($filterLoad['projectId']);
+  $resData = [$projectData, $styleGuideData];
+  return dataResp("success", $resData, "Project Data was retrieved");
 });
 
 // passing

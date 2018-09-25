@@ -20,16 +20,12 @@ function create_styleGuide($styleGuideData) {
 
 function update_styleGuide($styleGuideData) {
   $db = dbConnect();
-  $sql = 'UPDATE styleGuide SET styleGuideTitle = :styleGuideTitle, styleGuideSummary = :styleGuideSummary, styleGuideBody = :styleGuideBody, styleGuideStatus= :styleGuideStatus, styleGuideLink = :styleGuideLink, styleGuideModified = :styleGuideModified WHERE styleGuideId = :styleGuideId';
+  $sql = 'UPDATE styleGuide SET styleGuideTitle = :styleGuideTitle, styleGuideDescription = :styleGuideDescription, styleGuideStatus= :styleGuideStatus WHERE styleGuideId = :styleGuideId';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':styleGuideTitle',   $styleGuideData['styleGuideTitle'],   PDO::PARAM_STR);
-  $stmt->bindValue(':styleGuideSummary', $styleGuideData['styleGuideSummary'], PDO::PARAM_STR);
-  $stmt->bindValue(':styleGuideBody',    $styleGuideData['styleGuideBody'],    PDO::PARAM_STR);
+  $stmt->bindValue(':styleGuideDescription', $styleGuideData['styleGuideDescription'], PDO::PARAM_STR);
   $stmt->bindValue(':styleGuideStatus',  $styleGuideData['styleGuideStatus'],  PDO::PARAM_STR);
-  $stmt->bindValue(':styleGuideLink',    $styleGuideData['styleGuideLink'],    PDO::PARAM_STR);
-  $stmt->bindValue(':styleGuideModified',$styleGuideData['styleGuideModified'],PDO::PARAM_STR);
   $stmt->bindValue(':styleGuideId',      $styleGuideData['styleGuideId'],      PDO::PARAM_INT);
-  // $stmt->bindValue(':styleGuideImagePath',    $styleGuideData['styleGuideImage'],    PDO::PARAM_STR);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();

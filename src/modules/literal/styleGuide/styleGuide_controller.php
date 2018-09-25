@@ -44,9 +44,9 @@ $styleGuide->addAction('updateStyleGuide', function($payload){
       return response("failure", "Not all required data was supplied for that styleGuide");
       exit;
   }
-  $updatestyleGuide = update_styleGuide($filterLoad);
-  if($createstyleGuide == 1) {
-    return dataResp("success", get_styleGuide_by_Id($filterLoad['styleGuideId']), "styleGuide was successfully updated");
+  $updateStyleGuide = update_styleGuide($filterLoad);
+  if($updateStyleGuide == 1) {
+    return dataResp("success", get_styleGuides_by_projectId($filterLoad['projectId']), "styleGuide was successfully updated");
   } else {
     return response("failure", "styleGuide died :(");
   }
