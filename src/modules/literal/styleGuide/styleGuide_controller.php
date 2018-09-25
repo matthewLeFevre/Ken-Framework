@@ -7,7 +7,7 @@ $styleGuide = new Controller('styleGuide');
 // Passing
 $styleGuide->addAction('createStyleGuide', function($payload){
 
-  // first think to do when creating a new action is to filter
+  // first thing to do when creating a new action is to filter
   // the expected payload of that action.
 
   // Experamental function for filtering simple payloads
@@ -35,7 +35,7 @@ $styleGuide->addAction('createStyleGuide', function($payload){
 
 }, TRUE);
 
-// untested
+// passing
 $styleGuide->addAction('updateStyleGuide', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['styleGuideId']) ||
@@ -59,11 +59,11 @@ $styleGuide->addAction('deleteStyleGuide', function($payload){
     return response("failure", "styleGuideId was not specified");
     exit;
   }
-  $deletestyleGuide = delete_styleGuide($filterLoad['styleGuideId']);
-  if($deletestyleGuide == 1) {
+  $deleteStyleGuide = delete_styleGuide($filterLoad['styleGuideId']);
+  if($deleteStyleGuide == 1) {
     return response("success", "styleGuide deleted successfully");
   } else {
-    return response("failure", "Projuct was not deleted successfully");
+    return response("failure", "styleGuide was not deleted successfully");
   }
 }, TRUE);
   

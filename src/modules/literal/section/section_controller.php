@@ -3,6 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 $section = new Controller('section');
+/**
+ * Section actions
+ */
 
 // untested
 $section->addAction('createSection', function($payload){
@@ -101,3 +104,330 @@ $section->addAction('getSectionsByStyleGuideId', function($payload){
   $sectionData = get_sections_by_userId($filterLoad['styleGuideId']);
   return dataResp("success", $sectionData, "sections were retrieved");
 });
+
+//untested
+$section->addAction('getSectionAndItemsBySectionId', function($payload){
+
+  $filterLoad = Controller::filterPayload($payload);
+
+  if(empty($filterLoad['sectionId'])){
+    return response("failure", "No sectionId was specified.");
+    exit;
+  }
+
+  $section = get_section_by_id($filterLoad['sectionId']);
+  $sectionTextBoxs = get_textBoxs_by_sectionId($filterLoad['sectionId']);
+  $sectionFonts = get_fonts_by_sectionId($filterLoad['sectionId']);
+  $sectionColorPallets = get_colorPallets_by_sectionId($filterLoad['sectionId']);
+  $sectionHeadings = get_Headings_by_sectionId($filterLoad['sectionId']);
+  $sectionImages = get_Images_by_sectionId($filterLoad['sectionId']);
+  $sectionItems = array_merge($sectionTextBoxs, $sectionFonts, $sectionColorPallets, $sectionHeadings, $sectionImages);
+  $order = array();
+
+  foreach ($sectionItems as $key => $row) {
+    $order[$key] = $row['order'];
+  }
+  array_multisort($order, SORT_ASC, $sectionItems);
+
+  $sectionData = array_merge($section, $order);
+
+  return dataResp("success", $sectionData, "Section and all items were retrieved.")
+});
+
+/**
+ * Section Item Create Actions
+ */
+
+$section->addAction('createTextBox', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_textBox($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+$section->addAction('createHeading', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_heading($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+$section->addAction('createFont', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_font($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+$section->addAction('createImage', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_image($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+$section->addAction('createColorPallet', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_colorPallet($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+$section->addAction('createColorGroup', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['colorPalletId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_colorGroup($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+$section->addAction('createColorSwatch', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+     empty($filterLoad['colorGroupId']) ||
+     empty($filterLoad['order'])){
+    return response("failure", "Not all data was supplied for this item.");
+  }
+
+  $createItem = create_colorSwatch($filterLoad);
+  if($createItem == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return response('failure', "section Item was not created successfully");
+  }
+
+}, TRUE);
+
+/**
+ * Section Item Update Actions
+ */
+
+$section->addAction('updateTextBox', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) ||
+  empty($filterLoad['textBoxId'])){
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('updateHeading', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['headingId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('updateFont', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['fontId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('updateImage', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['imageId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('updateColorPallet', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['colorPalletId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('updateColorGroup', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['colorGroupId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('updateColorSwatch', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['colorSwatchId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+/**
+ * Section Item Delete Actions
+ */
+
+$section->addAction('deleteTextBox', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['textBoxId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('deleteHeading', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['headingId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('deleteFont', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['fontId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('deleteImage', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['imageId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('deleteColorPallet', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['colorPalletId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('deleteColorGroup', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['colorGroupId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+$section->addAction('deleteColorSwatch', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['sectionId']) || 
+     empty($filterLoad['colorSwatchId'])) {
+    return response("failure", "No __Id specified");
+  }
+}, TRUE);
+
+/**
+ * Section Item Get by Id Actions
+ */
+
+$section->addAction('getTextBoxById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['textBoxId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['textBoxId']);
+}, TRUE);
+
+$section->addAction('getHeadingById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['headingId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['headingId']);
+}, TRUE);
+
+$section->addAction('getFontById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['fontId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['fontId']);
+}, TRUE);
+
+$section->addAction('getImageById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['imageId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['imageId']);
+}, TRUE);
+
+$section->addAction('getColorPalletById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['colorPalletId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['colorPalletId']);
+}, TRUE);
+
+$section->addAction('getColorGroupById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['colorGroupId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['colorGroupId']);
+}, TRUE);
+
+$section->addAction('getColorSwatchById', function($payload){
+  $filterLoad = Controller::filterPayload($payload);
+  if(empty($filterLoad['colorSwatchId'])){
+    return response("failure", "No __Id specified");
+  }
+  $sectionItem = get_exam_by_id($filterLoad['colorSwatchId']);
+}, TRUE);
