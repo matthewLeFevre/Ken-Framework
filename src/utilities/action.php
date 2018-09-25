@@ -9,21 +9,55 @@ class Action
     private $tokenValidation;
     private $howToValidate;
 
-    function __construct($name, $action, $validation) {
+    public function __construct($name, $action, $validation) {
         $this->name = $name;
         $this->action = $action;
         $this->howToValidate = $validation;
     }
 
-    function setTokenValidation($tokenValidation) {
+    /**
+     * Setter
+     * ----------
+     * setTokenValidation($boolean)
+     * - when Action is instansiated by
+     * a constructor it recieves token validation
+     */
+
+    public function setTokenValidation($tokenValidation) {
         $this->tokenValidation = $tokenValidation;
     }
 
-    function getName() {
+    /**
+     * Getter
+     * ---------
+     * getName()
+     * - retrieves the nave of the Action
+     */
+
+    public function getName() {
         return $this->name;
     }
 
-    function __call($name, $arguments) {
+    /**
+     * __call(string, array) majic method
+     * reference: http://php.net/manual/en/language.oop5.overloading.php#object.call
+     * 
+     * - This function executes the user generated function
+     *  assigned to this action through the controller
+     * 
+     * - the method being called is the `$this->action` 
+     * method that was assigned to this aciton object
+     * at the point of instantiation.
+     * 
+     * call_user_func_array(function, parameters)
+     * reference: http://php.net/manual/en/function.call-user-func-array.php
+     * 
+     * - calls a callback function. The calback function
+     *  called is the one given to the action when 
+     *  it is first instantiated by the contructor.
+     */
+
+    public function __call($name, $arguments) {
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
         if($this->tokenValidation && $this->howToValidate && !isset($arguments[0]['apiToken'])) {

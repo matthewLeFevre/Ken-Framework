@@ -7,28 +7,70 @@ class Controller
     private $actions = array();
     private $tokenValidation;
 
-    function __construct($name) {
+    public function __construct($name) {
         $this->name = $name;
     }
 
-    function getName() {
-        return $this->name;
-    }
+    /**
+     * Setters
+     * ---------
+     * setTokenValidation(bool)
+     * - called when assigned to the server
+     *  basically inherits validation from
+     *  server configuration by user.
+     */
 
-    function setTokenValidation($validation) {
+    public function setTokenValidation($validation) {
         $this->tokenValidation = $validation;
         foreach ($this->actions as $storedAction) {
             $storedAction->setTokenValidation($validation);
         }
     }
 
-    function getTokenValidation() {
+    /**
+     * Getters
+     * --------
+     * getName()
+     * - returns the name of the controller
+     * 
+     * getTokenValidation()
+     * - returns the token validation assigned
+     *  it by the server to pass on to controller
+     *  actions
+     */
+
+    public function getName() {
+        return $this->name;
+    }
+
+    public function getTokenValidation() {
         return $this->tokenValidation;
     }
 
-    function addAction($actionName, $actionFunc, $howToValidate = FALSE) {
+    /**
+     * addAction(string, function, bool)
+     * - instantiates a new action with a name
+     * assigns the new action a callback function
+     * written by the developer of the controller
+     * 
+     * - adds the action to its array record of actions
+     * 
+     * - depending on the action validation can be 
+     * supplied to remedy how the aciton should
+     * handle token validation.
+     */
+    public function addAction($actionName, $actionFunc, $howToValidate = FALSE) {
         $this->actions[$actionName] = new Action($actionName, $actionFunc, $howToValidate);
     }
+
+    /**
+     * filterPayload(array) static function
+     * - used to expedite the filter and sanitize functions
+     * only caters to two data types. Strings and Numerics.
+     * 
+     * **NOTE** - Need a stronger way to deferentiate between 
+     * a basic string and input submitted with HTML markup.
+     */
 
     public static function filterPayload($payload) {
         $filteredPayload = array();
@@ -53,7 +95,15 @@ class Controller
         return $filteredPayload;
     }
 
-    function callAction($action, $params) {
+    /**
+     * callAction(string, array)
+     *  - iterates over avaliable actions
+     * once the correct one is encounted
+     * that action is executed and the 
+     * parameters for that funcion are sent along
+     */
+
+    public function callAction($action, $params) {
         
         foreach ($this->actions as $storedAction) {
             if($storedAction->getName() === $action) {
