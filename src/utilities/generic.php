@@ -12,23 +12,67 @@ class Generic {
     private $tokenValidation;
     private $controllers = array();
 
-    function __construct($tokenValidation = FALSE) {
-        $this->tokenValidation = $tokenValidation;
+    public function __construct($tokenValidation = FALSE) {
+        if(is_bool($tokenValidation)) {
+            $this->tokenValidation = $tokenValidation;
+        }
     }
 
-    function setTokenValidation($validation) {
+    /*
+    * Setters
+    *-----------------
+    * setTokenValidation(boolean) - 
+    *
+    * if boolean is true token validation will 
+    * be required for all protected requests
+    *
+    * if boolean is false token validation will 
+    * never be required.
+    */
+
+    protected function setTokenValidation($validation) {
         $this->tokenValidation = $validation;
     }
+
+    /*
+    * Getters
+    *---------------
+    * getTokenValidation()
+    *
+    * - returns a the tokenValidation boolean
+    * this funcitons return value is passed to
+    * assit in the propegation of tokenvalidation
+    * for controllers
+    *
+    * getPayload()
+    *
+    * - returns the value of a payload whenever
+    *  a request is made the payload field is populated
+    */
     
-    function getTokenValidation() {
+    public function getTokenValidation() {
         return $this->tokenValidation;
     }
 
-    function getPayload() {
+    public function getPayload() {
         return $this->payload;
     }
 
-    function addController($controller) {
+    /*
+    * addController(instantiated object)
+    *----------------------------------
+    * - each controller is an object and 
+    * has already been instatiated. 
+    *
+    * - this function records the controller
+    * objects that will be used in the application and
+    * and passes down the application token validation value.
+    * 
+    * - When a request is made the controller will be pulled
+    * to find an aciton that matches a request in a controller
+    */
+
+    public function addController($controller) {
         // if token validation has been implemented on the server
         // implement it in each controller
         if ($this->tokenValidation) {
@@ -37,15 +81,40 @@ class Generic {
         $this->controllers[$controller->getName()] = $controller;
     }
 
-    function start() {
+    /*
+    * start()
+    *-----------------
+    * - once start is called our server will
+    * start listening for GET and POST requests
+    *
+    * - whenever there is a response to be sent 
+    * to the client it comes back to this `echo`
+    * function bellow unless there is an error
+    * in this class
+    */
+
+    public function start() {
 
         $this->GETListener();
         $this->POSTListener();
         
-        echo json_encode($this->proccess());
+        echo json_encode($this->process());
     }
 
-    function proccess() {
+    /*
+    * process()
+    *------------------------------
+    * - When a request is made `process` iterates
+    * over each controller and compares the controller
+    * name to the controller name specified in the 
+    * request.
+    *
+    * - Once the controller is found the action
+    * is then searched for inside of the controller 
+    * and executed.
+    */
+
+    function process() {
         foreach ($this->controllers as $controller) {
             if($controller->getName() === $this->reqController) {
                 return $controller->callAction($this->reqAction, $this->payload);
@@ -55,15 +124,31 @@ class Generic {
         response("failure", "The " . $this->reqController . " controller does not exist");
     }
 
+    /*
+    * validateJsonPost(string)
+    *---------------------------
+    * - The request is a post request and we need
+    * to find the controller, action, and payload
+    * of the request.
+    * 
+    *  - Ckecks for an api token if token validation
+    * is enabled.
+    *
+    * - **NOTE** if token validation is enabled
+    * and thier are certain post requests that
+    * do not require the token they must be
+    * specified here. One example it user
+    * authentication.
+    */
+
     function validateJsonPost($json_str) {
         // JSON POST listener has content
         if(!empty($json_str)) {
 
-
             $reqArr = json_decode($json_str, true);
             
-            $this->reqAction = $reqArr['action'];
-            $this->reqController = $reqArr['controller'];
+            $this->reqAction = filter_var($reqArr['action'], FILTER_SANITIZE_STRING);
+            $this->reqController = filter_var($reqArr['controller'], FILTER_SANITIZE_STRING);
             $this->payload = $reqArr['payload'];
             
             if( empty($this->reqAction) || 
@@ -75,8 +160,9 @@ class Generic {
             }
 
             // A token is not required for the following requests and tokens are not 
-            // required --currently-- for any get requests. If request is made for 
-            // an aciton other than those in this logic statement a valid token is required.
+            // required --currently-- for any get requests unless they are specifically assigned 
+            // at the action level. If a request is made for an aciton other than those in
+            // this logic statement a valid token is required.
 
             // Verify that token validation is used on this server
             if($this->tokenValidation) {
@@ -95,11 +181,30 @@ class Generic {
             }
         } 
 
-        // else {
-        //     echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
-        //     return exit;
-        // }
+        else {
+            echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
+            return exit;
+        }
     }
+
+    /*
+    * listeners
+    *-------------------------
+    * GETListener()
+    * - Filters the controller and aciton on a
+    * GET request
+    *
+    * POSTListener()
+    * - collects the controller and action of a 
+    * request if the it is an file upload(asset)
+    * request
+    *
+    * **NOTE** - I need to find out how to filter
+    * the file upload.
+    *
+    * - collects entire post request by accessing
+    * the json for none asset/file upload requests
+    */
 
     function GETListener() {
         // GET request Listener
@@ -117,9 +222,9 @@ class Generic {
                     echo(json_encode(response("failure", "The specified controller or action has not been supplied.")));
                     exit;
                 } else {
-                    $this->reqController = $_POST['controller'];
-                    $this->reqAction = $_POST['action'];
-                    $this->payload = $_POST;
+                    $this->reqController = filter_var($_POST['controller'], FILTER_SANITIZE_STRING);
+                    $this->reqAction = filter_var($_POST['action'], FILTER_SANITIZE_STRING);
+                    $this->payload = $_POST; //How do I sanitize a file upload?...
                 }
             }
 
