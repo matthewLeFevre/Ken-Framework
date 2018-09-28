@@ -20,11 +20,11 @@ $asset->addAction('createAsset', function($payload){
   $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
 
   if(empty($assetStatus) || empty($userId)) {
-    return response("failure", "Asset status was not supplied. Please select published or saved.");
+    return Response::err("Asset status was not supplied. Please select published or saved.");
     exit;
   }
   if(empty($userId)) {
-    return response("failure", "UserId was not supplied.");
+    return Response::err("UserId was not supplied.");
     exit;
   }
 
@@ -32,19 +32,19 @@ $asset->addAction('createAsset', function($payload){
 
     // sends error if asset file is missing
     if(empty($assetName)) {
-      return response("failure","Coudn't find file. asset_controller.php line 20");
+      return Response::err("Coudn't find file.");
     }
 
     // sends error if file is an unsupported file type
     if(!fileTypeCheck($assetName) || !$assetType) {
-      return response("failure", "The uploaded file is an inncorrect file type.");
+      return Response::err("The uploaded file is an inncorrect file type.");
     }
 
     $source = $_FILES['fileUpload']['tmp_name'];
 
     // sends error if no temporary file name exists
     if($source =="") {
-      return response("failure", "Image tmp_name issue. Please contact your web administrator.");
+      return Response::err("Image tmp_name issue. Please contact your web administrator.");
     }
 
     // downlaod file to directory on server
@@ -66,9 +66,9 @@ $asset->addAction('createAsset', function($payload){
 
     // File successfully uploaded
     if(count($result) == 1) {
-      return response("success", $assetName . " was uploaded successfully");
+      return Response::success($assetName . " was uploaded successfully");
     } else {
-      return response("failure", $assetName . " was not uploaded successfully. Please contact your website administrator or try again.");
+      return Response::err($assetName . " was not uploaded successfully. Please contact your website administrator or try again.");
     }
   }
 }, TRUE);
@@ -83,15 +83,15 @@ $asset->addAction('assignAsset', function($payload){
   
   // send errors if data is missing
   if( empty($filteredPayload["assetId"]) || empty($filteredPayload["assignedTable"]) || empty($filteredPayload["assignedId"])) {
-    return response("failure", "Required data has not been supplied. Please try again.");
+    return Response::err("Required data has not been supplied. Please try again.");
   }
 
   $assignAssetStatus = assign_asset($filteredPayload);
 
   if($assignAssetStatus == 1) {
-    return response("success", "Asset successfully assigned");
+    return Response::success("Asset successfully assigned");
   } else {
-    return response("failure", "There was an issue assigning the asset.");
+    return Response::err("There was an issue assigning the asset.");
   }
 }, TRUE);
 
@@ -110,9 +110,9 @@ $asset->addAction('unAssignAsset', function($payload){
   if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
   $unassignAssetStatus- unassign_asset($filteredPayload);
   if($unassignAssetStatus == 1) {
-    return response("success", "Asset was unassigned successfully.");
+    return Response::err("success", "Asset was unassigned successfully.");
   } else {
-    return response("failure", "There was an issue unassigning the asset.");
+    return Response::err("failure", "There was an issue unassigning the asset.");
   }
 }, TRUE);
 
@@ -125,15 +125,15 @@ $asset->addAction('updateAssetStatus', function($payload){
   $filteredPayload["assetModified"] = date('Y-m-d H:i:s');
 
   if(empty($filteredPayload['assetId']) || empty($filteredPayload['assetStatus'])) {
-    return response("failure", "please ensure both assetId and assetStatus have values");
+    return Response::err("please ensure both assetId and assetStatus have values");
   }
 
   $assetChangeStatus = update_asset_status($filteredPayload);
 
   if($assetChangeStatus === 1) {
-    return response("success", "Asset has been updated successfully");
+    return Response::success("Asset has been updated successfully");
   } else {
-    return response("failure", "Asset was not updated successfully.");
+    return Response::err("Asset was not updated successfully.");
   }
 }, TRUE);
 
@@ -143,34 +143,40 @@ $asset->addAction('deleteAsset', function($payload){
   $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
 
   if(empty($filteredPayload['assetId'])) {
-    return response("failure", "please include the assetId in the query.");
+    return Response::err("please include the assetId in the query.");
   }
 
   $deleteAssetStatus = delete_asset($filteredPayload['assetId']);
 
   if($deleteAssetStatus === 1) {
-    return response("success", "Asset deleted.");
+    return Response::success("Asset deleted.");
   } else {
-    return response("failure", "Asset was not deleted.");
+    return Response::err("Asset was not deleted.");
   }
 }, TRUE);
 
 // untested - should use token validation
 $asset->addAction('getAssetsByUserId', function($payload){
+  if(empty($payload["userId"]){
+    return Response::err();
+  }
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
   $assets = get_assets_by_userId($userId);
-  return dataResp("success", $assets, "All of your assets were retrieved.");
+  return Response::data($assets, "All of your assets were retrieved.");
 }, TRUE);
 
 // untested
 $asset->addAction('getPublishedAssetsByUserId', function($payload){
+  if(empty($payload["userId"]){
+    return Response::err();
+  }
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
   $assets = get_published_assets_by_userId($userId);
-  return dataResp("success", $assets, "All of your published assets were retrieved.");
+  return Response::data($assets, "All of your published assets were retrieved.");
 }, TRUE);
 
 // untested
-$asset->addAction('getPublishedAssets', function($paylaod){
+$asset->addAction('getPublishedAssets', function($payload){
   $assets = get_published_assets();
-  return dataResp("success", $assets, "All published assets were retrieved.");
+  return Response::data($assets, "All published assets were retrieved.");
 });

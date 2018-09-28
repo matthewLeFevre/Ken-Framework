@@ -11,14 +11,16 @@ $user = new Controller('user');
 
 // Login User -- passing
 $user->addAction('loginUser', function($payload){
-  $userEmail         = filter_var($payload['userEmail']);
-  $userPassword      = filter_var($payload['userPassword'], FILTER_SANITIZE_STRING);
-  $userEmail         = checkEmail($userEmail);
-  // $userPasswordCheck = checkPassword($userPassword);
+  $filterLoad = Controller::filterLoad($payload);
+  $userPassword = $filterLoad['userPassword'];
+  $userEmail    = $filterLoad['userEmail'];
+  $userName     = $filterLoad['userName'];
+  $userEmail    = checkEmail($userEmail);
+  // $userPasswordCheck = checkPassword($userPassword); uncomment befor production and test
 
   // throw an error fill in all input fields
   if(empty($userEmail) || empty($userPassword)) {
-    return response("failure", "Please fill in both your username and password.");
+    return Response::err("Please fill in both your username and password.");
     exit;
   }
 
@@ -27,7 +29,7 @@ $user->addAction('loginUser', function($payload){
 
   // throw error wrong password
   if (!$hashCheck) {
-    return response("failure", "Your password or username is incorrect.");
+    return Response::err("Your password or username is incorrect.");
     exit;
   }
 
@@ -35,23 +37,25 @@ $user->addAction('loginUser', function($payload){
     $userData['apiToken'] = generateJWT($userData["userId"]);
   }
   
-  return dataResp("success", $userData, 'User successfully logged in.');
+  return Response::data($userData, 'User successfully logged in.');
 });
 
 // Check Login -- untested
 $user->addAction('checkLogin', function($payload){
   if(isset($GLOBALS['token'])) {
-    return dataResp("success", get_user_by_id(), 'Welcome back!');
+    return Response::data(get_user_by_id(), 'Welcome back!');
   } else {
-    return response("failure", "No authenticated users.");
+    return Response::err("No authenticated users.");
   }
 });
 
 // Logout User -- untested
+// I don't believe that this is still relevant becuase 
+// we are no longer using sessions. This needs to be reworked
 $user->addAction('logoutUser', function($payload){
   session_destroy();
   // refactor this response
-  return dataResp('success', ["action" => "logout"] , 'You have successfully logged out.');
+  return Response::data(["action" => "logout"] , 'You have successfully logged out.');
 });
 
 // Register User -- passing
@@ -77,7 +81,7 @@ $user->addAction('registerUser', function($payload){
   if( empty($filteredPayload['userName']) ||
       empty($filteredPayload['userEmail']) ||
       empty($filteredPayload['userPassword'])) {
-    return response("failure", "Please fill in all required data");
+    return Response::err("Please fill in all required data");
     exit;
   }
 
@@ -90,7 +94,7 @@ $user->addAction('registerUser', function($payload){
 
   // Throw error that entered email address already exists
   if($userEmailVerify){
-    return response("failue", "An account with that email address already exists please try logging in or using a different email.");
+    return Response::err("An account with that email address already exists please try logging in or using a different email.");
     exit;
   }
 
@@ -100,7 +104,7 @@ $user->addAction('registerUser', function($payload){
 
   // create custom notification that registration was successful
   if($newRegistrationStatus) {
-    return response("success", $filteredPayload['userName'] . " account created successfully. Please login to access your account.");
+    return Response::success($filteredPayload['userName'] . " account created successfully. Please login to access your account.");
     exit;
   }
 });

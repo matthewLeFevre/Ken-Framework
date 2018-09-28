@@ -6,6 +6,12 @@ function response($status, $message) {
   return ["status" => $status, "message" => $message];
 }
 
+function errResp($message = "An error was thrown") {
+  return ["status" => "failure", "message" => $message];
+}
+
+function 
+
 // sends json data responses to the client
 function dataResp($status, $data, $message) {
   return ["status"=> $status, "data"=> $data, "message"=>$message];
@@ -18,5 +24,20 @@ function chkEmpty($inputArr) {
       return response("failure", "Required data has not been supplied");
       exit;
     }
+  }
+}
+
+class Response {
+  public static function response($status, $message) {
+    return ["status" => $status, "message" => $message];
+  }
+  public static function success ($message = "Request was successfully executed") {
+    return ["status"=>"success", "message"=>$message];
+  }
+  public static function err($message = "An error was thrown") {
+    return ["status" => "failure", "message" => $message];
+  }
+  public static function data($data, $message = "Data Retrieved Successfully", $status = "success") {
+    return ["status"=> $status, "data"=> $data, "message"=>$message];
   }
 }
