@@ -12,9 +12,8 @@ $section->addAction('createSection', function($payload){
 
   $filterLoad = Controller::filterPayload($payload);
 
-  if(empty($filterLoad['userId']) ||
-    empty($filterLoad['styleGuideId']) ||
-    empty($filterLoad['order']) ||
+  if(empty($filterLoad['styleGuideId']) ||
+    empty($filterLoad['itemOrder']) ||
     empty($filterLoad['sectionTitle'])){
       return response("failure", "Not all required data was supplied for that section");
       exit;
@@ -27,7 +26,7 @@ $section->addAction('createSection', function($payload){
   if($createSection == 1) {
     // by sending a data response with a nested query we are able to imediately populate 
     // the section to the dashboard without having to make another request
-    return dataResp("success", get_sections_by_userId($filterLoad['userId']), "section was successfully created");
+    return dataResp("success", get_sections_by_styleGuideId($filterLoad['styleGuideId']), "section was successfully created");
   } else {
     return response("failure", "section died :(");
   }
@@ -38,7 +37,7 @@ $section->addAction('createSection', function($payload){
 $section->addAction('updateSection', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['userId']) ||
-    empty($filterLoad['order']) ||
+    empty($filterLoad['itemOrder']) ||
     empty($filterLoad['sectionId']) ||
     empty($filterLoad['sectionTitle'])){
       return response("failure", "Not all required data was supplied for that section");
@@ -111,22 +110,24 @@ $section->addAction('getSectionAndItemsBySectionId', function($payload){
   }
   $secId = $filterLoad['sectionId'];
   $section              = get_section_by_id($secId);
-  $sectionTextBoxs      = get_textBoxs_by_sectionId($secId);
+  $sectionTextBoxs      = get_textBoxes_by_sectionId($secId);
   $sectionFonts         = get_fonts_by_sectionId($secId);
   $sectionColorPallets  = get_colorPallets_by_sectionId($secId);
-  $sectionHeadings      = get_Headings_by_sectionId($secId);
-  $sectionImages        = get_Images_by_sectionId($secId);
+  $sectionHeadings      = get_headings_by_sectionId($secId);
+  $sectionImages        = get_images_by_sectionId($secId);
   $sectionItems         = array_merge($sectionTextBoxs, $sectionFonts, $sectionColorPallets, $sectionHeadings, $sectionImages);
-  $order                = array();
+  $itemOrder                = array();
+  // var_dump($sectionItems);
+  // foreach ($sectionItems as $key => $row) {
+  //   var_dump($key);
+  //   $itemOrder[$key] = $row;
+  // }
+  // var_dump($itemOrder);
+  // array_multisort($itemOrder, SORT_ASC, $sectionItems);
+  array_multisort(array_column($sectionItems, 'itemOrder'), SORT_ASC,SORT_NUMERIC,$sectionItems);
+  $sectionData = array("section" => $section, "items" => $sectionItems);
 
-  foreach ($sectionItems as $key => $row) {
-    $order[$key] = $row['order'];
-  }
-  array_multisort($order, SORT_ASC, $sectionItems);
-
-  $sectionData = array_merge($section, $order);
-
-  return dataResp("success", $sectionData, "Section and all items were retrieved.")
+  return dataResp("success", $sectionData, "Section and all items were retrieved.");
 });
 
 /**
@@ -136,7 +137,7 @@ $section->addAction('getSectionAndItemsBySectionId', function($payload){
 $section->addAction('createTextBox', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -152,7 +153,7 @@ $section->addAction('createTextBox', function($payload){
 $section->addAction('createHeading', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -168,7 +169,7 @@ $section->addAction('createHeading', function($payload){
 $section->addAction('createFont', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -184,7 +185,7 @@ $section->addAction('createFont', function($payload){
 $section->addAction('createImage', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -200,7 +201,7 @@ $section->addAction('createImage', function($payload){
 $section->addAction('createColorPallet', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -217,7 +218,7 @@ $section->addAction('createColorGroup', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
      empty($filterLoad['colorPalletId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -234,7 +235,7 @@ $section->addAction('createColorSwatch', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
      empty($filterLoad['colorGroupId']) ||
-     empty($filterLoad['order'])){
+     empty($filterLoad['itemOrder'])){
     return response("failure", "Not all data was supplied for this item.");
   }
 
@@ -255,7 +256,7 @@ $section->addAction('updateTextBox', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) ||
     empty($filterLoad['textBoxId']) ||
-    empty($filterLoad['order'])){
+    empty($filterLoad['itemOrder'])){
     return response("failure", "No __Id specified");
   }
 }, TRUE);
@@ -264,7 +265,7 @@ $section->addAction('updateHeading', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) || 
      empty($filterLoad['headingId'])  ||
-     empty($filterLoad['order'])) {
+     empty($filterLoad['itemOrder'])) {
     return response("failure", "No __Id specified");
   }
 }, TRUE);
@@ -273,7 +274,7 @@ $section->addAction('updateFont', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) || 
      empty($filterLoad['fontId']) ||
-     empty($filterLoad['order'])) {
+     empty($filterLoad['itemOrder'])) {
     return response("failure", "No __Id specified");
   }
 }, TRUE);
@@ -282,7 +283,7 @@ $section->addAction('updateImage', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) || 
      empty($filterLoad['imageId']) ||
-     empty($filterLoad['order'])) {
+     empty($filterLoad['itemOrder'])) {
     return response("failure", "No __Id specified");
   }
 }, TRUE);
@@ -291,7 +292,7 @@ $section->addAction('updateColorPallet', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) || 
      empty($filterLoad['colorPalletId']) ||
-     empty($filterLoad['order'])) {
+     empty($filterLoad['itemOrder'])) {
     return response("failure", "No __Id specified");
   }
 }, TRUE);
@@ -300,7 +301,7 @@ $section->addAction('updateColorGroup', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) || 
      empty($filterLoad['colorGroupId']) ||
-     empty($filterLoad['order'])) {
+     empty($filterLoad['itemOrder'])) {
     return response("failure", "No __Id specified");
   }
 }, TRUE);
@@ -309,7 +310,7 @@ $section->addAction('updateColorSwatch', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['sectionId']) || 
      empty($filterLoad['colorSwatchId']) ||
-     empty($filterLoad['order'])) {
+     empty($filterLoad['itemOrder'])) {
     return response("failure", "No __Id specified");
   }
 }, TRUE);

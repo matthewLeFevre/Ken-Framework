@@ -157,7 +157,7 @@ $asset->addAction('deleteAsset', function($payload){
 
 // untested - should use token validation
 $asset->addAction('getAssetsByUserId', function($payload){
-  if(empty($payload["userId"]){
+  if(empty($payload["userId"])){
     return Response::err();
   }
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
@@ -167,7 +167,7 @@ $asset->addAction('getAssetsByUserId', function($payload){
 
 // untested
 $asset->addAction('getPublishedAssetsByUserId', function($payload){
-  if(empty($payload["userId"]){
+  if(empty($payload["userId"])){
     return Response::err();
   }
   $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);

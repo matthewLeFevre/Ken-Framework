@@ -10,8 +10,6 @@ function errResp($message = "An error was thrown") {
   return ["status" => "failure", "message" => $message];
 }
 
-function 
-
 // sends json data responses to the client
 function dataResp($status, $data, $message) {
   return ["status"=> $status, "data"=> $data, "message"=>$message];
@@ -28,7 +26,9 @@ function chkEmpty($inputArr) {
 }
 
 class Response {
-  public static function response($status, $message) {
+  public function __constructor() {}
+    
+  public static function resp($status, $message) {
     return ["status" => $status, "message" => $message];
   }
   public static function success ($message = "Request was successfully executed") {

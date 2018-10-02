@@ -150,7 +150,7 @@ class Generic {
             $this->reqAction = filter_var($reqArr['action'], FILTER_SANITIZE_STRING);
             $this->reqController = filter_var($reqArr['controller'], FILTER_SANITIZE_STRING);
             $this->payload = $reqArr['payload'];
-            
+
             if( empty($this->reqAction) || 
                 empty($this->reqController)|| 
                 empty($this->payload)){
@@ -179,9 +179,7 @@ class Generic {
                     }
                 }
             }
-        } 
-
-        else {
+        } else {
             echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
             return exit;
         }
@@ -230,8 +228,10 @@ class Generic {
 
             // JSON POST Listener
             $json_str = file_get_contents('php://input');
-
-            $this->validateJsonPost($json_str);
+            if(!empty($json_str)) {
+                $this->validateJsonPost($json_str);
+            } 
+            
         } else {
             // GET payload if not a POST Request
             $this->payload = $_GET;

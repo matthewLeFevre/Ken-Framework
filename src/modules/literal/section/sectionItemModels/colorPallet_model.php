@@ -143,37 +143,51 @@ function delete_textBox ($data) {
 }
 
 
-function get_font_by_sectionId($sectionId) {
+function get_fonts_by_sectionId($sectionId) {
     $db = dbConnect();
-    $sql = "SELECT";
+    $sql = "SELECT * FROM font WHERE sectionId = :sectionId";
     $stmt = $db->prepare($sql);
+    $stmt->bindValue(':sectionId', $sectionId, PDO::PARAM_INT);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_NAMED);
     $stmt->closeCursor();
     return $data;
 }
-function get_heading_by_sectionId($sectionId) {
+function get_headings_by_sectionId($sectionId) {
     $db = dbConnect();
-    $sql = "SELECT";
+    $sql = "SELECT * FROM heading WHERE sectionId = :sectionId";
     $stmt = $db->prepare($sql);
+    $stmt->bindValue(':sectionId', $sectionId, PDO::PARAM_INT);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_NAMED);
     $stmt->closeCursor();
     return $data;
 }
-function get_image_by_sectionId($sectionId) {
+function get_images_by_sectionId($sectionId) {
     $db = dbConnect();
-    $sql = "SELECT";
+    $sql = "SELECT * FROM image WHERE sectionId = :sectionId";
     $stmt = $db->prepare($sql);
+    $stmt->bindValue(':sectionId', $sectionId, PDO::PARAM_INT);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_NAMED);
     $stmt->closeCursor();
     return $data;
 }
-function get_textBox_by_sectionId($sectionId) {
+function get_textBoxes_by_sectionId($sectionId) {
     $db = dbConnect();
-    $sql = "SELECT";
+    $sql = "SELECT * FROM textBox WHERE sectionId = :sectionId";
     $stmt = $db->prepare($sql);
+    $stmt->bindValue(':sectionId', $sectionId, PDO::PARAM_INT);
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_NAMED);
+    $stmt->closeCursor();
+    return $data;
+}
+function get_colorPallets_by_sectionId($sectionId) {
+    $db = dbConnect();
+    $sql = "SELECT * FROM colorPallet WHERE sectionId = :sectionId";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':sectionId', $sectionId, PDO::PARAM_INT);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_NAMED);
     $stmt->closeCursor();

@@ -13,8 +13,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/section/section_co
 require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/section/section_model.php';
 
 // section item models
-require_once $_SERVER['DOCUMENT_ROOT'] . 'src/modules/literal/section/sectionItemModels/colorPallet_model.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . 'src/modules/literal/section/sectionItemModels/font_model.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . 'src/modules/literal/section/sectionItemModels/heading_model.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . 'src/modules/literal/section/sectionItemModels/image_model.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . 'src/modules/literal/section/sectionItemModels/textBox_model.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/colorPallet_model.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/font_model.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/heading_model.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/image_model.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/textBox_model.php';
