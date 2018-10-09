@@ -7,17 +7,11 @@ $section = new Controller('section');
  * Section actions
  */
 
-// untested
+// passing
 $section->addAction('createSection', function($payload){
 
   $filterLoad = Controller::filterPayload($payload);
-
-  if(empty($filterLoad['styleGuideId']) ||
-    empty($filterLoad['itemOrder']) ||
-    empty($filterLoad['sectionTitle'])){
-      return response("failure", "Not all required data was supplied for that section");
-      exit;
-  }
+  Conroller::required(['styleGuideId', 'itemOrder', 'sectionTitle']);
 
   // execute database model action
   $createSection = create_section($filterLoad);
@@ -26,88 +20,106 @@ $section->addAction('createSection', function($payload){
   if($createSection == 1) {
     // by sending a data response with a nested query we are able to imediately populate 
     // the section to the dashboard without having to make another request
-    return dataResp("success", get_sections_by_styleGuideId($filterLoad['styleGuideId']), "section was successfully created");
+    return Response::data(get_sections_by_styleGuideId($filterLoad['styleGuideId']), "section was successfully created");
   } else {
-    return response("failure", "section died :(");
+    return Response::err("section died :( on querey to create");
   }
 
 }, TRUE);
 
-// untested
+// passing
 $section->addAction('updateSection', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['userId']) ||
-    empty($filterLoad['itemOrder']) ||
-    empty($filterLoad['sectionId']) ||
-    empty($filterLoad['sectionTitle'])){
-      return response("failure", "Not all required data was supplied for that section");
-      exit;
-  }
-  $updatesection = update_section($filterLoad);
-  if($createsection == 1) {
-    return dataResp("success", get_section_by_Id($filterLoad['sectionId']), "section was successfully updated");
+  Controller::required(['userId', 'itemOrder', 'sectionId', 'sectionTitle'], $filterLoad);
+  
+  $updateSection = update_section($filterLoad);
+  if($updateSection == 1) {
+    return Response::data(, get_section_by_Id($filterLoad['sectionId']), "section was successfully updated");
   } else {
-    return response("failure", "section died :(");
+    return Response::err("section died :( when queryed to update.");
+  }
+}, TRUE);
+
+// untested
+$section->addAction('updateSectionAndItems', function($payload){
+
+  foreach($payload['items'] as $item) {
+    switch($item['itemType']) {
+      case 'heading':
+        $section->callAction('updatHeading', $item);
+        break;
+      case 'textbox':
+        $section->callAction('updateTextBox', $item);
+        break;
+      case 'font':
+        $section->callAction('updateFont', $item);
+        break;
+      case 'image':
+        $section->callAction('updateImage', $item);
+        break;
+      case 'component':
+        $section->callAction('updateComponent', $item);
+        break;
+    }
+  }
+
+  $filterLoad = Controller::filterPayload($payload['section']);
+  Controller::required(['userId', 'itemOrder', 'sectionId', 'sectionTitle'], $filterLoad);
+
+  $updateSection = update_section($filterLoad);
+  if($updateSection == 1) {
+    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
+  } else {
+    return Response::err("section died :(");
   }
 }, TRUE);
 
 // untested
 $section->addAction('deleteSection', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['sectionId'])) {
-    return response("failure", "sectionId was not specified");
-    exit;
-  }
+  Controller::required(['sectionId'], $filterLoad);
   $deletesection = delete_section($filterLoad['sectionId']);
   if($deletesection == 1) {
-    return response("success", "section deleted successfully");
+    return Response::data(get_sections_by_styleGuideId($filterLoad['styleGuideId']));
   } else {
-    return response("failure", "Projuct was not deleted successfully");
+    return Response::err("Project was not deleted successfully");
   }
 }, TRUE);
   
 // untested
 $section->addAction('getSectionById', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['sectionId'])){
-    return response("failure", "No sectionId was specified.");
-    exit;
-  }
+  Controller::required(['sectionId'], $filterLoad);
+  
   $sectionData = get_section_by_id($filterLoad['sectionId']);
-  return dataResp("success", $sectionData, "section Data was retrieved");
+  return Response::data($sectionData, "section Data was retrieved");
 });
 
 // untested - possibly is uneeded
 $section->addAction('getSectionsByUserId', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['userId'])){
-    return response("failure", "No userId was specified.");
-    exit;
-  }
+  Controller::required(['userId'], $filterLoad);
+
   $sectionData = get_sections_by_userId($filterLoad['userId']);
-  return dataResp("success", $sectionData, "sections were retrieved");
+  return Response::data($sectionData, "sections were retrieved");
 }, TRUE);
 
 // untested
 $section->addAction('getSectionsByStyleGuideId', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['styleGuideId'])){
-    return response("failure", "No projectId was specified.");
-    exit;
-  }
-  $sectionData = get_sections_by_userId($filterLoad['styleGuideId']);
-  return dataResp("success", $sectionData, "sections were retrieved");
+  Controller::required(['styleGuideId'], $filterLoad);
+
+  $sectionData = get_sections_by_styleGuideId($filterLoad['styleGuideId']);
+  array_multisort(array_column($sectionData, 'itemOrder'), SORT_ASC, SORT_NUMERIC, $sectionData);
+  return Response::data($sectionData, "sections were retrieved");
 });
 
 //untested
 $section->addAction('getSectionAndItemsBySectionId', function($payload){
 
   $filterLoad = Controller::filterPayload($payload);
-
-  if(empty($filterLoad['sectionId'])){
-    return response("failure", "No sectionId was specified.");
-    exit;
-  }
+  Controller::required(['sectionId'], $filterLoad);
+  
   $secId = $filterLoad['sectionId'];
   $section              = get_section_by_id($secId);
   $sectionTextBoxs      = get_textBoxes_by_sectionId($secId);
@@ -117,17 +129,11 @@ $section->addAction('getSectionAndItemsBySectionId', function($payload){
   $sectionImages        = get_images_by_sectionId($secId);
   $sectionItems         = array_merge($sectionTextBoxs, $sectionFonts, $sectionColorPallets, $sectionHeadings, $sectionImages);
   $itemOrder                = array();
-  // var_dump($sectionItems);
-  // foreach ($sectionItems as $key => $row) {
-  //   var_dump($key);
-  //   $itemOrder[$key] = $row;
-  // }
-  // var_dump($itemOrder);
-  // array_multisort($itemOrder, SORT_ASC, $sectionItems);
-  array_multisort(array_column($sectionItems, 'itemOrder'), SORT_ASC,SORT_NUMERIC,$sectionItems);
+ 
+  array_multisort(array_column($sectionItems, 'itemOrder'), SORT_ASC, SORT_NUMERIC, $sectionItems);
   $sectionData = array("section" => $section, "items" => $sectionItems);
 
-  return dataResp("success", $sectionData, "Section and all items were retrieved.");
+  return Response::data($sectionData, "Section and all items were retrieved.");
 });
 
 /**
@@ -136,10 +142,7 @@ $section->addAction('getSectionAndItemsBySectionId', function($payload){
 
 $section->addAction('createTextBox', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['itemOrder'])){
-    return response("failure", "Not all data was supplied for this item.");
-  }
+  Controller::required(['sectionId', 'itemOrder'], $filterLoad);
 
   $createItem = create_textBox($filterLoad);
   if($createItem == 1) {
@@ -152,10 +155,7 @@ $section->addAction('createTextBox', function($payload){
 
 $section->addAction('createHeading', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['sectionId']) ||
-     empty($filterLoad['itemOrder'])){
-    return response("failure", "Not all data was supplied for this item.");
-  }
+  Controller::required(['sectionId', 'itemOrder'], $filterLoad);
 
   $createItem = create_heading($filterLoad);
   if($createItem == 1) {

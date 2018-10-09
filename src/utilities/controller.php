@@ -96,6 +96,24 @@ class Controller
     }
 
     /**
+     * required(array, array) static funciton
+     * - used to quickly check if inputs sent in the
+     * filtered request are present and not empty.
+     * 
+     * -only configure checkInputs that are required
+     * for the action to be completed.
+     */
+
+    public static function required($inputArr, $payload) {
+        foreach($inputArr as $input) {
+            if(empty($payload[$input])) {
+                echo json_encode(Response::err("$input is required to execute that request and was not found."));
+                exit;
+            }
+        }
+    }
+
+    /**
      * callAction(string, array)
      *  - iterates over avaliable actions
      * once the correct one is encounted

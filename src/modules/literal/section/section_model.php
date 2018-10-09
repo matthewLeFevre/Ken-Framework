@@ -22,6 +22,8 @@ function create_section($sectionData) {
 // - add share
 
 function update_section($sectionData) {
+  // echo json_encode($sectionData);
+  // exit;
   $db = dbConnect();
   $sql = 'UPDATE section SET sectionTitle = :sectionTitle, itemOrder = :itemOrder WHERE sectionId = :sectionId';
   $stmt = $db->prepare($sql);
