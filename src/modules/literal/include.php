@@ -12,9 +12,25 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/styleGuide/styleGu
 require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/section/section_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/section/section_model.php';
 
-// section item models
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/colorPallet_model.php';
+// textbox
+require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/textBox/textBox_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/src/modules/literal/textBox/textBox_model.php';
+
+// heading
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/heading//heading_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/heading//heading_model.php';
+
+// colorPallet
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/colorPallet/colorPallet_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/colorPallet/colorPallet_model.php';
+
+// font 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/font/font_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/font/font_model.php';
+
+// service
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/section_service.php';
+
+
 // require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/font_model.php';
-// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/heading_model.php';
 // require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/image_model.php';
-// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/textBox_model.php';

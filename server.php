@@ -24,5 +24,11 @@ $app->addController($project);
 $app->addController($styleGuide);
 $app->addController($section);
 
+$app->addController($textBox);
+$app->addController($heading);
+$app->addController($colorPallet);
+// $app->addController($font);
+// $app->addController($code);
+
 // start server
 $app->start();

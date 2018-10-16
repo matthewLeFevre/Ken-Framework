@@ -80,7 +80,7 @@ class Controller
                 $filter = filter_var($load, FILTER_SANITIZE_NUMBER_INT);
                 break;
                 case "string":
-                    if(strlen($load) > 45) {
+                    if(strlen($load) < 45) {
                         $filter = filter_var($load, FILTER_SANITIZE_STRING);
                     } else {
                         $filter = filter_var($load,   FILTER_SANITIZE_FULL_SPECIAL_CHARS);

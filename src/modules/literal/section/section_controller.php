@@ -11,7 +11,7 @@ $section = new Controller('section');
 $section->addAction('createSection', function($payload){
 
   $filterLoad = Controller::filterPayload($payload);
-  Conroller::required(['styleGuideId', 'itemOrder', 'sectionTitle']);
+  Controller::required(['styleGuideId', 'itemOrder', 'sectionTitle'], $filterLoad);
 
   // execute database model action
   $createSection = create_section($filterLoad);
@@ -34,7 +34,7 @@ $section->addAction('updateSection', function($payload){
   
   $updateSection = update_section($filterLoad);
   if($updateSection == 1) {
-    return Response::data(, get_section_by_Id($filterLoad['sectionId']), "section was successfully updated");
+    return Response::data(get_section_by_Id($filterLoad['sectionId']), "section was successfully updated");
   } else {
     return Response::err("section died :( when queryed to update.");
   }
@@ -116,21 +116,10 @@ $section->addAction('getSectionsByStyleGuideId', function($payload){
 
 //untested
 $section->addAction('getSectionAndItemsBySectionId', function($payload){
-
   $filterLoad = Controller::filterPayload($payload);
-  Controller::required(['sectionId'], $filterLoad);
-  
-  $secId = $filterLoad['sectionId'];
-  $section              = get_section_by_id($secId);
-  $sectionTextBoxs      = get_textBoxes_by_sectionId($secId);
-  $sectionFonts         = get_fonts_by_sectionId($secId);
-  $sectionColorPallets  = get_colorPallets_by_sectionId($secId);
-  $sectionHeadings      = get_headings_by_sectionId($secId);
-  $sectionImages        = get_images_by_sectionId($secId);
-  $sectionItems         = array_merge($sectionTextBoxs, $sectionFonts, $sectionColorPallets, $sectionHeadings, $sectionImages);
-  $itemOrder                = array();
- 
-  array_multisort(array_column($sectionItems, 'itemOrder'), SORT_ASC, SORT_NUMERIC, $sectionItems);
+                Controller::required(['sectionId'], $filterLoad);
+  $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
+  $section = get_section_by_id($filterLoad['sectionId']);
   $sectionData = array("section" => $section, "items" => $sectionItems);
 
   return Response::data($sectionData, "Section and all items were retrieved.");
@@ -140,18 +129,7 @@ $section->addAction('getSectionAndItemsBySectionId', function($payload){
  * Section Item Create Actions
  */
 
-$section->addAction('createTextBox', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  Controller::required(['sectionId', 'itemOrder'], $filterLoad);
 
-  $createItem = create_textBox($filterLoad);
-  if($createItem == 1) {
-    $section->callAction('getSectionAndItemsBySectionId', $filterLoad['sectionId']);
-  } else {
-    return response('failure', "section Item was not created successfully");
-  }
-
-}, TRUE);
 
 $section->addAction('createHeading', function($payload){
   $filterLoad = Controller::filterPayload($payload);
@@ -252,14 +230,7 @@ $section->addAction('createColorSwatch', function($payload){
  * Section Item Update Actions
  */
 
-$section->addAction('updateTextBox', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['sectionId']) ||
-    empty($filterLoad['textBoxId']) ||
-    empty($filterLoad['itemOrder'])){
-    return response("failure", "No __Id specified");
-  }
-}, TRUE);
+
 
 $section->addAction('updateHeading', function($payload){
   $filterLoad = Controller::filterPayload($payload);
@@ -319,13 +290,7 @@ $section->addAction('updateColorSwatch', function($payload){
  * Section Item Delete Actions
  */
 
-$section->addAction('deleteTextBox', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['sectionId']) || 
-     empty($filterLoad['textBoxId'])) {
-    return response("failure", "No __Id specified");
-  }
-}, TRUE);
+
 
 $section->addAction('deleteHeading', function($payload){
   $filterLoad = Controller::filterPayload($payload);
@@ -379,13 +344,7 @@ $section->addAction('deleteColorSwatch', function($payload){
  * Section Item Get by Id Actions
  */
 
-$section->addAction('getTextBoxById', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['textBoxId'])){
-    return response("failure", "No __Id specified");
-  }
-  $sectionItem = get_exam_by_id($filterLoad['textBoxId']);
-}, TRUE);
+
 
 $section->addAction('getHeadingById', function($payload){
   $filterLoad = Controller::filterPayload($payload);

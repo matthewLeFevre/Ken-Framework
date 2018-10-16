@@ -345,7 +345,7 @@ CREATE TABLE IF NOT EXISTS `literal`.`styleGuide` (
   `projectId` INT NOT NULL,
   `styleGuideTitle` VARCHAR(255) NOT NULL,
   `styleGuideStatus` VARCHAR(45) NOT NULL,
-  `styleGuideCreated` DATETIME NOT NULL,
+  `styleGuideCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `styleGuideDescription` MEDIUMTEXT NULL,
   PRIMARY KEY (`styleGuideId`),
   INDEX `fk_styleguide_project1_idx` (`projectId` ASC),
@@ -368,6 +368,7 @@ CREATE TABLE IF NOT EXISTS `literal`.`section` (
   `sectionTitle` VARCHAR(255) NOT NULL,
   `itemOrder` INT NOT NULL,
   `sectionCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sectionDescription` TINYTEXT NULL,
   PRIMARY KEY (`sectionId`),
   INDEX `fk_section_styleguide1_idx` (`styleGuideId` ASC),
   CONSTRAINT `fk_section_styleguide1`
@@ -428,7 +429,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `literal`.`colorPallet` ;
 
 CREATE TABLE IF NOT EXISTS `literal`.`colorPallet` (
-  `colorPalletId` INT NOT NULL,
+  `colorPalletId` INT NOT NULL AUTO_INCREMENT,
   `sectionId` INT NOT NULL,
   `itemOrder` INT NOT NULL,
   `itemType` ENUM('colorPallet') NOT NULL DEFAULT 'colorPallet',
@@ -493,43 +494,23 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`colorGroup`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`colorGroup` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`colorGroup` (
-  `colorGroupId` INT NOT NULL AUTO_INCREMENT,
-  `colorPalletId` INT NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `colorGroupTitle` VARCHAR(45) NULL,
-  PRIMARY KEY (`colorGroupId`),
-  INDEX `fk_colorgroup_colorpallet1_idx` (`colorPalletId` ASC),
-  CONSTRAINT `fk_colorgroup_colorpallet1`
-    FOREIGN KEY (`colorPalletId`)
-    REFERENCES `literal`.`colorPallet` (`colorPalletId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `literal`.`colorSwatch`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `literal`.`colorSwatch` ;
 
 CREATE TABLE IF NOT EXISTS `literal`.`colorSwatch` (
   `colorSwatchId` INT NOT NULL AUTO_INCREMENT,
-  `colorGroupId` INT NOT NULL,
   `colorSwatchHex` VARCHAR(7) NOT NULL,
   `itemOrder` INT NOT NULL,
   `colorSwatchTitle` VARCHAR(45) NULL,
   `colorSwatchVar` VARCHAR(45) NULL,
   `colorSwatchRGB` VARCHAR(17) NULL,
+  `colorPalletId` INT NOT NULL,
   PRIMARY KEY (`colorSwatchId`),
-  INDEX `fk_colorswatch_colorgroup1_idx` (`colorGroupId` ASC),
-  CONSTRAINT `fk_colorswatch_colorgroup1`
-    FOREIGN KEY (`colorGroupId`)
-    REFERENCES `literal`.`colorGroup` (`colorGroupId`)
+  INDEX `fk_colorSwatch_colorPallet1_idx` (`colorPalletId` ASC),
+  CONSTRAINT `fk_colorSwatch_colorPallet1`
+    FOREIGN KEY (`colorPalletId`)
+    REFERENCES `literal`.`colorPallet` (`colorPalletId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
