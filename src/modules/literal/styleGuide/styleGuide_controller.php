@@ -2,92 +2,155 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
+/**
+ * StyleGuide
+ *  
+ *  Style Guides are entities that
+ *  contain user generated sections
+ *  they dictiate the limits of project
+ *  styleing
+ */
+
 $styleGuide = new Controller('styleGuide');
 
-// Passing
-$styleGuide->addAction('createStyleGuide', function($payload){
+/**
+ * Create StyleGuide // passing
+ * --------------
+ * 
+ *  Requires:
+ *  @var int projectId 
+ *  @var string styleGuideStatus
+ *  @var string styleGuideTitle
+ */
 
-  // first thing to do when creating a new action is to filter
-  // the expected payload of that action.
+$styleGuide->addAction('createStyleGuide', 
 
-  // Experamental function for filtering simple payloads
-  $filterLoad = Controller::filterPayload($payload);
+  function($payload){
 
-  // Second make sure that the required data is present
-  if(empty($filterLoad['projectId']) ||
-    empty($filterLoad['styleGuideStatus']) ||
-    empty($filterLoad['styleGuideTitle'])){
-      return Response::err("Not all required data was supplied for that styleGuide");
-      exit;
-  }
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['projectId', 'styleGuideStatus', 'styleGuideTitle'], $filterLoad);
 
-  // execute database model action
-  $createstyleGuide = create_styleGuide($filterLoad);
+    $createstyleGuide = create_styleGuide($filterLoad);
 
-  // check for success or failure
-  if($createstyleGuide == 1) {
-    // by sending a data response with a nested query we are able to imediately populate 
-    // the styleGuide to the dashboard without having to make another request
-    return dataResp("success", get_styleGuides_by_projectId($filterLoad['projectId']), "styleGuide was successfully created");
-  } else {
-    return Response::err("styleGuide died :(");
-  }
+    if($createstyleGuide == 1) {
+      return Response::data(get_styleGuides_by_projectId($filterLoad['projectId']), "styleGuide was successfully created");
+    } else {
+      return Response::err("styleGuide died :(");
+    }
 
 }, TRUE);
 
-// Passing
-$styleGuide->addAction('updateStyleGuide', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['styleGuideId']) ||
-    empty($filterLoad['styleGuideStatus']) ||
-    empty($filterLoad['styleGuideTitle'])){
-      return Response::err("Not all required data was supplied for that styleGuide");
-      exit;
-  }
-  $updateStyleGuide = update_styleGuide($filterLoad);
-  if($updateStyleGuide == 1) {
-    return dataResp("success", get_styleGuides_by_projectId($filterLoad['projectId']), "styleGuide was successfully updated");
-  } else {
-    return Response::err("styleGuide died :(");
-  }
+/**
+ *  Update StyleGuide // passing
+ * --------------
+ * 
+ *  Requires:
+ *  @var int styleGuideId 
+ *  @var string styleGuideStatus
+ *  @var string styleGuideTitle
+ */
+
+$styleGuide->addAction('updateStyleGuide', 
+  function($payload){
+
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['styleGuideId', 'styleGuideStatus', 'styleGuideTitle'], $filterLoad);
+
+    $updateStyleGuide = update_styleGuide($filterLoad);
+
+    if($updateStyleGuide == 1) {
+      return Response::data(get_styleGuides_by_projectId($filterLoad['projectId']), "styleGuide was successfully updated");
+    } else {
+      return Response::err("styleGuide died :(");
+    }
+
 }, TRUE);
 
-// Passing
-$styleGuide->addAction('deleteStyleGuide', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['styleGuideId']) ||
-     empty($filterLoad['projectId'])) {
-    return Response::err("styleGuideId was not specified");
-    exit;
-  }
-  $deleteStyleGuide = delete_styleGuide($filterLoad['styleGuideId']);
-  if($deleteStyleGuide == 1) {
-    return Response::data(get_styleGuides_by_projectId($filterLoad['projectId']),"styleGuide deleted successfully");
-  } else {
-    return Response::err("styleGuide was not deleted successfully");
-  }
+/**
+ * Delete StyleGuide // passing
+ * --------------
+ * 
+ *  Requires:
+ *  @var int projectId
+ *  @var int styleGuideId 
+ */
+
+$styleGuide->addAction('deleteStyleGuide', 
+
+  function($payload){
+
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['styleGuideId', 'projectId'], $filterLoad);
+
+    $deleteStyleGuide = delete_styleGuide($filterLoad['styleGuideId']);
+
+    if($deleteStyleGuide == 1) {
+      return Response::data(get_styleGuides_by_projectId($filterLoad['projectId']),"styleGuide deleted successfully");
+    } else {
+      return Response::err("styleGuide was not deleted successfully");
+    }
+
 }, TRUE);
   
-// untested
-$styleGuide->addAction('getStyleGuideById', function($payload){
-  $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['styleGuideId'])){
-    return Response::err("No styleGuideId was specified.");
-    exit;
-  }
-  $styleGuideData = get_styleGuide_by_id($filterLoad['styleGuideId']);
-  $sectionData = get_sections_by_styleGuideId($filterLoad['styleGuideId']);
-  $respData = [$styleGuideData, $sectionData];
-  return dataResp("success", $respData, "styleGuide Data was retrieved");
+/**
+ * Get StyleGuide By Id // @alert untested
+ * --------------
+ * 
+ *  Requires:
+ *  @var int styleGuideId 
+ */
+
+$styleGuide->addAction('getStyleGuideById', 
+
+  function($payload){
+
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['styleGuideId'], $filterLoad);
+
+    $data = [
+      get_styleGuide_by_id($filterLoad['styleGuideId']),
+      get_sections_by_styleGuideId($filterLoad['styleGuideId'])
+    ];
+
+    return Response::data($data, "styleGuide Data was retrieved");
 });
 
-// Passing
-$styleGuide->addAction('getStyleGuidesByProjectId', function($payload){
+/**
+ * Get Public Style Guide By Id // @alert passing
+ * --------------
+ * 
+ *  Requires:
+ *  @var int styleGuideId 
+ */
+
+$styleGuide->addAction('getPublicStyleGuideById', function($payload){
   $filterLoad = Controller::filterPayload($payload);
-  if(empty($filterLoad['projectId'])){
-    return Response::err("No projectId was specified.");
-    exit;
-  }
-  $styleGuideData = get_styleGuides_by_userId($filterLoad['projectId']);
-  return dataResp("success", $styleGuideData, "styleGuides were retrieved");
+                Controller::required(['styleGuideId'], $payload);
+
+  $data = [
+    'styleGuide' => get_public_styleGuide_by_id($filterLoad['styleGuideId']),
+    'sections' => get_sections_by_styleGuideId($filterLoad['styleGuideId'])
+  ];
+
+  return Response::data($data);
+});
+
+/**
+ * Get Public Style Guide By Id // @alert passing
+ * --------------
+ * 
+ *  Requires:
+ *  @var int projectId 
+ */
+
+$styleGuide->addAction('getStyleGuidesByProjectId', 
+
+  function($payload){
+
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['projectId'], $filterLoad);
+
+    $styleGuideData = get_styleGuides_by_userId($filterLoad['projectId']);
+
+    return Response::data($styleGuideData, "styleGuides were retrieved");
 });

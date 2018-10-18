@@ -35,7 +35,7 @@ class Section {
         $newItem['sectionId'] = $pallet['sectionId'];
         $newItem['itemType'] = $pallet['itemType'];
         $newItem['itemOrder'] = $pallet['itemOrder'];
-        array_push($newItem['colorSwatches'], ['colorSwatchTitle' => $pallet['colorSwatchTitle'], 'colorSwatchHex' => $pallet['colorSwatchHex'],'colorSwatchRGB' => $pallet['colorSwatchRGB'], 'colorSwatchVar' => $pallet['colorSwatchVar']]);
+        array_push($newItem['colorSwatches'], ['colorSwatchTitle' => $pallet['colorSwatchTitle'], 'colorSwatchHex' => $pallet['colorSwatchHex'],'colorSwatchRGB' => $pallet['colorSwatchRGB'], 'colorSwatchVar' => $pallet['colorSwatchVar'], 'colorSwatchId' => $pallet['colorSwatchId']]);
       }
     }
     return $finishedItems;

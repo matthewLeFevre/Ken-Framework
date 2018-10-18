@@ -46,10 +46,14 @@ function get_colorPallet_by_sectionId($sectionId) {
 
 function create_colorSwatch($data) {
     $db = dbConnect();
-    $sql= "INSERT INTO colorSwatch (itemOrder, colorPalletId) VALUES (:itemOrder, :colorPalletId)";
+    $sql= "INSERT INTO colorSwatch (itemOrder, colorPalletId, colorSwatchTitle, colorSwatchHex, colorSwatchRgb, colorSwatchVar) VALUES (:itemOrder, :colorPalletId, :colorSwatchTitle, :colorSwatchHex, :colorSwatchRgb, :colorSwatchVar)";
     $stmt = $db->prepare($sql);
-    $stmt->bindValue(':sectionId', $data['colorPalletId'], PDO::PARAM_INT);
+    $stmt->bindValue(':colorPalletId', $data['colorPalletId'], PDO::PARAM_INT);
     $stmt->bindValue(':itemOrder', $data['itemOrder'], PDO::PARAM_INT);
+    $stmt->bindValue(':colorSwatchTitle', $data['colorSwatchTitle'], PDO::PARAM_STR);
+    $stmt->bindValue(':colorSwatchHex', $data['colorSwatchHex'], PDO::PARAM_STR);
+    $stmt->bindValue(':colorSwatchRgb', $data['colorSwatchRgb'], PDO::PARAM_STR);
+    $stmt->bindValue(':colorSwatchVar', $data['colorSwatchVar'], PDO::PARAM_STR);
     $stmt->execute();
     $rowsChanged = $stmt->rowCount();
     $stmt->closeCursor();
@@ -69,7 +73,7 @@ function update_colorSwatch($data) {
 
 function get_colorPallets_by_sectionId($sectionId) {
     $db = dbConnect();
-    $sql = "SELECT cp.*, cs.colorSwatchHex, cs.colorSwatchTitle, cs.colorSwatchRGB, cs.colorSwatchVar
+    $sql = "SELECT cp.*, cs.colorSwatchHex, cs.colorSwatchTitle, cs.colorSwatchRGB, cs.colorSwatchVar, cs.colorSwatchId
             FROM colorPallet AS cp
             LEFT JOIN colorSwatch AS cs
             ON cp.colorPalletId = cs.colorPalletId
@@ -86,9 +90,9 @@ function get_colorPallets_by_sectionId($sectionId) {
 
 function delete_colorSwatch($data) {
     $db = dbConnect();
-    $sql= "DELETE FROM colorSwatch WHERE colorPalletId = :colorSwatchId";
+    $sql= "DELETE FROM colorSwatch WHERE colorSwatchId = :colorSwatchId";
     $stmt = $db->prepare($sql);
-    $stmt->bindValue(':colorPalletId', $data['colorSwatchId'], PDO::PARAM_INT);
+    $stmt->bindValue(':colorSwatchId', $data['colorSwatchId'], PDO::PARAM_INT);
     $stmt->execute();
     $rowsChanged = $stmt->rowCount();
     $stmt->closeCursor();

@@ -64,6 +64,17 @@ function get_styleGuide_by_id($styleGuideId) {
   return $styleGuideData;
 }
 
+function get_public_styleGuide_by_id($styleGuideId) {
+  $db = dbConnect();
+  $sql = "SELECT * FROM styleGuide WHERE styleGuideId = :styleGuideId AND styleGuideStatus = 'public'";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':styleGuideId', $styleGuideId, PDO::PARAM_INT);
+  $stmt->execute();
+  $styleGuideData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $styleGuideData;
+}
+
 function get_styleGuides_by_projectId($projectId) {
   $db = dbConnect();
   $sql = "SELECT * FROM styleGuide WHERE projectId = :projectId";
