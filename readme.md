@@ -4,15 +4,15 @@ Server side php architecture/framework. Adapted from an MVC method to coincide w
 
 ## Install php_generic
 
-First time framework creator here and the only way to have access to ther server is cloning and downloading this repository. Make sure to have [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") installed on your desired operating system.
+First time framework creator here and the only way to have access to the server is cloning and downloading this repository. Make sure to have [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") (or a similar alternative) installed on your desired operating system.
 
 ## Setup
 
-To setup php_generic use the `server.php` as a template or guide. `server.php` is an example of an application including some of the php_generic built in features, these features are optional and do not have to be included in the application.
+To setup php_generic use the `server.php` as a template. `server.php` is an example of an application including some of the php_generic built in features, these features are optional and do not have to be included in the application.
 
 ### Database Connection
 
-Using the [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") environment ensure that along with PHP mySQL was also installed by clicking on the enviornment icon. Navigate to PHPMyAdmin and create a new database with your desired name. If you are using the built in features with php_generic you can simply import the `generic_db.sql` file and configure the `db_connect.php` file to point to your local environment.
+Using the [XAMPP](https://www.apachefriends.org/index.html "Apache Friends Website") environment ensure that along with PHP mySQL was also installed by clicking on the enviornment icon. Navigate to PHPMyAdmin and create a new database with your desired name. If you are using the built in features with php_generic you can simply import the `generic_db.sql` file and configure the `src/utilities/db_connect.php` file to point to your local environment.
 
 #### Custom Database Setup
 
@@ -48,7 +48,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 ```
 
-These headers enable the php_generic to share resources with requests from other domains. Do not keep this enabled in production because it poses a significan security risk called CSRF (cross-site request forgery). When using php_generic in production simply swap the `*` for the domain you are using the fron end on, this will whitelist all other domain except the one provided.
+These headers enable the php_generic to share resources with requests from other domains. Do not keep this enabled in production because it poses a significan security vulnerability called CSRF (cross-site request forgery). When using php_generic in production simply swap the `*` for the domain you are using the front end on, this will whitelist all other domain except the one provided.
 
 ## Preforming Http/Fetch requests
 

@@ -4,3 +4,5 @@ src/asset/asset_controller_deprecated.php
 src/user/user_controller_deprecated.php
 server_assets/*
 server_deprecated.php
+depricated_code
+

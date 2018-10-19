@@ -21,6 +21,8 @@ class Action
      * setTokenValidation($boolean)
      * - when Action is instansiated by
      * a constructor it recieves token validation
+     * 
+     *  @param boolean $tokenValidation
      */
 
     public function setTokenValidation($tokenValidation) {
@@ -55,6 +57,9 @@ class Action
      * - calls a callback function. The calback function
      *  called is the one given to the action when 
      *  it is first instantiated by the contructor.
+     * 
+     * @param string $name
+     * @param array $arguments
      */
 
     public function __call($name, $arguments) {
