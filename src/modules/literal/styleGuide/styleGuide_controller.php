@@ -150,7 +150,26 @@ $styleGuide->addAction('getStyleGuidesByProjectId',
     $filterLoad = Controller::filterPayload($payload);
                   Controller::required(['projectId'], $filterLoad);
 
-    $styleGuideData = get_styleGuides_by_userId($filterLoad['projectId']);
+    $styleGuideData = get_styleGuides_by_projectId($filterLoad['projectId']);
+
+    return Response::data($styleGuideData, "styleGuides were retrieved");
+});
+
+/**
+ * Get Public Style Guide By Id // @alert passing
+ * --------------
+ * 
+ *  Requires:
+ *  @var int projectId 
+ */
+
+$styleGuide->addAction('getPublicStyleGuides', 
+
+  function($payload){
+
+    $filterLoad = Controller::filterPayload($payload);
+
+    $styleGuideData = get_public_styleGuides();
 
     return Response::data($styleGuideData, "styleGuides were retrieved");
 });

@@ -85,3 +85,13 @@ function get_styleGuides_by_projectId($projectId) {
   $stmt->closeCursor();
   return $styleGuideData;
 }
+
+function get_public_styleGuides() {
+  $db = dbConnect();
+  $sql = "SELECT * FROM styleGuide WHERE styleGuideStatus = 'public'";
+  $stmt = $db->prepare($sql);
+  $stmt->execute();
+  $styleGuideData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $styleGuideData;
+}

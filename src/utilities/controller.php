@@ -70,27 +70,35 @@ class Controller
      * 
      * **NOTE** - Need a stronger way to deferentiate between 
      * a basic string and input submitted with HTML markup.
+     * 
+     * @todo make the exemption input an array so that more than one
+     * input can conditionally be sanitized
      */
 
-    public static function filterPayload($payload) {
+    public static function filterPayload($payload, $exemption = null) {
         $filteredPayload = array();
         foreach($payload as $key => $load) {
-            switch(gettype($load)) {
-                case "integer":
-                $filter = filter_var($load, FILTER_SANITIZE_NUMBER_INT);
-                break;
-                case "string":
-                    if(strlen($load) < 45) {
-                        $filter = filter_var($load, FILTER_SANITIZE_STRING);
-                    } else {
-                        $filter = filter_var($load,   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                    }
-                break;
-                default:
-                $filter = NULL;
-                break;
+            
+            if($key == $exemption) {
+                $filteredPayload[$key] = $load;
+            } else {
+                switch(gettype($load)) {
+                    case "integer":
+                    $filter = filter_var($load, FILTER_SANITIZE_NUMBER_INT);
+                    break;
+                    case "string":
+                        if(strlen($load) < 45) {
+                            $filter = filter_var($load, FILTER_SANITIZE_STRING);
+                        } else {
+                            $filter = filter_var($load,   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                        }
+                    break;
+                    default:
+                    $filter = NULL;
+                    break;
+                }
+                $filteredPayload[$key] = $filter;
             }
-            $filteredPayload[$key] = $filter;
         }
         return $filteredPayload;
     }
