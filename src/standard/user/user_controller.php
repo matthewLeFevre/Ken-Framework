@@ -36,7 +36,7 @@ $user->addAction('loginUser',
 
   function($payload){
 
-    $filterLoad = Controller::filterLoad($payload, 'userEmail');
+    $filterLoad = Controller::filterPayload($payload, 'userEmail');
                   Controller::required(['userEmail', 'userPassword'], $filterLoad);
 
     $userPassword = $filterLoad['userPassword'];
@@ -79,7 +79,7 @@ $user->addAction('registerUser',
 
   function($payload){
 
-    $filteredPayload = Controller::filterLoad($payload);
+    $filteredPayload = Controller::filterPayload($payload);
                       Controller::required(['userName', 'userEmail', 'userPassword'], $payload);
 
     // Ensure that password and email are valid and clean
