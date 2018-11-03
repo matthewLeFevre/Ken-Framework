@@ -64,7 +64,7 @@ function get_section_by_id($sectionId) {
 
 function get_sections_by_styleGuideId($styleGuideId) {
   $db = dbConnect();
-  $sql = "SELECT * FROM section WHERE styleGuideId = :styleGuideId ORDER By itemOrder DESC";
+  $sql = "SELECT * FROM section WHERE styleGuideId = :styleGuideId ORDER By itemOrder ASC";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':styleGuideId', $styleGuideId, PDO::PARAM_INT);
   $stmt->execute();

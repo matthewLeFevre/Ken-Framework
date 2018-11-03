@@ -161,7 +161,7 @@ $section->addAction('getSectionsByStyleGuideId',
                   Controller::required(['styleGuideId'], $filterLoad);
 
     $sectionData = get_sections_by_styleGuideId($filterLoad['styleGuideId']);
-                  array_multisort(array_column($sectionData, 'itemOrder'), SORT_ASC, SORT_NUMERIC, $sectionData);
+                  // array_multisort(array_column($sectionData, 'itemOrder'), SORT_ASC, SORT_NUMERIC, $sectionData);
 
     return Response::data($sectionData, "sections were retrieved");
 

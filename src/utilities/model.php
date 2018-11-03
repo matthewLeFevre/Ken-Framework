@@ -58,3 +58,55 @@ $create_new_article_data = [
   ]
   
   $create_new_article = new Model ('create_new_article');
+
+
+//   class Model {
+//     private $data;
+//     private $table;
+//     private $binds = [];
+//     private $bindNames;
+//     public function __construct($data, $table, $method) {
+//       $this->data = $data;
+//       $this->table = $table;
+//       $this->method = $method;
+//       $this->bindNames = array_keys($data);
+//       $this->bind($data);
+//     }
+//     protected function bind($data) {
+//       foreach($data as $key=>$item) {
+//         array_push($this->binds, [":$key", $item, $this->getConstant($item)]);
+//       }
+//     }
+//     public function run(){
+//       switch($method) {
+//         case "insert":
+//           $this->runInsert();
+//           break;
+//         case "update":
+//           $this->runUpdate();
+//           break;
+//         case "delete":
+//           $this->runDelete();
+//           break;
+//           //throw an error
+//         default:
+//           exit;
+//           break;
+//       }
+//     }
+
+//     protected function getConstant($item) {
+//       $type = gettype($item);
+//       switch ($type) {
+//         case "string":
+//           return PDO::PARAM_STR;
+//           break;
+//         case "integer": 
+//           return PDO::PARAM_INT;
+//           break;
+//         default:
+//           exit;
+//           break;
+//       }
+//     }
+//   }

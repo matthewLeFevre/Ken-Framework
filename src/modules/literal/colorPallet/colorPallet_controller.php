@@ -29,17 +29,17 @@ $colorPallet->addAction('deleteColorPallet', function ($payload) {
   }
 }, TRUE);
 
-$colorPallet->addAction('updateColorPallet', function ($payload) {
-  $filterLoad = Controller::filterPayload($payload);
-                Controller::required(['sectionId', 'colorPalletId'], $filterLoad);
-  $updatePallet = update_colorPallet($filterLoad);
-  if($updatePallet == 1) {
-    $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-    return Response::data($sectionItems, 'section Items retrieved');
-  } else {
-    return Response::err();
-  }
-}, TRUE);
+// $colorPallet->addAction('updateColorPallet', function ($payload) {
+//   $filterLoad = Controller::filterPayload($payload);
+//                 Controller::required(['sectionId', 'colorPalletId'], $filterLoad);
+//   $updatePallet = update_colorPallet($filterLoad);
+//   if($updatePallet == 1) {
+//     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
+//     return Response::data($sectionItems, 'section Items retrieved');
+//   } else {
+//     return Response::err();
+//   }
+// }, TRUE);
 
 $colorPallet->addAction('getColorPalletById', function ($payload) {
   
