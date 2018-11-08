@@ -27,7 +27,8 @@ $app->addController($section);
 $app->addController($textBox);
 $app->addController($heading);
 $app->addController($colorPallet);
-// $app->addController($font);
+$app->addController($font);
+$app->addController($image);
 // $app->addController($code);
 
 // start server

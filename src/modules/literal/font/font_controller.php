@@ -13,7 +13,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 $font = new Controller('font');
 
 /**
- * Create Font // untested
+ * Create Font // passing
  * -----------------------
  * 
  * Requires:
@@ -46,6 +46,8 @@ $font->addAction('createFont', function($payload){
 
 $font->addAction('updateFont', function($payload){
   $filterLoad = Controller::filterPayload($payload);
+  //      var_dump($filterLoad);
+  // exit;
                 Controller::required(['sectionId', 'fontId'], $filterLoad);
   $updateFont = update_font($filterLoad);
   if($updateFont == 1) {
@@ -57,7 +59,7 @@ $font->addAction('updateFont', function($payload){
 }, True);
 
 /**
- * Delete Font // untested
+ * Delete Font // passing
  * 
  * Requires:
  * @var int secitonId
@@ -65,6 +67,7 @@ $font->addAction('updateFont', function($payload){
  */
 
  $font->addAction('deleteFont', function($payload) {
+
   $filterLoad = Controller::filterPayload($payload);
                 Controller::required(['sectionId', 'fontId'], $filterLoad);
   $deleteFont = delete_font($filterLoad);

@@ -5,7 +5,7 @@ function create_font($data) {
   $sql = "INSERT INTO font (itemOrder, sectionId, fontUrl, fontFamily) VALUES (:itemOrder, :sectionId, :fontUrl, :fontFamily)";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(":itemOrder", $data['itemOrder'], PDO::PARAM_INT);
-  $stmt->bindValue(":secitonId", $data['secitonId'], PDO::PARAM_INT);
+  $stmt->bindValue(":sectionId", $data['sectionId'], PDO::PARAM_INT);
   $stmt->bindValue(":fontUrl", $data['fontUrl'], PDO::PARAM_STR);
   $stmt->bindValue(":fontFamily", $data['fontFamily'], PDO::PARAM_STR);
   $stmt->execute();
@@ -15,7 +15,7 @@ function create_font($data) {
 }
 function update_font($data) {
   $db = dbConnect();
-  $sql = "UPDATE font SET itemOrder = :itemOrder, fontURL = :fontURL, fontFamily = :fontFamily WHERE fontId = :fontId";
+  $sql = "UPDATE font SET itemOrder = :itemOrder, fontUrl = :fontUrl, fontFamily = :fontFamily WHERE fontId = :fontId";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(":itemOrder", $data['itemOrder'], PDO::PARAM_INT);
   $stmt->bindValue(":fontId", $data['fontId'], PDO::PARAM_INT);
@@ -28,7 +28,7 @@ function update_font($data) {
 }
 function delete_font($data) {
   $db = dbConnect();
-  $sql = "DELETE font WHERE fontId = :fontId";
+  $sql = "DELETE FROM font WHERE fontId = :fontId";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(":fontId", $data['fontId'], PDO::PARAM_INT);
   $stmt->execute();

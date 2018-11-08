@@ -28,9 +28,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/colorPallet/color
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/font/font_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/font/font_model.php';
 
+// image
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/image/image_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/image/image_model.php';
+
 // service
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/section_service.php';
 
 
 // require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/font_model.php';
-// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/sectionItemModels/image_model.php';

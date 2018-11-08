@@ -13,10 +13,11 @@ class Section {
   public Static function getSectionItems ($secId) {
     $sectionTextBoxes      = get_textBoxes_by_sectionId($secId);
     $sectionFonts         = get_fonts_by_sectionId($secId);
+    $sectionImages         = get_images_by_sectionId($secId);
     $sectionColorPallets  = get_colorPallets_by_sectionId($secId);
     $sectionColorPallets = Section::palletFilter($sectionColorPallets);
     $sectionHeadings      = get_headings_by_sectionId($secId);
-    $sectionItems         = array_merge($sectionTextBoxes, $sectionHeadings, $sectionColorPallets);
+    $sectionItems         = array_merge($sectionTextBoxes, $sectionHeadings, $sectionImages, $sectionColorPallets, $sectionFonts);
 
     usort($sectionItems, function ($a, $b) {
       if ($a['itemOrder'] == $b['itemOrder']) return 0;

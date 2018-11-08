@@ -57,12 +57,11 @@ $section->addAction('createSection',
 $section->addAction('updateSection', 
 
   function($payload){
-
+    
     $filterLoad = Controller::filterPayload($payload);
-                  Controller::required(['userId', 'itemOrder', 'sectionId', 'sectionTitle'], $filterLoad);
+                  Controller::required(['userId', 'itemOrder', 'sectionId', 'sectionTitle', 'sectionDescription'], $filterLoad);
     
     $updateSection = update_section($filterLoad);
-
     if($updateSection == 1) {
       return Response::data(get_section_by_Id($filterLoad['sectionId']), "section was successfully updated");
     } else {

@@ -25,9 +25,10 @@ function update_section($sectionData) {
   // echo json_encode($sectionData);
   // exit;
   $db = dbConnect();
-  $sql = 'UPDATE section SET sectionTitle = :sectionTitle, itemOrder = :itemOrder WHERE sectionId = :sectionId';
+  $sql = 'UPDATE section SET sectionTitle = :sectionTitle, itemOrder = :itemOrder, sectionDescription = :sectionDescription WHERE sectionId = :sectionId';
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':sectionTitle',   $sectionData['sectionTitle'],   PDO::PARAM_STR);
+  $stmt->bindValue(':sectionDescription',   $sectionData['sectionDescription'],   PDO::PARAM_STR);
   $stmt->bindValue(':itemOrder', $sectionData['itemOrder'], PDO::PARAM_STR);
   $stmt->bindValue(':sectionId',      $sectionData['sectionId'],      PDO::PARAM_INT);
   $stmt->execute();

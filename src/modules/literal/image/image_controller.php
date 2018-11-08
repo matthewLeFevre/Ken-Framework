@@ -22,12 +22,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
   *
   * @var string imageUrl
   * -------OR--------
-  * @var int assetId
+  * @var int assetId // assetId to be removed only the assetPath of the 
+  * asset is required to fill in the image URL
   */
 
   $image->addAction('createImage', function($payload) {
     $filterLoad = Controller::filterPayload($payload);
-                  Controller::required(['sectionId', 'itemOrder']);
+                  Controller::required(['sectionId', 'itemOrder', 'imageUrl'], $filterLoad);
     $createImage = create_image($filterLoad);
     if($createImage == 1) {
       $sectionItems = Section::getSectionItems($filterLoad['sectionId']);

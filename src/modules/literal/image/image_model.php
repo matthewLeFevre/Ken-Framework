@@ -1,17 +1,21 @@
 <?php
 
-function createImage($data) {
+function create_image($data) {
   $db = dbConnect();
-  $sql = "INSERT INTO image (itemOrder, sectionId, imageUrl, assetId) VALUES (:itemOrder, :sectionId, :imageUrl, :assetId)";
+  $sql = "INSERT INTO image (itemOrder, sectionId, imageUrl) VALUES (:itemOrder, :sectionId, :imageUrl)";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(":itemOrder", $data['itemOrder'], PDO::PARAM_INT);
-  $stmt->bindValue(":secitonId", $data['secitonId'], PDO::PARAM_INT);
+  $stmt->bindValue(":sectionId", $data['sectionId'], PDO::PARAM_INT);
   $stmt->bindValue(":imageUrl", $data['imageUrl'], PDO::PARAM_STR);
-  $stmt->bindValue(":assetId", $data['assetId'], PDO::PARAM_INT);
+  // $stmt->bindValue(":assetId", $data['assetId'], PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
   return $rowsChanged;
+}
+function update_image($data) {
+  $db = dbConnect();
+  $sql = "UPDATE image set imageUrl = imageUrl, assetId = assetId, itemOrder";
 }
 function delete($data) {
   $db = dbConnect();
