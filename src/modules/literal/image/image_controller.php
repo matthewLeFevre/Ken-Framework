@@ -13,7 +13,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  $image = new Controller('image');
 
  /**
-  * Create Image // unstested
+  * Create Image // passing
   *-------------------------
   *
   * Requires:
@@ -34,9 +34,36 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
       $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
       return Response::data($sectionItems, 'section Items retrieved');
     } else {
-      Response::err();
+      return Response::err();
     }
-  });
+  }, TRUE);
+
+  /**
+   * Update Image // untested
+   * ------------------------
+   * 
+   * Requires: 
+   * @var int sectionId
+   * @var int imageId
+   * @var int itemOrder
+   * 
+   * @var string imageUrl
+   */
+
+  $image->addAction('updateImage',
+    
+    function($payload){
+
+      $filterLoad = Controller::filterPayload($payload);
+                    Controller::required(['sectionId', 'imageId'], $filterLoad);
+      $updateImage = update_image($filterLoad);
+      if($updateImage == 1) {
+        $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
+        return Response::data($sectionItems, 'section Items retrieved');
+      } else {
+        return Response::err();
+      }
+    }, TRUE);
 
    /**
   * Delete Image // unstested
@@ -48,12 +75,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
   */
   $image->addAction('deleteImage', function($payload) {
     $filterLoad = Controller::filterPayload($payload);
-                  Controller::required(['sectionId','imageId']);
-    $deleteImage = create_delete($filterLoad);
+                  Controller::required(['sectionId','imageId'], $filterLoad);
+    $deleteImage = delete_image($filterLoad);
     if($deleteImage == 1) {
       $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
       return Response::data($sectionItems, 'section Items retrieved');
     } else {
-      Response::err();
+      return Response::err();
     }
-  });
+  }, TRUE);

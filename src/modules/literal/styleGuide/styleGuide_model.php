@@ -88,7 +88,11 @@ function get_styleGuides_by_projectId($projectId) {
 
 function get_public_styleGuides() {
   $db = dbConnect();
-  $sql = "SELECT * FROM styleGuide WHERE styleGuideStatus = 'public'";
+  $sql = "SELECT styleGuide.*, user.userId, user.userName
+          FROM styleGuide 
+          INNER JOIN project ON styleGuide.projectId = project.projectId
+          INNER JOIN user ON project.userId = user.userId 
+          WHERE styleGuideStatus = 'public'";
   $stmt = $db->prepare($sql);
   $stmt->execute();
   $styleGuideData = $stmt->fetchAll(PDO::FETCH_NAMED);

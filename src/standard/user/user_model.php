@@ -32,11 +32,6 @@
     $stmt->bindValue(':userName',      $newUserData['userName'],      PDO::PARAM_STR);
     $stmt->bindValue(':userEmail',     $newUserData['userEmail'],     PDO::PARAM_STR);
     $stmt->bindValue(':userPassword',  $newUserData['userPassword'],  PDO::PARAM_STR);
-
-    // Optional data not working right currently
-    // $stmt->bindValue(':userFirstName', $newUserData['userFirstName'], PDO::PARAM_STR);
-    // $stmt->bindValue(':userLastName',  $newUserData['userLastName'],  PDO::PARAM_STR);
-    
     $stmt->execute();
     $rowsChanged = $stmt->rowCount();
     $stmt->closeCursor();
@@ -59,23 +54,39 @@
     }
   }
 
-// Lower priority functions
+  function update_user_data($data) {
+    $db = dbConnect();
+    $sql = "UPDATE user SET userName = :userName, userFirstName = :userFirstName, userLastName = :userLastName  WHERE userId = :userId";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':userId', $data['userId'], PDO::PARAM_INT);
+    $stmt->bindValue(':userName', $data['userName'], PDO::PARAM_STR);
+    $stmt->bindValue(':userFirstName', $data['userFirstName'], PDO::PARAM_STR);
+    $stmt->bindValue(':userLastName', $data['userLastName'], PDO::PARAM_STR);
+    $stmt->execute();
+    $rowsChanged = $stmt->rowCount();
+    $stmt->closeCursor();
+    return $rowsChanged;
+  }
 
-  function update_existing_user() {}
+  function update_user_password($data) {
+    $db = dbConnect();
+    $sql = "UPDATE user SET userPassword = :userPassword WHERE userId = :userId";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':userId', $data['userId'], PDO::PARAM_INT);
+    $stmt->bindValue(':userPassword', $data['userPassword'], PDO::PARAM_INT);
+    $stmt->execute();
+    $rowsChanged = $stmt->rowCount();
+    $stmt->closeCursor();
+    return $rowsChanged;
+  }
 
-  function update_existing_user_password() {}
-  
-// an attempt at standardizing the pdo function
-  // funciton db_insert($payload, $table) {
-  //   $db = dbConnect();
-  //   $sql = "INSERT INTO $table";
-  //   $rows = "(";
-  //   $values = "VALUES (";
-  //   for($item of $payload) {
-  //     $rows .= $item['row'];
-  //     $values .= ":".$item['row'];
-  //   }
-  //   $rows .=")";
-
-
-  // }
+  function delete_user($userId) {
+    $db = dbConnect();
+    $sql = "DELETE FROM user WHERE userId = :userId";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    $rowsChanged = $stmt->rowCount();
+    $stmt->closeCursor();
+    return $rowsChanged;
+  }

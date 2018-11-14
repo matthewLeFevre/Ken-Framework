@@ -59,7 +59,7 @@ $section->addAction('updateSection',
   function($payload){
     
     $filterLoad = Controller::filterPayload($payload);
-                  Controller::required(['userId', 'itemOrder', 'sectionId', 'sectionTitle', 'sectionDescription'], $filterLoad);
+                  Controller::required(['userId', 'itemOrder', 'sectionId', 'sectionTitle'], $filterLoad);
     
     $updateSection = update_section($filterLoad);
     if($updateSection == 1) {

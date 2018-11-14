@@ -18,6 +18,7 @@ $app = new Generic(TRUE);
 $app->addController($asset);
 $app->addController($article);
 $app->addController($user);
+$app->addController($message);
 
 // custom module controllers in development
 $app->addController($project);
@@ -29,6 +30,7 @@ $app->addController($heading);
 $app->addController($colorPallet);
 $app->addController($font);
 $app->addController($image);
+$app->addController($notice);
 // $app->addController($code);
 
 // start server

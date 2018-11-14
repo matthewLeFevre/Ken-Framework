@@ -2,10 +2,11 @@
 
 
 // create article
-function create_group($groupdata) {
+function create_group($groupData) {
   $db = dbConnect();
-  $sql = 'INSERT INTO group (groupTitle) VALUES (:groupTitle)';
+  $sql = 'INSERT INTO group (groupTitle, userId) VALUES (:groupTitle, :userId)';
   $stmt = $db->prepare($sql);
+  $stmt->bindValue(':userId', $groupData['userId'], PDO::PARAM_STR);
   $stmt->bindValue(':groupTitle',   $groupData['groupTitle'],   PDO::PARAM_STR);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
@@ -56,6 +57,18 @@ function get_group_by_id($groupId) {
   return $groupData;
 }
 
+function get_last_group_by_userId($userId) {
+  $db = dbConnect();
+  // $sql = "SELECT groupId FROM group WHERE userId = :userId AND groupId = (SELECT MAX(groupId) from group)";
+  $sql = "SELECT MAX(groupId) FROM group WHERE userId = :userId)";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+  $stmt->execute();
+  $groupId = $stmt->fetch(PDO::FETCH_ASSOC);
+  $stmt->closeCursor();
+  return $groupId;
+}
+
 function get_groups_by_userId($userId) {
   $sql = "SELECT user_has_group.*, group.*, message.*, user.*  FROM user
           LEFT JOIN user_has_group ON user.userId = user_has_group.userId
@@ -64,10 +77,9 @@ function get_groups_by_userId($userId) {
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
   $stmt->execute();
-  $articleData = $stmt->fetchAll(PDO::FETCH_NAMED);
+  $groupData = $stmt->fetchAll(PDO::FETCH_NAMED);
   $stmt->closeCursor();
-  return $user
-  Data;
+  return $groupData;
 }
 
 

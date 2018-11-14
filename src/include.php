@@ -40,5 +40,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/user/user_utilities.php'
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/user/user_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/user/user_model.php';
 
+// message
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/message_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/message_model.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/group_model.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/user_has_group_model.php';
+
 // modules
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/include.php';

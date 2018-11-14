@@ -43,9 +43,9 @@ function get_message_by_id($messageId) {
 
 // get messages by group id
 
-function get_message_by_group_id($groupId) {
+function get_messages_by_group_id($groupId) {
   $db = dbConnect();
-  $sql = "SELECT * FROM message  WHERE groupId = :groupId ORDER BY messageCreated ASC";
+  $sql = "SELECT * FROM message WHERE groupId = :groupId ORDER BY messageCreated ASC";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(':messageId', $messageId, PDO::PARAM_INT);
   $stmt->execute();

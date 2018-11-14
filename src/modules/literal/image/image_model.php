@@ -7,7 +7,6 @@ function create_image($data) {
   $stmt->bindValue(":itemOrder", $data['itemOrder'], PDO::PARAM_INT);
   $stmt->bindValue(":sectionId", $data['sectionId'], PDO::PARAM_INT);
   $stmt->bindValue(":imageUrl", $data['imageUrl'], PDO::PARAM_STR);
-  // $stmt->bindValue(":assetId", $data['assetId'], PDO::PARAM_INT);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();
@@ -15,11 +14,19 @@ function create_image($data) {
 }
 function update_image($data) {
   $db = dbConnect();
-  $sql = "UPDATE image set imageUrl = imageUrl, assetId = assetId, itemOrder";
+  $sql = "UPDATE image set imageUrl = :imageUrl, itemOrder = :itemOrder WHERE imageId = :imageId";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(":imageUrl", $data['imageUrl'], PDO::PARAM_STR);
+  $stmt->bindValue(":itemOrder", $data['itemOrder'], PDO::PARAM_INT);
+  $stmt->bindValue(":imageId", $data["imageId"], PDO::PARAM_INT);
+  $stmt->execute();
+  $rowsChanged = $stmt->rowCount();
+  $stmt->closeCursor();
+  return $rowsChanged;
 }
-function delete($data) {
+function delete_image($data) {
   $db = dbConnect();
-  $sql = "DELETE image WHERE imageId = :imageId";
+  $sql = "DELETE FROM image WHERE imageId = :imageId";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(":imageId", $data['imageId'], PDO::PARAM_INT);
   $stmt->execute();

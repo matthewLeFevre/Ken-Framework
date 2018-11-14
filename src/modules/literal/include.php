@@ -32,6 +32,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/font/font_model.p
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/image/image_controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/image/image_model.php';
 
+// notice
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/notice/notice_controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/notice/notice_model.php';
+
 // service
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/section/section_service.php';
 

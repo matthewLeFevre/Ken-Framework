@@ -42,7 +42,14 @@ CREATE TABLE IF NOT EXISTS `literal`.`group` (
   `groupId` INT NOT NULL,
   `groupCreated` DATETIME NOT NULL,
   `groupTitle` VARCHAR(45) NULL,
-  PRIMARY KEY (`groupId`))
+  `user_userId` INT NOT NULL,
+  PRIMARY KEY (`groupId`),
+  INDEX `fk_group_user1_idx` (`user_userId` ASC),
+  CONSTRAINT `fk_group_user1`
+    FOREIGN KEY (`user_userId`)
+    REFERENCES `literal`.`user` (`userId`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -473,20 +480,20 @@ DROP TABLE IF EXISTS `literal`.`image` ;
 CREATE TABLE IF NOT EXISTS `literal`.`image` (
   `imageId` INT NOT NULL AUTO_INCREMENT,
   `sectionId` INT NOT NULL,
-  `asset_assetId` INT NULL,
+  `assetId` INT NULL,
   `itemOrder` INT NOT NULL,
   `imageUrl` VARCHAR(255) NULL,
   `itemType` ENUM('image') NOT NULL DEFAULT 'image',
   PRIMARY KEY (`imageId`),
   INDEX `fk_image_section1_idx` (`sectionId` ASC),
-  INDEX `fk_image_asset1_idx` (`asset_assetId` ASC),
+  INDEX `fk_image_asset1_idx` (`assetId` ASC),
   CONSTRAINT `fk_image_section1`
     FOREIGN KEY (`sectionId`)
     REFERENCES `literal`.`section` (`sectionId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_image_asset1`
-    FOREIGN KEY (`asset_assetId`)
+    FOREIGN KEY (`assetId`)
     REFERENCES `literal`.`asset` (`assetId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
@@ -511,6 +518,74 @@ CREATE TABLE IF NOT EXISTS `literal`.`colorSwatch` (
   CONSTRAINT `fk_colorSwatch_colorPallet1`
     FOREIGN KEY (`colorPalletId`)
     REFERENCES `literal`.`colorPallet` (`colorPalletId`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `literal`.`notice`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `literal`.`notice` ;
+
+CREATE TABLE IF NOT EXISTS `literal`.`notice` (
+  `noticeId` INT NOT NULL AUTO_INCREMENT,
+  `sectionId` INT NOT NULL,
+  `itemOrder` INT NOT NULL,
+  `itemType` ENUM('notice') NOT NULL DEFAULT 'notice',
+  `noticeType` ENUM('success', 'info', 'warning', 'danger', 'tip', 'note') NOT NULL DEFAULT 'note',
+  `noticeText` TINYTEXT NULL,
+  PRIMARY KEY (`noticeId`),
+  INDEX `fk_notice_section1_idx` (`sectionId` ASC),
+  CONSTRAINT `fk_notice_section1`
+    FOREIGN KEY (`sectionId`)
+    REFERENCES `literal`.`section` (`sectionId`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `literal`.`code`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `literal`.`code` ;
+
+CREATE TABLE IF NOT EXISTS `literal`.`code` (
+  `codeId` INT NOT NULL AUTO_INCREMENT,
+  `itemOrder` INT NOT NULL,
+  `itemType` ENUM('code') NOT NULL DEFAULT 'code',
+  `codeMarkup` MEDIUMTEXT NULL,
+  `codeLanguage` ENUM('html', 'css', 'js', 'php') NOT NULL DEFAULT 'html',
+  `sectionId` INT NOT NULL,
+  PRIMARY KEY (`codeId`),
+  INDEX `fk_code_section1_idx` (`sectionId` ASC),
+  CONSTRAINT `fk_code_section1`
+    FOREIGN KEY (`sectionId`)
+    REFERENCES `literal`.`section` (`sectionId`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `literal`.`component`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `literal`.`component` ;
+
+CREATE TABLE IF NOT EXISTS `literal`.`component` (
+  `componentId` INT NOT NULL AUTO_INCREMENT,
+  `itemOrder` INT NOT NULL,
+  `itemType` ENUM('component') NOT NULL DEFAULT 'component',
+  `componentHtml` MEDIUMTEXT NOT NULL,
+  `componentCss` MEDIUMTEXT NOT NULL,
+  `componentTitle` VARCHAR(75) NOT NULL,
+  `componentDescription` MEDIUMTEXT NULL,
+  `sectionId` INT NOT NULL,
+  PRIMARY KEY (`componentId`),
+  INDEX `fk_component_section1_idx` (`sectionId` ASC),
+  CONSTRAINT `fk_component_section1`
+    FOREIGN KEY (`sectionId`)
+    REFERENCES `literal`.`section` (`sectionId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
