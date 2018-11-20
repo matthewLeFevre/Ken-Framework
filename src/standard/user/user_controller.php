@@ -21,7 +21,7 @@ $user = new Controller('user');
 
 
 /**
- * Login User // Retest
+ * Login User // Passing
  * --------------
  * 
  *  Requires:
@@ -29,8 +29,8 @@ $user = new Controller('user');
  *  @var string userEmail
  * 
  * Notes:
- *  @todo Retest this action
  *  @todo Enable $userPasswordCheck in production
+ *  @todo do not send password of user to the client
  */
 $user->addAction('loginUser', 
 
@@ -103,3 +103,16 @@ $user->addAction('registerUser',
     }
 
 });
+
+/**
+ * Logout User // Retest
+ * --------------
+ */
+
+$user->addAction('logoutUser', 
+
+  function($payload){
+
+    return Response::Data(['userIsLoggedIn' => FALSE], "User Logged out successfully");
+
+  }, TRUE);

@@ -13,7 +13,7 @@ $colorPallet->addAction('createColorPallet', function($payload) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
     return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
 }, TRUE);
 
@@ -25,7 +25,7 @@ $colorPallet->addAction('deleteColorPallet', function ($payload) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
     return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
 }, TRUE);
 
@@ -41,7 +41,7 @@ $colorPallet->addAction('createColorSwatch', function ($payload) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
     return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
 }, TRUE);
 
@@ -53,6 +53,6 @@ $colorPallet->addAction('deleteColorSwatch', function($payload) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
     return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
 }, TRUE);

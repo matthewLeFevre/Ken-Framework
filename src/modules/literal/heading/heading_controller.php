@@ -37,14 +37,14 @@ $heading->addAction('deleteHeading', function($payload){
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
     return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    return response('failure', "section Item was not created successfully");
+    return Response::err("section Item was not created successfully");
   }
 }, TRUE);
 
 $heading->addAction('getHeadingById', function($payload){
   $filterLoad = Controller::filterPayload($payload);
   if(empty($filterLoad['headingId'])){
-    return response("failure", "No __Id specified");
+    return Response::err("No __Id specified");
   }
   $sectionItem = get_exam_by_id($filterLoad['headingId']);
 }, TRUE);

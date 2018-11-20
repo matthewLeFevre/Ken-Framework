@@ -18,8 +18,17 @@ class Section {
     $sectionColorPallets  = Section::palletFilter($sectionColorPallets);
     $sectionHeadings      = get_headings_by_sectionId($secId);
     $sectionNotices       = get_notices_by_sectionId($secId);
-    $sectionItems         = array_merge($sectionTextBoxes, $sectionHeadings, $sectionImages, $sectionColorPallets, $sectionFonts, $sectionNotices);
+    $sectionCodes         = get_codes_by_sectionId($secId);
+    $sectionItems         = array_merge($sectionTextBoxes, 
+                                        $sectionHeadings, 
+                                        $sectionImages, 
+                                        $sectionColorPallets, 
+                                        $sectionFonts, 
+                                        $sectionNotices, 
+                                        $sectionCodes);
 
+    // var_dump($sectionItems);
+    // exit;
     usort($sectionItems, function ($a, $b) {
       if ($a['itemOrder'] == $b['itemOrder']) return 0;
       return ($a['itemOrder'] < $b['itemOrder']) ? -1 : 1;

@@ -31,7 +31,7 @@ $app->addController($colorPallet);
 $app->addController($font);
 $app->addController($image);
 $app->addController($notice);
-// $app->addController($code);
+$app->addController($code);
 
 // start server
 $app->start();

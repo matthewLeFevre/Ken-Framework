@@ -129,11 +129,8 @@ class Generic {
      */
 
     public function start() {
-
         $this->GETListener();
         $this->POSTListener();
-        
-        echo json_encode($this->process());
     }
 
     /**
@@ -151,12 +148,11 @@ class Generic {
 
     function process() {
         foreach ($this->controllers as $controller) {
-            if($controller->getName() === $this->reqController) {
+            if($controller->getName() == $this->reqController) {
                 return $controller->callAction($this->reqAction, $this->payload);
-            }
+            } 
         }
-
-        response("failure", "The " . $this->reqController . " controller does not exist");
+        return response("failure", "The " . $this->reqController . " controller does not exist");
     }
 
     /**
@@ -173,7 +169,7 @@ class Generic {
      * and there are certain post requests that
      * do not require the token they must be
      * specified here. One example it user
-     * authentication whick is preconfigured.
+     * authentication which is preconfigured.
      * 
      * @param string $json_str
      */
@@ -216,9 +212,12 @@ class Generic {
                     }
                 }
             }
+
+            echo json_encode($this->process());
+
         } else {
             echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
-            return exit;
+            return;
         }
     }
 
@@ -260,6 +259,7 @@ class Generic {
                     $this->reqController = filter_var($_POST['controller'], FILTER_SANITIZE_STRING);
                     $this->reqAction = filter_var($_POST['action'], FILTER_SANITIZE_STRING);
                     $this->payload = $_POST; //How do I sanitize a file upload?...
+                    echo json_encode($this->process());
                 }
             }
 
@@ -272,6 +272,11 @@ class Generic {
         } else {
             // GET payload if not a POST Request
             $this->payload = $_GET;
+            if(isset($this->reqController) || isset($this->reqAction)){
+                echo json_encode($this->process());
+            } else {
+                return;
+            }
         }
     }
 }

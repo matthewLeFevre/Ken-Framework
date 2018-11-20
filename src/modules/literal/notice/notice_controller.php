@@ -15,14 +15,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  $notice = new Controller('notice');
 
 /**
- * Create Notice - untested
+ * Create Notice - passing
  * -------------------
  * 
  * Requires:
  * @var int sectionId
  * @var int itemOrder
- * @var string noticeText
- * @var string noticeType
  */
 
  $notice->addAction('createNotice', 
@@ -30,21 +28,21 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
   function($payload){
 
       $filterLoad = Controller::filterPayload($payload);
-                    Controller::required(['sectionId', 'itemOrder', 'noticetext', 'noticeType'], $filterLoad);
+                    Controller::required(['sectionId', 'itemOrder'], $filterLoad);
 
       $createNotice = create_notice($filterLoad);
 
       if($createNotice == 1) {
         $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-        Response::data($sectionItems, 'section Items retrieved');
+        return Response::data($sectionItems, 'section Items retrieved');
       } else {
-        Response::err();
+        return Response::err();
       }
 
   }, TRUE);
 
 /**
- * Update Notice - untested
+ * Update Notice - passing
  * -------------------
  * 
  * Requires:
@@ -52,7 +50,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * @var int noticeId
  */
 
- $font->addAction('updateNotice', 
+ $notice->addAction('updateNotice', 
  
   function($payload){
 
@@ -63,15 +61,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
     if($updateNotice == 1) {
       $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-      Response::data($sectionItems, 'section Items retrieved');
+      return Response::data($sectionItems, 'section Items retrieved');
     } else {
-      Response::err();
+      return Response::err("update notice threw an error");
     }
 
   }, TRUE);
 
 /**
- * Delete Notice - untested
+ * Delete Notice - passing
  * -------------------
  * 
  * Requires:
@@ -90,9 +88,9 @@ $notice->addAction('deleteNotice',
 
     if($deleteNotice == 1) {
       $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-      Response::data($sectionItems, 'section Items retrieved');
+      return Response::data($sectionItems, 'section Items retrieved');
     } else {
-      Response::err();
+      return Response::err();
     }
 
   }, TRUE);

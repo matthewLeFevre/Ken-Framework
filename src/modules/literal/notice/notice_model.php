@@ -2,12 +2,11 @@
 
 function create_notice($data) {
   $db = dbConnect();
-  $sql = "INSERT INTO notice (itemOrder, sectionId, noticeText, noticeType) VALUES (:itemOrder, :sectionId, :noticeType, :noticeText)";
+  $sql = "INSERT INTO notice (itemOrder, sectionId, noticeText) VALUES (:itemOrder, :sectionId, :noticeText)";
   $stmt = $db->prepare($sql);
   $stmt->bindValue(":itemOrder", $data['itemOrder'], PDO::PARAM_INT);
   $stmt->bindValue(":sectionId", $data['sectionId'], PDO::PARAM_INT);
   $stmt->bindValue(":noticeText", $data['noticeText'], PDO::PARAM_STR);
-  $stmt->bindValue(":noticeType", $data['noticeType'], PDO::PARAM_STR);
   $stmt->execute();
   $rowsChanged = $stmt->rowCount();
   $stmt->closeCursor();

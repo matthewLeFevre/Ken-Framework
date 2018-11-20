@@ -34,8 +34,65 @@ $code = new Controller('code');
 
     if($createCode == 1) {
       $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-      Response::data($sectionItems, 'section Items retrieved');
+      return Response::data($sectionItems, 'section Items retrieved');
     } else {
-      Response::err();
+      return Response::err();
     }
+  }, TRUE);
+
+/**
+ * Update code // untested
+ * -----------------------
+ * 
+ * Requires:
+ * @var int secitonId
+ * @var int codeId
+ */
+
+ $code->addAction('updateCode', 
+ 
+  function($payload){
+    var_dump($payload);
+    exit;
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['sectionId', 'codeId'], $filterLoad);
+    // if($payload["codeMarkup"] != null) {
+    //   $filterLoad["codeMarkup"] = Controller::filterHTML($payload["codeMarkup"]);
+    // }
+    
+    $updateCode = update_code($filterLoad);
+
+    if($updateCode == 1) {
+      $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
+      return Response::data($sectionItems, 'section Items retrieved');
+    } else {
+      return Response::err();
+    }
+
+  }, TRUE);
+  
+/**
+ * Delete code // untested
+ * -----------------------
+ * 
+ * Requires:
+ * @var int secitonId
+ * @var int codeId
+ */
+
+$code->addAction('deleteCode', 
+  
+  function($payload){
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(['sectionId', 'codeId'], $filterLoad);
+    
+    $deleteCode = delete_code($filterLoad);
+
+    if($deleteCode == 1) {
+      $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
+      return Response::data($sectionItems, 'section Items retrieved');
+    } else {
+      return Response::err();
+    }
+    
   }, TRUE);

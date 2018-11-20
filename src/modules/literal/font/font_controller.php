@@ -29,9 +29,9 @@ $font->addAction('createFont', function($payload){
   $createFont = create_font($filterLoad);
   if($createFont == 1) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-    Response::data($sectionItems, 'section Items retrieved');
+    return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
 }, TRUE);
 
@@ -50,9 +50,9 @@ $font->addAction('updateFont', function($payload){
   $updateFont = update_font($filterLoad);
   if($updateFont == 1) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-    Response::data($sectionItems, 'section Items retrieved');
+    return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
 }, True);
 
@@ -71,8 +71,8 @@ $font->addAction('updateFont', function($payload){
   $deleteFont = delete_font($filterLoad);
   if($deleteFont == 1) {
     $sectionItems = Section::getSectionItems($filterLoad['sectionId']);
-    Response::data($sectionItems, 'section Items retrieved');
+    return Response::data($sectionItems, 'section Items retrieved');
   } else {
-    Response::err();
+    return Response::err();
   }
  }, TRUE);
