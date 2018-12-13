@@ -1,8 +1,5 @@
 src/utilities/db_connect_local.php
-src/article/article_controller_deprecated.php
-src/asset/asset_controller_deprecated.php
-src/user/user_controller_deprecated.php
-server_assets/*
-server_deprecated.php
+src/modules/
+server_assets/
 depricated_code
 

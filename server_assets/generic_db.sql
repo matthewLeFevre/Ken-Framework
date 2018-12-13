@@ -5,21 +5,21 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema literal
+-- Schema generic
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema literal
+-- Schema generic
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `literal` DEFAULT CHARACTER SET utf8 ;
-USE `literal` ;
+CREATE SCHEMA IF NOT EXISTS `generic` DEFAULT CHARACTER SET utf8 ;
+USE `generic` ;
 
 -- -----------------------------------------------------
--- Table `literal`.`user`
+-- Table `generic`.`user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`user` ;
+DROP TABLE IF EXISTS `generic`.`user` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`user` (
+CREATE TABLE IF NOT EXISTS `generic`.`user` (
   `userId` INT NOT NULL AUTO_INCREMENT,
   `userName` VARCHAR(45) NULL,
   `userEmail` VARCHAR(45) NOT NULL,
@@ -34,11 +34,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`group`
+-- Table `generic`.`group`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`group` ;
+DROP TABLE IF EXISTS `generic`.`group` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`group` (
+CREATE TABLE IF NOT EXISTS `generic`.`group` (
   `groupId` INT NOT NULL,
   `groupCreated` DATETIME NOT NULL,
   `groupTitle` VARCHAR(45) NULL,
@@ -47,18 +47,18 @@ CREATE TABLE IF NOT EXISTS `literal`.`group` (
   INDEX `fk_group_user1_idx` (`user_userId` ASC),
   CONSTRAINT `fk_group_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`message`
+-- Table `generic`.`message`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`message` ;
+DROP TABLE IF EXISTS `generic`.`message` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`message` (
+CREATE TABLE IF NOT EXISTS `generic`.`message` (
   `messageId` INT NOT NULL AUTO_INCREMENT,
   `messageBody` VARCHAR(255) NOT NULL,
   `messageCreated` VARCHAR(45) NOT NULL,
@@ -69,23 +69,23 @@ CREATE TABLE IF NOT EXISTS `literal`.`message` (
   INDEX `fk_message_user1_idx` (`user_userId` ASC),
   CONSTRAINT `fk_message_group1`
     FOREIGN KEY (`group_groupId`)
-    REFERENCES `literal`.`group` (`groupId`)
+    REFERENCES `generic`.`group` (`groupId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_message_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`post`
+-- Table `generic`.`post`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`post` ;
+DROP TABLE IF EXISTS `generic`.`post` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`post` (
+CREATE TABLE IF NOT EXISTS `generic`.`post` (
   `postId` INT NOT NULL AUTO_INCREMENT,
   `postCreated` DATETIME NOT NULL,
   `postModified` DATETIME NOT NULL,
@@ -95,18 +95,18 @@ CREATE TABLE IF NOT EXISTS `literal`.`post` (
   INDEX `fk_post_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_post_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`asset`
+-- Table `generic`.`asset`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`asset` ;
+DROP TABLE IF EXISTS `generic`.`asset` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`asset` (
+CREATE TABLE IF NOT EXISTS `generic`.`asset` (
   `assetId` INT NOT NULL AUTO_INCREMENT,
   `assetPath` VARCHAR(255) NOT NULL,
   `assetName` VARCHAR(45) NOT NULL,
@@ -119,18 +119,18 @@ CREATE TABLE IF NOT EXISTS `literal`.`asset` (
   INDEX `fk_asset_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_asset_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`user_has_group`
+-- Table `generic`.`user_has_group`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`user_has_group` ;
+DROP TABLE IF EXISTS `generic`.`user_has_group` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`user_has_group` (
+CREATE TABLE IF NOT EXISTS `generic`.`user_has_group` (
   `user_has_groupId` INT NOT NULL AUTO_INCREMENT,
   `userId` INT NOT NULL,
   `groupId` INT NOT NULL,
@@ -139,23 +139,23 @@ CREATE TABLE IF NOT EXISTS `literal`.`user_has_group` (
   INDEX `fk_user_has_group1_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_user_has_group1_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_group1_group1`
     FOREIGN KEY (`groupId`)
-    REFERENCES `literal`.`group` (`groupId`)
+    REFERENCES `generic`.`group` (`groupId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`user_has_group`
+-- Table `generic`.`user_has_group`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`user_has_group` ;
+DROP TABLE IF EXISTS `generic`.`user_has_group` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`user_has_group` (
+CREATE TABLE IF NOT EXISTS `generic`.`user_has_group` (
   `user_has_groupId` INT NOT NULL AUTO_INCREMENT,
   `userId` INT NOT NULL,
   `groupId` INT NOT NULL,
@@ -164,23 +164,23 @@ CREATE TABLE IF NOT EXISTS `literal`.`user_has_group` (
   INDEX `fk_user_has_group1_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_user_has_group1_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_group1_group1`
     FOREIGN KEY (`groupId`)
-    REFERENCES `literal`.`group` (`groupId`)
+    REFERENCES `generic`.`group` (`groupId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`article`
+-- Table `generic`.`article`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`article` ;
+DROP TABLE IF EXISTS `generic`.`article` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`article` (
+CREATE TABLE IF NOT EXISTS `generic`.`article` (
   `articleId` INT NOT NULL AUTO_INCREMENT,
   `articleTitle` VARCHAR(255) NOT NULL,
   `articleSummary` VARCHAR(255) NULL,
@@ -196,18 +196,18 @@ CREATE TABLE IF NOT EXISTS `literal`.`article` (
   INDEX `fk_article_user1_idx` (`userId` ASC),
   CONSTRAINT `fk_article_user1`
     FOREIGN KEY (`userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`comment`
+-- Table `generic`.`comment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`comment` ;
+DROP TABLE IF EXISTS `generic`.`comment` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`comment` (
+CREATE TABLE IF NOT EXISTS `generic`.`comment` (
   `commentId` INT NOT NULL AUTO_INCREMENT,
   `commentCreated` DATETIME NOT NULL,
   `commentBody` VARCHAR(255) NOT NULL,
@@ -220,46 +220,46 @@ CREATE TABLE IF NOT EXISTS `literal`.`comment` (
   INDEX `fk_comment_article1_idx` (`article_articleId` ASC),
   CONSTRAINT `fk_comment_post1`
     FOREIGN KEY (`post_postId`)
-    REFERENCES `literal`.`post` (`postId`)
+    REFERENCES `generic`.`post` (`postId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_comment_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_comment_article1`
     FOREIGN KEY (`article_articleId`)
-    REFERENCES `literal`.`article` (`articleId`)
+    REFERENCES `generic`.`article` (`articleId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`userProfileImage`
+-- Table `generic`.`userProfileImage`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`userProfileImage` ;
+DROP TABLE IF EXISTS `generic`.`userProfileImage` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`userProfileImage` (
+CREATE TABLE IF NOT EXISTS `generic`.`userProfileImage` (
   `userProfileImage` INT NOT NULL AUTO_INCREMENT,
   `asset_assetId` INT NOT NULL,
   PRIMARY KEY (`userProfileImage`),
   INDEX `fk_table1_asset1_idx` (`asset_assetId` ASC),
   CONSTRAINT `fk_table1_asset1`
     FOREIGN KEY (`asset_assetId`)
-    REFERENCES `literal`.`asset` (`assetId`)
+    REFERENCES `generic`.`asset` (`assetId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`userProfile`
+-- Table `generic`.`userProfile`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`userProfile` ;
+DROP TABLE IF EXISTS `generic`.`userProfile` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`userProfile` (
+CREATE TABLE IF NOT EXISTS `generic`.`userProfile` (
   `userProfileId` INT NOT NULL AUTO_INCREMENT,
   `table1_userProfileImage` INT NOT NULL,
   `user_userId` INT NOT NULL,
@@ -269,23 +269,23 @@ CREATE TABLE IF NOT EXISTS `literal`.`userProfile` (
   INDEX `fk_userProfile_user1_idx` (`user_userId` ASC),
   CONSTRAINT `fk_userProfile_table11`
     FOREIGN KEY (`table1_userProfileImage`)
-    REFERENCES `literal`.`userProfileImage` (`userProfileImage`)
+    REFERENCES `generic`.`userProfileImage` (`userProfileImage`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_userProfile_user1`
     FOREIGN KEY (`user_userId`)
-    REFERENCES `literal`.`user` (`userId`)
+    REFERENCES `generic`.`user` (`userId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `literal`.`asset_assignment`
+-- Table `generic`.`asset_assignment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`asset_assignment` ;
+DROP TABLE IF EXISTS `generic`.`asset_assignment` ;
 
-CREATE TABLE IF NOT EXISTS `literal`.`asset_assignment` (
+CREATE TABLE IF NOT EXISTS `generic`.`asset_assignment` (
   `assignmentId` INT NOT NULL AUTO_INCREMENT,
   `assetId` INT NOT NULL,
   `post_postId` INT NULL,
@@ -298,294 +298,22 @@ CREATE TABLE IF NOT EXISTS `literal`.`asset_assignment` (
   INDEX `fk_asset_assignment_article1_idx` (`articleId` ASC),
   CONSTRAINT `fk_asset_assignment_asset1`
     FOREIGN KEY (`assetId`)
-    REFERENCES `literal`.`asset` (`assetId`)
+    REFERENCES `generic`.`asset` (`assetId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_asset_assignment_post1`
     FOREIGN KEY (`post_postId`)
-    REFERENCES `literal`.`post` (`postId`)
+    REFERENCES `generic`.`post` (`postId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_asset_assignment_message1`
     FOREIGN KEY (`messageId`)
-    REFERENCES `literal`.`message` (`messageId`)
+    REFERENCES `generic`.`message` (`messageId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_asset_assignment_article1`
     FOREIGN KEY (`articleId`)
-    REFERENCES `literal`.`article` (`articleId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`project`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`project` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`project` (
-  `projectId` INT NOT NULL AUTO_INCREMENT,
-  `userId` INT NOT NULL,
-  `projectStatus` VARCHAR(45) NOT NULL,
-  `projectTitle` VARCHAR(255) NOT NULL,
-  `projectCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `projectDescription` MEDIUMTEXT NULL,
-  `projectImage` VARCHAR(255) NULL,
-  PRIMARY KEY (`projectId`),
-  INDEX `fk_project_user1_idx` (`userId` ASC),
-  CONSTRAINT `fk_project_user1`
-    FOREIGN KEY (`userId`)
-    REFERENCES `literal`.`user` (`userId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`styleGuide`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`styleGuide` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`styleGuide` (
-  `styleGuideId` INT NOT NULL AUTO_INCREMENT,
-  `projectId` INT NOT NULL,
-  `styleGuideTitle` VARCHAR(255) NOT NULL,
-  `styleGuideStatus` VARCHAR(45) NOT NULL,
-  `styleGuideCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `styleGuideDescription` MEDIUMTEXT NULL,
-  PRIMARY KEY (`styleGuideId`),
-  INDEX `fk_styleguide_project1_idx` (`projectId` ASC),
-  CONSTRAINT `fk_styleguide_project1`
-    FOREIGN KEY (`projectId`)
-    REFERENCES `literal`.`project` (`projectId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`section`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`section` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`section` (
-  `sectionId` INT NOT NULL AUTO_INCREMENT,
-  `styleGuideId` INT NOT NULL,
-  `sectionTitle` VARCHAR(255) NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `sectionCreated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `sectionDescription` TINYTEXT NULL,
-  PRIMARY KEY (`sectionId`),
-  INDEX `fk_section_styleguide1_idx` (`styleGuideId` ASC),
-  CONSTRAINT `fk_section_styleguide1`
-    FOREIGN KEY (`styleGuideId`)
-    REFERENCES `literal`.`styleGuide` (`styleGuideId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`textBox`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`textBox` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`textBox` (
-  `textBoxId` INT NOT NULL AUTO_INCREMENT,
-  `sectionId` INT NOT NULL,
-  `textBoxText` MEDIUMTEXT NOT NULL,
-  `textBoxCreated` DATETIME NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `itemType` ENUM('textBox') NOT NULL DEFAULT 'textBox',
-  PRIMARY KEY (`textBoxId`),
-  INDEX `fk_textbox_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_textbox_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`heading`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`heading` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`heading` (
-  `headingId` INT NOT NULL AUTO_INCREMENT,
-  `sectionId` INT NOT NULL,
-  `headingText` VARCHAR(255) NOT NULL,
-  `headingCreated` DATETIME NOT NULL,
-  `itemOrder` VARCHAR(45) NOT NULL,
-  `itemType` ENUM('heading') NOT NULL DEFAULT 'heading',
-  PRIMARY KEY (`headingId`),
-  INDEX `fk_heading_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_heading_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`colorPallet`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`colorPallet` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`colorPallet` (
-  `colorPalletId` INT NOT NULL AUTO_INCREMENT,
-  `sectionId` INT NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `itemType` ENUM('colorPallet') NOT NULL DEFAULT 'colorPallet',
-  PRIMARY KEY (`colorPalletId`),
-  INDEX `fk_colorpallet_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_colorpallet_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`font`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`font` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`font` (
-  `fontId` INT NOT NULL AUTO_INCREMENT,
-  `sectionId` INT NOT NULL,
-  `fontUrl` VARCHAR(255) NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `fontFamily` VARCHAR(45) NOT NULL,
-  `itemType` ENUM('font') NOT NULL DEFAULT 'font',
-  PRIMARY KEY (`fontId`),
-  INDEX `fk_font_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_font_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`image`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`image` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`image` (
-  `imageId` INT NOT NULL AUTO_INCREMENT,
-  `sectionId` INT NOT NULL,
-  `assetId` INT NULL,
-  `itemOrder` INT NOT NULL,
-  `imageUrl` VARCHAR(255) NULL,
-  `itemType` ENUM('image') NOT NULL DEFAULT 'image',
-  PRIMARY KEY (`imageId`),
-  INDEX `fk_image_section1_idx` (`sectionId` ASC),
-  INDEX `fk_image_asset1_idx` (`assetId` ASC),
-  CONSTRAINT `fk_image_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_image_asset1`
-    FOREIGN KEY (`assetId`)
-    REFERENCES `literal`.`asset` (`assetId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`colorSwatch`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`colorSwatch` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`colorSwatch` (
-  `colorSwatchId` INT NOT NULL AUTO_INCREMENT,
-  `colorSwatchHex` VARCHAR(7) NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `colorSwatchTitle` VARCHAR(45) NULL,
-  `colorSwatchVar` VARCHAR(45) NULL,
-  `colorSwatchRGB` VARCHAR(17) NULL,
-  `colorPalletId` INT NOT NULL,
-  PRIMARY KEY (`colorSwatchId`),
-  INDEX `fk_colorSwatch_colorPallet1_idx` (`colorPalletId` ASC),
-  CONSTRAINT `fk_colorSwatch_colorPallet1`
-    FOREIGN KEY (`colorPalletId`)
-    REFERENCES `literal`.`colorPallet` (`colorPalletId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`notice`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`notice` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`notice` (
-  `noticeId` INT NOT NULL AUTO_INCREMENT,
-  `sectionId` INT NOT NULL,
-  `itemOrder` INT NOT NULL,
-  `itemType` ENUM('notice') NOT NULL DEFAULT 'notice',
-  `noticeType` ENUM('success', 'info', 'warning', 'danger', 'tip', 'note') NOT NULL DEFAULT 'note',
-  `noticeText` TINYTEXT NULL,
-  PRIMARY KEY (`noticeId`),
-  INDEX `fk_notice_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_notice_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`code`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`code` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`code` (
-  `codeId` INT NOT NULL AUTO_INCREMENT,
-  `itemOrder` INT NOT NULL,
-  `itemType` ENUM('code') NOT NULL DEFAULT 'code',
-  `codeMarkup` MEDIUMTEXT NULL,
-  `codeLanguage` ENUM('html', 'css', 'js', 'php') NOT NULL DEFAULT 'html',
-  `sectionId` INT NOT NULL,
-  PRIMARY KEY (`codeId`),
-  INDEX `fk_code_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_code_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `literal`.`component`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `literal`.`component` ;
-
-CREATE TABLE IF NOT EXISTS `literal`.`component` (
-  `componentId` INT NOT NULL AUTO_INCREMENT,
-  `itemOrder` INT NOT NULL,
-  `itemType` ENUM('component') NOT NULL DEFAULT 'component',
-  `componentHtml` MEDIUMTEXT NOT NULL,
-  `componentCss` MEDIUMTEXT NOT NULL,
-  `componentTitle` VARCHAR(75) NOT NULL,
-  `componentDescription` MEDIUMTEXT NULL,
-  `sectionId` INT NOT NULL,
-  PRIMARY KEY (`componentId`),
-  INDEX `fk_component_section1_idx` (`sectionId` ASC),
-  CONSTRAINT `fk_component_section1`
-    FOREIGN KEY (`sectionId`)
-    REFERENCES `literal`.`section` (`sectionId`)
+    REFERENCES `generic`.`article` (`articleId`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;

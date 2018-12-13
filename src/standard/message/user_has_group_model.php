@@ -14,7 +14,10 @@ function create_user_group($userGroupData) {
   return $rowsChanged;
 }
 
-// delete message
+// Remove a user from a group 
+/**
+ * @todo: deletes all of that users messages as well
+ */  
 
 function delete_user_group($userGroupId) {
   $db = dbConnect();
