@@ -37,21 +37,40 @@ $user->addAction('loginUser',
   function($payload){
 
     $filterLoad = Controller::filterPayload($payload, 'userEmail');
-                  Controller::required(['userEmail', 'userPassword'], $filterLoad);
+                  Controller::required(['userNameOrEmail', 'userPassword'], $filterLoad);
 
-    $userPassword = $filterLoad['userPassword'];
-    $userEmail    = $filterLoad['userEmail'];
-    $userEmail    = checkEmail($userEmail);
-    // $userPasswordCheck = checkPassword($userPassword); uncomment befor production and test
+    $isEmail = isEmail($filterLoad['userNameOrEmail']);
 
-    $userData  = get_user_by_email($userEmail);
-    $hashCheck = password_verify($userPassword, $userData['userPassword']);
+    
+    if($isEmail) {
+      $userEmail = checkEmail($filterLoad['userNameOrEmail']);
+      $userData  = get_user_by_email($userEmail);
+    } else {
+      $userData = get_user_by_name($filterLoad['userNameOrEmail']);
+    }
+    
+    // this ensures that users are creating passwords that contain
+    // an uppercase/lowercase/number/symbol in thier passwords
+    // $userPasswordCheck = checkPassword($userPassword); 
+    $hashCheck = password_verify($filterLoad['userPassword'], $userData['userPassword']);
 
     // throw error wrong password
     if (!$hashCheck) {
       return Response::err("Your password or username is incorrect.");
       exit;
     }
+
+    // Change user to be online
+    // needs more work
+    // $updateActivity = update_user_activity(["userIsOnline" => "yes", "userId" => $userData["userId"]]);
+    $userData = get_user_by_id($userData['userId']);
+
+    // needs more work
+    // if($updateActivity != 1) {
+    //   echo "problems with updating user activity";
+    //   exit;
+    // }
+    
 
     if($GLOBALS['user']->getTokenValidation()) {
       $userData['apiToken'] = generateJWT($userData["userId"]);
@@ -62,7 +81,7 @@ $user->addAction('loginUser',
 });
 
 /**
- * Register User // Retest
+ * Register User // Passing
  * --------------
  * 
  *  Requires:
@@ -105,14 +124,34 @@ $user->addAction('registerUser',
 });
 
 /**
- * Logout User // Retest
+ * Logout User // Passing
  * --------------
  */
 
 $user->addAction('logoutUser', 
 
   function($payload){
+    $filterLoad = Controller::filterPayload($payload);
+                  Controller::required(["userId"], $filterLoad);
+    update_user_activity(["userIsOnline" => "no", "userId" => $filterLoad["userId"]]);
+    return Response::success("User Logged out successfully");
 
-    return Response::Data(['userIsLoggedIn' => FALSE], "User Logged out successfully");
+  }, True);
 
-  }, TRUE);
+  /**
+   * Delete User // Untested
+   * -----------------------
+   */
+
+  $user ->addAction('deleteUser', 
+  
+    function($payload){
+      $filterLoad = Controller::filterPayload($payload);
+                    Controller::required(["userId"], $filterLoad);
+      $deleteUser = delete_user($filterLoad["userId"]);
+      if ($deleteUser) {
+        return Response::success("User deleted successfully");
+      } else {
+        return Response::err("User was not deleted successfully");
+      }
+    }, TRUE);

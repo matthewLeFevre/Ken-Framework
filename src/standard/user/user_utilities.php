@@ -15,3 +15,12 @@
     $pattern = '/^(?=.*[[:digit:]])(?=.*[[:punct:]])[[:print:]]{8,}$/';
     return preg_match($pattern, $password);
   }
+
+  function isEmail($input) {
+    $key = stripos($input, '@');
+    if ($key) {
+      return true;
+    } else {
+      return false;
+    }
+  }

@@ -117,6 +117,16 @@ class Controller
         return $filterVar;
     }
 
+    public static function filterText($payloadVar) {
+        if(gettype($payloadVar) == "string") {
+            $filterVar = filter_var($payloadVar, FILTER_SANITIZE_STRING);
+        } else {
+            return Response::err("The var to be filtered to plain text was not a string.");
+        }
+
+        return $filterVar;
+    }
+
     /**
      * required(array, array) static funciton
      * - used to quickly check if inputs sent in the

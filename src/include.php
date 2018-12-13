@@ -45,6 +45,3 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/message_controll
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/message_model.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/group_model.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/standard/message/user_has_group_model.php';
-
-// modules
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/modules/literal/include.php';

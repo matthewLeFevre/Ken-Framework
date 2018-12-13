@@ -12,26 +12,13 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 
 // Instantiate app
-$app = new Generic(TRUE);
+$app = new Generic();
 
 // add controllers
 $app->addController($asset);
 $app->addController($article);
 $app->addController($user);
 $app->addController($message);
-
-// custom module controllers in development
-$app->addController($project);
-$app->addController($styleGuide);
-$app->addController($section);
-
-$app->addController($textBox);
-$app->addController($heading);
-$app->addController($colorPallet);
-$app->addController($font);
-$app->addController($image);
-$app->addController($notice);
-$app->addController($code);
 
 // start server
 $app->start();
