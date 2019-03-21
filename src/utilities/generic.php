@@ -6,8 +6,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * 
  *  Here is where the server exists.
  *  The server keeps track of all of the 
- *  controllers and listens for git and
- *  post requests. When the requests are
+ *  controllers and listens for GET and
+ *  POST requests. When the requests are
  *  made it pushes the data along to the
  *  right controller and that controller
  *  will fire the correct action.

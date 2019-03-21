@@ -115,6 +115,10 @@ $user->addAction('registerUser',
     $filteredPayload['userPassword'] = password_hash($filteredPayload['userPassword'], PASSWORD_DEFAULT);
     $newRegistrationStatus = register_new_user($filteredPayload);
 
+    // creates a folder for each regsitered user
+    if(mkdir($_SERVER['DOCUMENT_ROOT'] . '/server_assets/' . preg_replace('/\s+/', '_', $filterPayload['userName']))) {
+      return Response::err("new folder not created");
+    }
     // create custom notification that registration was successful
     if($newRegistrationStatus) {
       return Response::success($filteredPayload['userName'] . " account created successfully. Please login to access your account.");

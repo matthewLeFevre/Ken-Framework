@@ -8,7 +8,8 @@ $asset = new Controller('asset');
 $asset->addAction('createAsset', function($payload){
 
   // asset variables
-  $asset_dir = '/server_assets';
+  $userName = filter_input(INPUT_POST, 'userName', FILTER_SANITIZE_STRING);
+  $asset_dir = '/server_assets/' . preg_replace('/\s+/', '_', $userName);
   $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
 
   // collect needed inputs
@@ -73,49 +74,6 @@ $asset->addAction('createAsset', function($payload){
   }
 }, TRUE);
 
-// Assign Asset -- Retest
-$asset->addAction('assignAsset', function($payload){
-
-  $filteredPayload = array();
-  $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-  $filteredPayload["assignedTable"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING);
-  $filteredPayload["assignedId"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
-  
-  // send errors if data is missing
-  if( empty($filteredPayload["assetId"]) || empty($filteredPayload["assignedTable"]) || empty($filteredPayload["assignedId"])) {
-    return Response::err("Required data has not been supplied. Please try again.");
-  }
-
-  $assignAssetStatus = assign_asset($filteredPayload);
-
-  if($assignAssetStatus == 1) {
-    return Response::success("Asset successfully assigned");
-  } else {
-    return Response::err("There was an issue assigning the asset.");
-  }
-}, TRUE);
-
-// untested
-// Logic that has not yet been implimented correctly
-// should be retrieving data from payload not assetData
-$asset->addAction('unAssignAsset', function($payload){
-
-  $filteredPayload = array();
-  $filteredPayload["assetId"]  = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
-  $filteredPayload["assigned"] = filter_var($payload["assignedId"], FILTER_SANITIZE_NUMBER_INT);
-  $filteredPayload["assigned"] = filter_var($payload["assignedTable"], FILTER_SANITIZE_STRING); 
-  // Check for empty inputs
-  // chkEmpty() should not be used here
-  // check empty inputs manually
-  if(ckEmpty($filteredPayload)) { return ckEmpty($filteredPayload);}
-  $unassignAssetStatus- unassign_asset($filteredPayload);
-  if($unassignAssetStatus == 1) {
-    return Response::err("success", "Asset was unassigned successfully.");
-  } else {
-    return Response::err("failure", "There was an issue unassigning the asset.");
-  }
-}, TRUE);
-
 // retest
 $asset->addAction('updateAssetStatus', function($payload){
 
@@ -137,32 +95,52 @@ $asset->addAction('updateAssetStatus', function($payload){
   }
 }, TRUE);
 
-// retest/unfinished - needs to delete resource from server as well
-$asset->addAction('deleteAsset', function($payload){
-  $filteredPayload = array();
-  $filteredPayload["assetId"] = filter_var($payload["assetId"], FILTER_SANITIZE_NUMBER_INT);
+// untested
+$asset->addAction('deleteAsset', 
 
-  if(empty($filteredPayload['assetId'])) {
-    return Response::err("please include the assetId in the query.");
-  }
+  function($payload){
+    $filteredLoad = Controller::filterPayload($payload);
+                    Controller::required(['assetId', 'userName'], $filteredLoad);
+    
+    // server file path
+    $asset_dir = '/server_assets/' preg_replace('/\s+/', '_', $filterPayload['userName']);
+    $asset_dir_path = $_SERVER['DOCUMENT_ROOT'] . $asset_dir;
 
-  $deleteAssetStatus = delete_asset($filteredPayload['assetId']);
+    // get file data out of database to get the filename
+    $assetData = get_asset_by_id($filteredPayload[]);
 
-  if($deleteAssetStatus === 1) {
-    return Response::success("Asset deleted.");
-  } else {
-    return Response::err("Asset was not deleted.");
-  }
+    // create the direct path to the file
+    $target = $asset_dir_path . "/" . $assetData["assetName"];
+
+    if(file_exists($target)) {
+      $result = unlink($target);
+    }
+    
+    // only delete the asset if physical file was deleted
+    if($result) {
+      $deleteAssetStatus = delete_asset($filteredPayload['assetId']);
+
+      if($deleteAssetStatus === 1) {
+        return Response::success("Asset deleted.");
+      } else {
+        return Response::err("Asset was not deleted.");
+      }
+    } else {
+      return Response::err("The physical file was not deleted!")
+    }
 }, TRUE);
 
 // untested - should use token validation
-$asset->addAction('getAssetsByUserId', function($payload){
-  if(empty($payload["userId"])){
-    return Response::err();
-  }
-  $userId = filter_var($payload['userId'], FILTER_SANITIZE_NUMBER_INT);
-  $assets = get_assets_by_userId($userId);
-  return Response::data($assets, "All of your assets were retrieved.");
+$asset->addAction('getAssetsByUserId', 
+
+  function($payload){
+    
+    $filteredLoad = Controller::filterPayload($payload);
+                    Controller::required(['userId'], $filteredLoad);
+
+    $assets = get_assets_by_userId($filteredLoad['userId']);
+
+    return Response::data($assets, "All of your assets were retrieved.");
 }, TRUE);
 
 // untested

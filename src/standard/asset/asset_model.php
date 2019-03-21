@@ -107,3 +107,14 @@ function get_published_assets() {
   $stmt->closeCursor();
   return $assetData;
 }
+
+function get_asset_by_id($assetId) {
+  $db = dbConnect();
+  $sql = "SELECT *  FROM asset WHERE assetId = :assetId";
+  $stmt = $db->prepare($sql);
+  $stmt->bindValue(':assetId', $assetId, PDO::PARAM_INT);
+  $stmt->execute();
+  $assetData = $stmt->fetch(PDO::FETCH_NAMED);
+  $stmt->closeCursor();
+  return $assetData;
+}
