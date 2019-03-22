@@ -12,7 +12,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 
 // Instantiate app
-$app = new Generic();
+$app = new Ken();
 
 // add controllers
 $app->addController($asset);

@@ -14,7 +14,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * 
  */
 
-class Generic {
+class Ken {
 
     /**
      *  request information
