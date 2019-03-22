@@ -115,7 +115,7 @@ $user->addAction('registerUser',
     $filteredPayload['userPassword'] = password_hash($filteredPayload['userPassword'], PASSWORD_DEFAULT);
     $newRegistrationStatus = register_new_user($filteredPayload);
 
-    // creates a folder for each regsitered user
+    // creates a folder for each regsitered
     if(mkdir($_SERVER['DOCUMENT_ROOT'] . '/server_assets/' . preg_replace('/\s+/', '_', $filterPayload['userName']))) {
       return Response::err("new folder not created");
     }
