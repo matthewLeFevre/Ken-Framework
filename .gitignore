@@ -2,4 +2,5 @@ src/utilities/db_connect_local.php
 src/modules/
 server_assets/
 depricated_code
+src/standard/
 
