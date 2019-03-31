@@ -12,6 +12,7 @@ Actions represent a single operation that a user undertakes, this could be regis
 
 - Dispatcher class makes database interactions dynamic be drying up the code needed to create models in the PHP generic way.
 - Model and controller now can be combined removing the need for a seperate file
+- Removed old code from the framework
 
 ## v0.1.0
 

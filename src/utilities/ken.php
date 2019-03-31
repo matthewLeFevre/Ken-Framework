@@ -2,7 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 /**
- * Generic 
+ * Ken Class
  * 
  *  Here is where the server exists.
  *  The server keeps track of all of the 
