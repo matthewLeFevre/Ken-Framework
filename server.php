@@ -1,5 +1,12 @@
 <?php 
 
+/**
+ * Sample Server File
+ * 
+ * This outlines the general structure of the
+ * server file.
+ */
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
 // CSRF (cross-site request forgery) vulnerability
@@ -15,10 +22,7 @@ header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 $app = new Ken();
 
 // add controllers
-$app->addController($asset);
-$app->addController($article);
 $app->addController($user);
-$app->addController($message);
 
 // start server
 $app->start();
