@@ -19,6 +19,8 @@ class Controller
      * - called when assigned to the server
      *  basically inherits validation from
      *  server configuration by user.
+     * 
+     * @param boolean $validation
      */
 
     public function setTokenValidation($validation) {
@@ -29,7 +31,7 @@ class Controller
     }
 
     /**
-     * Getters
+     * Get-ers
      * --------
      * getName()
      * - returns the name of the controller
@@ -59,6 +61,10 @@ class Controller
      * - depending on the action validation can be 
      * supplied to remedy how the aciton should
      * handle token validation.
+     * 
+     * @param string $actionName
+     * @param function $actionFunc
+     * @param boolean $howToValidate
      */
     public function addAction($actionName, $actionFunc, $howToValidate = FALSE) {
         $this->actions[$actionName] = new Action($actionName, $actionFunc, $howToValidate);
@@ -69,43 +75,55 @@ class Controller
      * - used to expedite the filter and sanitize functions
      * only caters to two data types. Strings and Numerics.
      * 
-     * **NOTE** - Need a stronger way to deferentiate between 
-     * a basic string and input submitted with HTML markup.
-     * 
-     * @todo make the exemption input an array so that more than one
-     * input can conditionally be sanitized
+     * @param array $payload
+     * @param array $exemptions
      */
 
-    public static function filterPayload($payload, $exemption = null) {
-        $filteredPayload = array();
-        foreach($payload as $key => $load) {
-            
-            if($key == $exemption) {
-                $filteredPayload[$key] = $load;
-            } else {
-                switch(gettype($load)) {
-                    case "integer":
-                    $filter = filter_var($load, FILTER_SANITIZE_NUMBER_INT);
-                    break;
-                    case "string":
-                        if(strlen($load) < 45) {
-                            $filter = filter_var($load, FILTER_SANITIZE_STRING);
-                        } else {
-                            $filter = filter_var($load,   FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                        }
-                    break;
-                    default:
-                    $filter = NULL;
-                    break;
+    public static function filterPayload($payload, $exemptions = []) {
+        $filterLoad = array();
+
+        /**
+         * Iterate through the payload
+         * ---------------------------
+         * 
+         * If there are exemptions that are specified
+         * iterate through all of the exemptions and 
+         * compate them to the key of each payload
+         * if there is a match assign that value 
+         * to the payload without being sanitized.
+         */
+        foreach($payload as $key => $value) {
+            if(!empty($exemptions)) {
+                foreach($exemptions as $exep) {
+                    if($key === $exep) {
+                        $filterLoad[$key] = $value;
+                    }
                 }
-                $filteredPayload[$key] = $filter;
+            } else {
+                switch(gettype($value)) {
+                    case "integer":
+                        $filter = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                        break;
+                    case "string":
+                        $filter = filter_var($value, FILTER_SANITIZE_STRING);
+                        break;
+                    default:
+                        $filter = NULL;
+                        break;
+                }
+                $filterLoad[$key] = $filter;
             }
         }
-        return $filteredPayload;
+        return $filterLoad;
     }
 
     /**
-     * Filter Html
+     * Filter Html 
+     * ------------
+     * 
+     * If the client sends html be sure to add an
+     * exemption and explicitly fitler the variable
+     * with this static function.
      */
 
     public static function filterHTML($payloadVar) {
@@ -152,6 +170,9 @@ class Controller
      * once the correct one is encounted
      * that action is executed and the 
      * parameters for that funcion are sent along
+     * 
+     * @param string $action
+     * @param array $params
      */
 
     public function callAction($action, $params) {
