@@ -12,26 +12,26 @@ class JWT  {
     return base64_decode($paddedData);
   }
 
-  public static function generateJWT($userId) {
-    $headerEncoded = self::base64URLEncode(json_encode(["alg" => "HS256", "typ" => "JWT"]));
-    $payloadEncoded = self::base64URLEncode(json_encode(["userId" => $userId])); // may be changed determined on size of payload
+  // testing this method instead of the other one.
+  public static function base64EncodeTest($data) {
+    return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
+  }
+
+  public static function generateJWT($tokenClaims) {
+    $headerEncoded = self::base64URLEncodeTest(json_encode(["alg" => "HS256", "typ" => "JWT"]));
+    $payloadEncoded = self::base64URLEncodeTest(json_encode($tokenClaims)); // may be changed determined on size of payload
     $dataEncoded = "$headerEncoded.$payloadEncoded";
     $rawSignature = hash_hmac('sha256', $dataEncoded, "thisIsMySecret", true);
-    $signatureEncoded = self::base64URLEncode($rawSignature);
+    $signatureEncoded = self::base64URLEncodeTest($rawSignature);
     $jwt = "$dataEncoded.$signatureEncoded";
     return $jwt;
   }
   
   public static function verifyToken($token) {
-    
     list($headerEncoded, $payloadEncoded, $signatureEncoded) = explode('.', $token);
- 
     $dataEncoded = "$headerEncoded.$payloadEncoded";
- 
     $signature = self::base64URLDecode($signatureEncoded);
- 
     $rawSignature = hash_hmac('sha256', $dataEncoded, "thisIsMySecret", true); // you should use a much more secure secret
- 
     return hash_equals($rawSignature, $signature);
   }
 }

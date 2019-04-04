@@ -10,7 +10,7 @@ Actions represent a single operation that a user undertakes, this could be regis
 
 ### Alpha Dispatcher Class
 
-- Dispatcher class makes database interactions dynamic be drying up the code needed to create models in the PHP generic way.
+- Dispatcher class makes database interactions dynamic by drying up the code needed to create models in the PHP generic way.
 - Model and controller now can be combined removing the need for a seperate file
 - Removed old code from the framework
 

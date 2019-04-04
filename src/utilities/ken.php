@@ -18,6 +18,10 @@ class Ken {
 
     /**
      *  request information
+     * ---------------------
+     * The request needs to contain these
+     * values in order to be a valid request
+     * the exception to this is a get request
      * 
      *  @var string $reqController
      *  @var string $reqAction
@@ -41,10 +45,13 @@ class Ken {
     /**
      *  class constructor
      *  
-     *  @param boolean $tokenValidation
+     *  @param array $options
+     * 
+     *  @todo explore more configuration options
+     *        for the server.
      */
-    public function __construct($tokenValidation = FALSE) {
-        if(is_bool($tokenValidation)) {
+    public function __construct($options = ['tokenValidation' => FALSE]) {
+        if(is_bool($options['tokenValidation'])) {
             $this->tokenValidation = $tokenValidation;
         }
     }
@@ -104,7 +111,7 @@ class Ken {
      * - When a request is made the controller will be pulled
      * to find an aciton that matches a request in a controller
      * 
-     *  @param object $controller;
+     *  @param controller $controller;
      */
 
     public function addController($controller) {
@@ -152,7 +159,7 @@ class Ken {
                 return $controller->callAction($this->reqAction, $this->payload);
             } 
         }
-        return response("failure", "The " . $this->reqController . " controller does not exist");
+        return Response::err("The " . $this->reqController . " controller does not exist");
     }
 
     /**
@@ -207,7 +214,7 @@ class Ken {
                         $token = $this->payload["apiToken"];
                         $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING); // I don't think there is any reason to sanitize the token...
                     } else {
-                        echo json_encode(response("failure", "No token was submitted with the request. Please log back in and try again or consult your web administrator."));
+                        echo json_encode(Response::err("No token was submitted with the request. Please log back in and try again or consult your web administrator."));
                         return exit;
                     }
                 }
@@ -216,7 +223,7 @@ class Ken {
             echo json_encode($this->process());
 
         } else {
-            echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
+            echo json_encode(Response::err("failure", "Bad post request. Either the controller action or payload was not sent."));
             return;
         }
     }
@@ -233,7 +240,7 @@ class Ken {
      * request if the it is an file upload(asset)
      * request
      *
-     * **NOTE** - I need to find out how to filter
+     * @todo - I need to find out how to filter
      * the file upload.
      *
      * - collects entire post request by accessing
@@ -247,10 +254,22 @@ class Ken {
     }
 
     function POSTListener() {
-        // POST request Listener
+        /**
+         * Post request Listener
+         * 
+         * If the controller and action have not
+         * yet been populated by the GETListener
+         * we have a post request.
+         */
         if($this->reqController == NULL || $this->reqAction == NULL){
 
-            // Asset POST Listener
+            /**
+             * Asset Listener
+             * 
+             * If we can directly access the controller
+             * from the $_POST object we are dealing with
+             * a form.
+             */
             if(isset($_POST['controller'])) {
                 if(!isset($_POST['action'])) {
                     echo(json_encode(response("failure", "The specified controller or action has not been supplied.")));
