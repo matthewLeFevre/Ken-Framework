@@ -33,7 +33,7 @@ class Action
      * Getter
      * ---------
      * getName()
-     * - retrieves the nave of the Action
+     * - retrieves the name of the Action
      */
 
     public function getName() {
@@ -66,11 +66,11 @@ class Action
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
         if($this->tokenValidation && $this->howToValidate && !isset($arguments[0]['apiToken'])) {
-            return response("failure", "Api token missing, please contact your web administrator");
+            return Response::err("Api token missing, please contact your web administrator");
             exit;
         }
         if($this->tokenValidation && $this->howToValidate && !verifyToken($arguments[0]['apiToken'])) {
-            return response("failure", "Invalid token sent to api, error encountered in ". $this->name." action ,please contact your web administrator");
+            return Response::err("Invalid token sent to api, error encountered in ". $this->name." action ,please contact your web administrator");
             exit;
         }
         return call_user_func_array($this->action, $arguments);

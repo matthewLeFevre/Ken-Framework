@@ -14,6 +14,7 @@ Actions represent a single operation that a user undertakes, this could be regis
   - Added a simplified base 64encoding function to JWT Class
   - Minor edits to Ken Class
   - Added the capability to add more than one exemptions to the Controller::filterPayload()
+  - Minor changes to Dispatcher Class
 
 ## v0.2.0
 

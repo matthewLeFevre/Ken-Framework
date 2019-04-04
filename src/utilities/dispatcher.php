@@ -11,7 +11,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * previous method of having a function for
  * each model action dynamic
  * 
- * @todo test the dispatcher agains more actions
+ * @todo test the dispatcher against more actions
  */
 
 class Dispatcher 
@@ -21,8 +21,20 @@ class Dispatcher
     $this->table = $table;
     $this->fields = $fields;
   }
+
+  /**
+   * Specify details that the dispatch can 
+   * execute against the database.
+   * 
+   * Iterates over each key and binds the
+   * value to the PDO object.
+   * 
+   * @param string $sql
+   * @param array $data
+   * @param string $fetchConstant
+   */
   
-  public function dispatch($sql, $data, $options = false) {
+  public function dispatch($sql, $data, $fetchConstant = false) {
     $db = dbConnect();
     $stmt = $db->prepare($sql);
 
@@ -36,11 +48,9 @@ class Dispatcher
 
     $stmt->execute();
 
-    if($options) {
-      // var_dump($options);
-      // exit;
+    if($fetchConstant) {
       $data = "";
-      switch($options) {
+      switch($fetchConstant) {
         case "fetch":
           $data = $stmt->fetch(PDO::FETCH_NAMED);
           break;
