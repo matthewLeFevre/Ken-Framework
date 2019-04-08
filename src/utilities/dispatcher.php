@@ -17,9 +17,23 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 class Dispatcher 
 {
 
-  function __construct($table, $fields) {
+  /**
+   * @param string $table
+   * @param array $fields
+   * @param array $sql
+   * 
+   * form $sql array like this:
+   * 
+   * $sql = array (
+   *  $name => $value,
+   * );
+   * 
+   */
+
+  function __construct($table, $fields, $sql = []) {
     $this->table = $table;
     $this->fields = $fields;
+    $this->sql = $sql;
   }
 
   /**
@@ -88,6 +102,10 @@ class Dispatcher
         return Response::err("$key was not of type integer, double, or string.");
       break;
     }
+  }
+
+  public function getSQL($key) {
+    return $this->sql[$key];
   }
 
 }

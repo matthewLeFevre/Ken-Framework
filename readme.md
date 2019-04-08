@@ -6,6 +6,13 @@ Actions represent a single operation that a user undertakes, this could be regis
 
 # Change Log
 
+## v0.3.1
+
+### Minor Edits to Dispatcher Class
+
+  - Added the ability to include all SQL statements to be used on instantiation so that they can be reused throughout the actions.
+  - Added a helper function to get the SQL statements stored by key
+
 ## v0.3.0
 
 ### Updates to JWT Class
