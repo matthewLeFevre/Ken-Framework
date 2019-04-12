@@ -1,4 +1,4 @@
-# Ken Framework v0.3.0
+# Ken Framework v0.3.1
 
 Ken is a simple PHP framework adapted to create custom REST API's. Ken supplies a suite of middleware tools to developers to simplify web application creation. In a nutshell Ken uses a server file to handle requests from a client, the request has to be sent with specific criteria to be able to preform an action.
 
