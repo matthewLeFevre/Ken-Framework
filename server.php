@@ -19,10 +19,10 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 
 // Instantiate app
-$app = new Ken(['tokenValidation' => TRUE]);
+$app = new Ken(['tokenValidation' => TRUE, 'actionExemptions' => ['createAccount']]);
 
 // add controllers
-$app->addController($user);
+$app->addController($Account);
 
 // start server
 $app->start();

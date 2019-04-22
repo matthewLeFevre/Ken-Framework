@@ -11,7 +11,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * previous method of having a function for
  * each model action dynamic
  * 
- * @todo test the dispatcher against more actions
+ * @todo test the dispatcher against more actions - testing is underway
+ * @todo make the dispatch more abstract and less rigid - Options were added
+ *       we may need some for of dynamic query builder
+ * @todo clean up code so that it looks nicer
  */
 
 class Dispatcher 
@@ -19,20 +22,18 @@ class Dispatcher
 
   /**
    * @param string $table
-   * @param array $fields
    * @param array $sql
    * 
    * form $sql array like this:
    * 
    * $sql = array (
-   *  $name => $value,
+   *  $name => $sqlQuery,
    * );
    * 
    */
 
-  function __construct($table, $fields, $sql = []) {
+  function __construct($table, $sql = []) {
     $this->table = $table;
-    $this->fields = $fields;
     $this->sql = $sql;
   }
 
@@ -46,15 +47,28 @@ class Dispatcher
    * @param string $sql
    * @param array $data
    * @param string $fetchConstant
+   * 
+   * @todo Provide documentation and descriptions for all methods
    */
   
-  public function dispatch($sql, $data, $fetchConstant = false) {
+  public function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false]) {
+    $fields = array();
+
+    // parse the sql and find the required fields
+    // $pattern = "/[:^](\S*)[$,|$)]/";
+    // $pattern = "/[:^](\S+)/";
+    $pattern = "/[:^]([A-z]+)/";
+    preg_match_all($pattern, $sql, $matches_out);
+    $fields = $matches_out[1];
+
     $db = dbConnect();
     $stmt = $db->prepare($sql);
 
     foreach($data AS $key => $value) {
-      foreach($this->fields AS $field) {
+      foreach($fields AS $field) {
         if($key == $field) {
+          var_dump($key . "---Key", $field ."--field");
+          
           $stmt->bindValue(":$key", $value, $this->pdoConstant($value, $key));
         }
       }
@@ -62,9 +76,9 @@ class Dispatcher
 
     $stmt->execute();
 
-    if($fetchConstant) {
+    if(isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
       $data = "";
-      switch($fetchConstant) {
+      switch($options['fetchConstant']) {
         case "fetch":
           $data = $stmt->fetch(PDO::FETCH_NAMED);
           break;
@@ -82,6 +96,11 @@ class Dispatcher
       return $data;
     } else {
       $rowsChanged = $stmt->rowCount();
+      if (isset($options['returnId']) && $options['returnId'] == TRUE) {
+        $id = $db->lastInsertId();
+        $stmt->closeCursor();
+        return ["rows" => $rowsChanged, "id" => $id];
+      }
       $stmt->closeCursor();
       return $rowsChanged;
     }

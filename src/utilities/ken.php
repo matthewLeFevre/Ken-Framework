@@ -41,6 +41,7 @@ class Ken {
      */
     private $tokenValidation;
     private $controllers = array();
+    private $actionExemptions = array();
 
     /**
      *  class constructor
@@ -49,10 +50,15 @@ class Ken {
      * 
      *  @todo explore more configuration options
      *        for the server.
+     *  @todo having the options specified like so could pose
+     *        issues when all of them are not explicitely used
      */
-    public function __construct($options = ['tokenValidation' => FALSE]) {
+    public function __construct($options = ['tokenValidation' => FALSE, 'actionExemptions' => array()]) {
         if(is_bool($options['tokenValidation'])) {
-            $this->tokenValidation = $tokenValidation;
+            $this->tokenValidation = $options['tokenValidation'];
+        }
+        if(!empty($options['actionExemptions'])) {
+            $this->actionExemptions = $options['actionExemptions'];
         }
     }
 
@@ -121,6 +127,20 @@ class Ken {
             $controller->setTokenValidation($this->tokenValidation);
         }
         $this->controllers[$controller->getName()] = $controller;
+    }
+
+    /**
+     * isNoTokenAction()
+     * -------------------
+     * Checks to see if the action running does not require a token
+     */
+
+    private function isActionExemption($reqAction) {
+        foreach($this->actionExemptions as $action) {
+            if ($action == $reqAction) {
+                return TRUE;
+            }
+        }
     }
 
     /**
@@ -199,17 +219,19 @@ class Ken {
                 exit;
             }
 
-            // A token is not required for the following requests and tokens are not 
-            // required --currently-- for any get requests unless they are specifically assigned 
-            // at the action level. If a request is made for an aciton other than those in
-            // this logic statement a valid token is required.
+            /** 
+             * A token is not required for the following requests and tokens are not 
+             * required --currently-- for any get requests unless they are specifically assigned 
+             * at the action level. If a request is made for an aciton other than those in
+             * this logic statement a valid token is required.
+             * 
+             * @todo create options when creating the server for post actions that do not
+             *       require token validation.
+            */ 
 
             // Verify that token validation is used on this server
             if($this->tokenValidation) {
-                if ($this->reqAction !== "loginUser" &&
-                    $this->reqAction !== "logoutUser" &&
-                    $this->reqAction !== "registerUser") {
-
+                if (!$this->isActionExemption($this->reqAction)) {
                     if(isset($this->payload["apiToken"])) {
                         $token = $this->payload["apiToken"];
                         $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING); // I don't think there is any reason to sanitize the token...
