@@ -67,7 +67,6 @@ class Dispatcher
     foreach($data AS $key => $value) {
       foreach($fields AS $field) {
         if($key == $field) {
-          var_dump($key . "---Key", $field ."--field");
           
           $stmt->bindValue(":$key", $value, $this->pdoConstant($value, $key));
         }

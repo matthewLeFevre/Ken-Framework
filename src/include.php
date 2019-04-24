@@ -19,7 +19,3 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/ken.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/action.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/dispatcher.php';
-
-// Account
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/features/Account/utilities_account.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/features/Account/controller_account.php';
