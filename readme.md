@@ -6,6 +6,12 @@ Actions represent a single operation that a user undertakes, this could be regis
 
 # Change Log
 
+## v0.4.2
+
+### Updates to Controller Class Input Filtering
+
+- Error with exemptions fixed.
+
 ## v0.4.1
 
 ### Include and Dispatcher cleanup

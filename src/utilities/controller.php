@@ -91,30 +91,41 @@ class Controller
          * compate them to the key of each payload
          * if there is a match assign that value 
          * to the payload without being sanitized.
+         * 
+         * @todo this needs to be refactored to be dry
          */
         foreach($payload as $key => $value) {
             if(!empty($exemptions)) {
                 foreach($exemptions as $exep) {
                     if($key === $exep) {
                         $filterLoad[$key] = $value;
+                    } else {
+                        $filterLoad[$key] = Self::valueFilter($value);
                     }
-                }
-            } else {
-                switch(gettype($value)) {
-                    case "integer":
-                        $filter = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-                        break;
-                    case "string":
-                        $filter = filter_var($value, FILTER_SANITIZE_STRING);
-                        break;
-                    default:
-                        $filter = NULL;
-                        break;
-                }
-                $filterLoad[$key] = $filter;
+                } 
+            }else {
+                $filterLoad[$key] = Self::valueFilter($value);
             }
         }
         return $filterLoad;
+    }
+
+    /**
+     * valueFilter($value) - utility function for
+     * - used in filter payload.
+     */
+    public static function valueFilter($value) {
+        switch(gettype($value)) {
+            case "integer":
+                return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                break;
+            case "string":
+                return filter_var($value, FILTER_SANITIZE_STRING);
+                break;
+            default:
+                return NULL;
+                break;
+        }
     }
 
     /**
