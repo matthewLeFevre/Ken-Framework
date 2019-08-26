@@ -1,7 +1,5 @@
 <?php
-
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
-
 /**
  * Dispatcher
  * -----------
@@ -16,27 +14,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  *       we may need some for of dynamic query builder
  * @todo clean up code so that it looks nicer
  */
-
 class Dispatcher 
 {
-
-  /**
-   * @param string $table
-   * @param array $sql
-   * 
-   * form $sql array like this:
-   * 
-   * $sql = array (
-   *  $name => $sqlQuery,
-   * );
-   * 
-   */
-
-  function __construct($table, $sql = []) {
-    $this->table = $table;
-    $this->sql = $sql;
-  }
-
   /**
    * Specify details that the dispatch can 
    * execute against the database.
@@ -51,30 +30,30 @@ class Dispatcher
    * @todo Provide documentation and descriptions for all methods
    */
   
-  public function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false]) {
+  public static function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false]) {
     $fields = array();
-
     // parse the sql and find the required fields
     // $pattern = "/[:^](\S*)[$,|$)]/";
     // $pattern = "/[:^](\S+)/";
     $pattern = "/[:^]([A-z]+)/";
     preg_match_all($pattern, $sql, $matches_out);
     $fields = $matches_out[1];
-
     $db = dbConnect();
     $stmt = $db->prepare($sql);
-
-    foreach($data AS $key => $value) {
-      foreach($fields AS $field) {
-        if($key == $field) {
-          
-          $stmt->bindValue(":$key", $value, $this->pdoConstant($value, $key));
+    // put in a try catch here
+    if(!empty($data)) { 
+      foreach($data AS $key => $value) {
+        foreach($fields AS $field) {
+          if($key == $field) {
+            
+            $stmt->bindValue(":$key", $value, self::pdoConstant($value, $key));
+          }
         }
       }
+    } else {
+      return Response::err();
     }
-
     $stmt->execute();
-
     if(isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
       $data = "";
       switch($options['fetchConstant']) {
@@ -104,8 +83,7 @@ class Dispatcher
       return $rowsChanged;
     }
   }
-
-  private function pdoConstant($value, $key) {
+  private static function pdoConstant($value, $key) {
     switch(gettype($value)) {
       case 'string':
         return PDO::PARAM_STR;
@@ -121,9 +99,4 @@ class Dispatcher
       break;
     }
   }
-
-  public function getSQL($key) {
-    return $this->sql[$key];
-  }
-
 }

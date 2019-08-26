@@ -4,5 +4,6 @@ src/features/
 server_assets/
 depricated_code
 src/standard/
+vendor/
 index.html
 

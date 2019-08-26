@@ -81,30 +81,6 @@ class Ken {
     }
 
      /**
-     * Getters
-     *---------------
-     * getTokenValidation()
-     *
-     * - returns a the tokenValidation boolean
-     * this funcitons return value is passed to
-     * assit in the propegation of tokenvalidation
-     * for controllers
-     *
-     * getPayload()
-     *
-     * - returns the value of a payload whenever
-     *  a request is made the payload field is populated
-     */
-    
-    public function getTokenValidation() {
-        return $this->tokenValidation;
-    }
-
-    public function getPayload() {
-        return $this->payload;
-    }
-
-     /**
      * addController(instantiated object)
      *----------------------------------
      * - each controller is an object and 
@@ -130,7 +106,7 @@ class Ken {
     }
 
     /**
-     * isNoTokenAction()
+     * isActionExemption()
      * -------------------
      * Checks to see if the action running does not require a token
      */
@@ -156,8 +132,20 @@ class Ken {
      */
 
     public function start() {
-        $this->GETListener();
-        $this->POSTListener();
+        $route = str_replace(
+            '/api.php', 
+            "", 
+            filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_STRING)
+        );
+
+        $req = new Request(
+            $_SERVER['REQUEST_METHOD'], 
+            $route, getallheaders(), 
+            json_decode(file_get_contents('php://input'), true), 
+            $_FILES
+        );
+
+        echo json_encode($this->process($req));
     }
 
     /**
@@ -173,10 +161,10 @@ class Ken {
      * and executed.
      */
 
-    function process() {
+    function process($req) {
         foreach ($this->controllers as $controller) {
-            if($controller->getName() == $this->reqController) {
-                return $controller->callAction($this->reqAction, $this->payload);
+            if($controller->getName() == explode('/', $req->route)[1]) {
+                return $controller->callRoute($req);
             } 
         }
         return Response::err("The " . $this->reqController . " controller does not exist");
@@ -319,5 +307,23 @@ class Ken {
                 return;
             }
         }
+    }
+}
+
+class Request {
+    public function __construct($method, $route, $headers, $body, $file) {
+        if(is_array($body) && is_array($file)) {
+            $reqBody = array_merge($body, $file);
+        } elseif(!isset($file)) {
+            $reqBody = $body;
+        } elseif(!isset($body)) {
+            $reqBody = $file;
+        } else {
+            $reqBody = NULL;
+        }
+        $this->method = $method;
+        $this->route = $route;
+        $this->headers = $headers;
+        $this->body = $reqBody;
     }
 }

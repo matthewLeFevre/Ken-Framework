@@ -7,6 +7,10 @@ class Controller
     private $name;
     private $actions = array();
     private $tokenValidation;
+    private $get = array();
+    private $post = array();
+    private $put = array();
+    private $delete = array();
 
     public function __construct($name) {
         $this->name = $name;
@@ -25,8 +29,17 @@ class Controller
 
     public function setTokenValidation($validation) {
         $this->tokenValidation = $validation;
-        foreach ($this->actions as $storedAction) {
-            $storedAction->setTokenValidation($validation);
+        foreach ($this->get as $route) {
+            $route->setTokenValidation($validation);
+        }
+        foreach ($this->post as $route) {
+            $route->setTokenValidation($validation);
+        }
+        foreach ($this->put as $route) {
+            $route->setTokenValidation($validation);
+        }
+        foreach ($this->delete as $route) {
+            $route->setTokenValidation($validation);
         }
     }
 
@@ -66,8 +79,17 @@ class Controller
      * @param function $actionFunc
      * @param boolean $howToValidate
      */
-    public function addAction($actionName, $actionFunc, $howToValidate = FALSE) {
-        $this->actions[$actionName] = new Action($actionName, $actionFunc, $howToValidate);
+    public function get($route, $callback, $howToValidate = FALSE) {
+        $this->get[$route] = new Route($route, $callback, $howToValidate);
+    }
+    public function post($route, $callback, $howToValidate = FALSE) {
+        $this->post[$route] = new Route($route, $callback, $howToValidate);
+    }
+    public function put($route, $callback, $howToValidate = FALSE) {
+        $this->put[$route] = new Route($route, $callback, $howToValidate);
+    }
+    public function delete($route, $callback, $howToValidate = FALSE) {
+        $this->delete[$route] = new Route($route, $callback, $howToValidate);
     }
 
     /**
@@ -186,13 +208,44 @@ class Controller
      * @param array $params
      */
 
-    public function callAction($action, $params) {
-        
-        foreach ($this->actions as $storedAction) {
-            if($storedAction->getName() === $action) {
-                return $storedAction->action($params);
-            }
+    public function callRoute($req) {
+        switch($req->method) {
+            case "GET":
+                foreach ($this->get as $route) {
+                    if($route->getRoute() === $req->route) {
+                        return $route->callback($req);   
+                    }
+                    return Response::err("Undefined get route.");
+                }
+            break;
+            case "POST":
+                foreach ($this->post as $route) {
+                    if($route->getRoute() === $req->route) {
+                        return $route->callback($req);   
+                    }
+                    return Response::err("Undefined post route.");
+                }
+            break;
+            case "PUT":
+                foreach ($this->put as $route) {
+                    if($route->getRoute() === $req->route) {
+                        return $route->callback($req);   
+                    }
+                    return Response::err("Undefined put route.");
+                }
+            break;
+            case "DELETE":
+                foreach ($this->delete as $route) {
+                    if($route->getRoute() === $req->route) {
+                        return $route->callback($req);   
+                    }
+                    return Response::err("Undefined delete route.");
+                }
+            break;
+            default:
+                return Response::err("The illegal http method.");
+            break;
         }
-        return response("failure", "The specified action has not been defined.");
+
     }
 }
