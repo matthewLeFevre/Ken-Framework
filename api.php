@@ -19,11 +19,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 
 // Instantiate app
-$app = new Ken(['tokenValidation' => TRUE]);
+$app = new Ken();
 
-// add controllers
-// $app->addController($Controller);
-$app->addController($Test);
+$app->integrate($Test->getRoutes());
 
-// start server
 $app->start();

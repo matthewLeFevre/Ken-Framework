@@ -17,31 +17,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 class Ken {
 
     /**
-     *  request information
-     * ---------------------
-     * The request needs to contain these
-     * values in order to be a valid request
-     * the exception to this is a get request
-     * 
-     *  @var string $reqController
-     *  @var string $reqAction
-     *  @var array $payload
-     * 
-     */
-    private $reqController;
-    private $reqAction;
-    private $payload;
-    
-    /**
      *  Configuration
      * 
      *  @var boolean $tokenValidation
      *  @var array $controller
      * 
      */
+    private $routes = array();
     private $tokenValidation;
-    private $controllers = array();
-    private $actionExemptions = array();
+    private $routeExemptions = array();
 
     /**
      *  class constructor
@@ -53,12 +37,12 @@ class Ken {
      *  @todo having the options specified like so could pose
      *        issues when all of them are not explicitely used
      */
-    public function __construct($options = ['tokenValidation' => FALSE, 'actionExemptions' => array()]) {
+    public function __construct($options = ['tokenValidation' => FALSE, 'routeExemptions' => array()]) {
         if(is_bool($options['tokenValidation'])) {
             $this->tokenValidation = $options['tokenValidation'];
         }
-        if(!empty($options['actionExemptions'])) {
-            $this->actionExemptions = $options['actionExemptions'];
+        if(!empty($options['routeExemptions'])) {
+            $this->routeExemptions = $options['routeExemptions'];
         }
     }
 
@@ -80,31 +64,6 @@ class Ken {
         $this->tokenValidation = $tokenValidation;
     }
 
-     /**
-     * addController(instantiated object)
-     *----------------------------------
-     * - each controller is an object and 
-     * has already been instatiated. 
-     *
-     * - this function records the controller
-     * objects that will be used in the application and
-     * and passes down the application token validation value.
-     * 
-     * - When a request is made the controller will be pulled
-     * to find an aciton that matches a request in a controller
-     * 
-     *  @param controller $controller;
-     */
-
-    public function addController($controller) {
-        // if token validation has been implemented on the server
-        // implement it in each controller
-        if ($this->tokenValidation) {
-            $controller->setTokenValidation($this->tokenValidation);
-        }
-        $this->controllers[$controller->getName()] = $controller;
-    }
-
     /**
      * isActionExemption()
      * -------------------
@@ -112,11 +71,15 @@ class Ken {
      */
 
     private function isActionExemption($reqAction) {
-        foreach($this->actionExemptions as $action) {
+        foreach($this->routeExemptions as $action) {
             if ($action == $reqAction) {
                 return TRUE;
             }
         }
+    }
+
+    public function getRoutes() {
+        return $this->routes;
     }
 
     /**
@@ -132,19 +95,25 @@ class Ken {
      */
 
     public function start() {
+
+        foreach($this->routes as $route) {
+            $route->setTokenValidation($this->tokenValidation);
+        }
+
         $route = str_replace(
             '/api.php', 
             "", 
             filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_STRING)
         );
-
+        
         $req = new Request(
             $_SERVER['REQUEST_METHOD'], 
-            $route, getallheaders(), 
+            $route, 
+            getallheaders(), 
             json_decode(file_get_contents('php://input'), true), 
             $_FILES
         );
-
+        
         echo json_encode($this->process($req));
     }
 
@@ -162,152 +131,34 @@ class Ken {
      */
 
     function process($req) {
-        foreach ($this->controllers as $controller) {
-            if($controller->getName() == explode('/', $req->route)[1]) {
-                return $controller->callRoute($req);
+        foreach ($this->routes as $route) {
+            if($route->getRoute() == $req->getRoute() && $route->getMethod() == $req->getMethod()) {
+                return $route->callRoute($req);
             } 
         }
-        return Response::err("The " . $this->reqController . " controller does not exist");
+        return Response::err("The " . $req->getMethod() ." " . $req->getRoute() . " route does not exist");
     }
 
-    /**
-     * validateJsonPost(string)
-     *---------------------------
-     * - The request is a post request and we need
-     * to find the controller, action, and payload
-     * of the request.
-     * 
-     *  - Ckecks for an api token if token validation
-     * is enabled.
-     *
-     * - **NOTE** if token validation is enabled
-     * and there are certain post requests that
-     * do not require the token they must be
-     * specified here. One example it user
-     * authentication which is preconfigured.
-     * 
-     * @param string $json_str
-     */
-
-    function validateJsonPost($json_str) {
-        // JSON POST listener has content
-        if(!empty($json_str)) {
-
-            $reqArr = json_decode($json_str, true);
-            
-            $this->reqAction = filter_var($reqArr['action'], FILTER_SANITIZE_STRING);
-            $this->reqController = filter_var($reqArr['controller'], FILTER_SANITIZE_STRING);
-            $this->payload = $reqArr['payload'];
-
-            if( empty($this->reqAction) || 
-                empty($this->reqController)|| 
-                empty($this->payload)){
-                echo json_encode(response("failure", "Bad post request. Either the controller action or payload was not sent."));
-                return; 
-                exit;
-            }
-
-            /** 
-             * A token is not required for the following requests and tokens are not 
-             * required --currently-- for any get requests unless they are specifically assigned 
-             * at the action level. If a request is made for an aciton other than those in
-             * this logic statement a valid token is required.
-             * 
-             * @todo create options when creating the server for post actions that do not
-             *       require token validation.
-            */ 
-
-            // Verify that token validation is used on this server
-            if($this->tokenValidation) {
-                if (!$this->isActionExemption($this->reqAction)) {
-                    if(isset($this->payload["apiToken"])) {
-                        $token = $this->payload["apiToken"];
-                        $sanitizedToken = filter_var($token, FILTER_SANITIZE_STRING); // I don't think there is any reason to sanitize the token...
-                    } else {
-                        echo json_encode(Response::err("No token was submitted with the request. Please log back in and try again or consult your web administrator."));
-                        return exit;
-                    }
-                }
-            }
-
-            echo json_encode($this->process());
-
-        } else {
-            echo json_encode(Response::err("failure", "Bad post request. Either the controller action or payload was not sent."));
-            return;
-        }
+    public function get($route, $callback, $howToValidate = FALSE) {
+        array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
+    }
+    public function post($route, $callback, $howToValidate = FALSE) {
+        array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
+    }
+    public function put($route, $callback, $howToValidate = FALSE) {
+        array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
+    }
+    public function patch($route, $callback, $howToValidate = FALSE) {
+        array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
+    }
+    public function delete($route, $callback, $howToValidate = FALSE) {
+        array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
     }
 
-    /**
-     * listeners
-     *-------------------------
-     * GETListener()
-     * - Filters the controller and aciton on a
-     * GET request
-     *
-     * POSTListener()
-     * - collects the controller and action of a 
-     * request if the it is an file upload(asset)
-     * request
-     *
-     * @todo - I need to find out how to filter
-     * the file upload.
-     *
-     * - collects entire post request by accessing
-     * the json for none asset/file upload requests
-     */
-
-    function GETListener() {
-        // GET request Listener
-        $this->reqController = filter_input(INPUT_GET, 'controller', FILTER_SANITIZE_STRING);
-        $this->reqAction     = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
+    public function integrate(array $routes) {
+        $this->routes = array_merge($this->routes, $routes);
     }
 
-    function POSTListener() {
-        /**
-         * Post request Listener
-         * 
-         * If the controller and action have not
-         * yet been populated by the GETListener
-         * we have a post request.
-         */
-        if($this->reqController == NULL || $this->reqAction == NULL){
-
-            /**
-             * Asset Listener
-             * 
-             * If we can directly access the controller
-             * from the $_POST object we are dealing with
-             * a form.
-             */
-            if(isset($_POST['controller'])) {
-                if(!isset($_POST['action'])) {
-                    echo(json_encode(response("failure", "The specified controller or action has not been supplied.")));
-                    exit;
-                } else {
-                    $this->reqController = filter_var($_POST['controller'], FILTER_SANITIZE_STRING);
-                    $this->reqAction = filter_var($_POST['action'], FILTER_SANITIZE_STRING);
-                    $this->payload = $_POST; //How do I sanitize a file upload?...
-                    echo json_encode($this->process());
-                }
-            }
-
-            // JSON POST Listener
-            $json_str = file_get_contents('php://input');
-            if(!empty($json_str)) {
-                $this->validateJsonPost($json_str);
-            } 
-            
-        } else {
-            // GET payload if not a POST Request
-            $this->payload = $_GET;
-            if(isset($this->reqController) || isset($this->reqAction)){
-                echo json_encode($this->process());
-            } else {
-                return;
-            }
-        }
-    }
 }
 
 class Request {
@@ -316,14 +167,53 @@ class Request {
             $reqBody = array_merge($body, $file);
         } elseif(!isset($file)) {
             $reqBody = $body;
-        } elseif(!isset($body)) {
+        } elseif(isset($file)) {
             $reqBody = $file;
         } else {
             $reqBody = NULL;
         }
+
+        $params = ltrim($route, '/');
+        $params = explode( '/', $params);
+
         $this->method = $method;
-        $this->route = $route;
         $this->headers = $headers;
         $this->body = $reqBody;
+        $this->params = $params;
+
+        /** 
+         *  This is not scalable and only a temporary solution
+         *  to remedie complex api endpoints
+         * 
+         *  @todo  find a dynamic way to work with endpoints
+         */ 
+
+        switch(count($params)) {
+            case 1:
+                $this->route = $route;
+                break;
+            case 2:
+                $this->route = "/$params[0]/:id";
+                break;
+            case 3: 
+                $this->route = "/$params[0]/:id/$params[2]";
+                break;
+            case 4:
+                $this->route = "/$params[0]/:id/$params[2]/:id";
+                break;
+            default:
+                return Response::err("Error analyzing request");
+                break;
+        }
+    }
+
+    public function getRoute() {
+        return $this->route;
+    }
+    public function getBody() {
+        return $this->body;
+    }
+    public function getMethod() {
+        return $this->method;
     }
 }

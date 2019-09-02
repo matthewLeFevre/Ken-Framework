@@ -10,10 +10,11 @@ class Route {
     private $tokenValidation;
     private $howToValidate;
 
-    public function __construct($route, $callback, $howToValidate) {
+    public function __construct($method, $route, $callback, $howToValidate = FALSE) {
         $this->route = $route;
         $this->callback = $callback;
         $this->howToValidate = $howToValidate;
+        $this->method = $method;
     }
 
     /**
@@ -41,6 +42,10 @@ class Route {
         return $this->route;
     }
 
+    public function getMethod() {
+        return $this->method;
+    }
+
     /**
      * __call(string, array) magic method
      * reference: http://php.net/manual/en/language.oop5.overloading.php#object.call
@@ -64,6 +69,7 @@ class Route {
      */
 
     public function __call($route, $req) {
+        global $secret;
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
         if($this->tokenValidation && $this->howToValidate && !isset($req[0]->headers['Authorization'])) {
@@ -74,6 +80,7 @@ class Route {
             return Response::err("Invalid token sent to api, error encountered in ". $this->route ." action ,please contact your web administrator");
             exit;
         }
-        return call_user_func_array($this->callback, $payload);
+
+        return call_user_func_array($this->callback, $req);
     }
 }

@@ -2,95 +2,29 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
-class Controller
-{
-    private $name;
-    private $actions = array();
-    private $tokenValidation;
-    private $get = array();
-    private $post = array();
-    private $put = array();
-    private $delete = array();
+class Controller {
+    private $routes = array();
 
-    public function __construct($name) {
-        $this->name = $name;
-    }
-
-    /**
-     * Setters
-     * ---------
-     * setTokenValidation(bool)
-     * - called when assigned to the server
-     *  basically inherits validation from
-     *  server configuration by user.
-     * 
-     * @param boolean $validation
-     */
-
-    public function setTokenValidation($validation) {
-        $this->tokenValidation = $validation;
-        foreach ($this->get as $route) {
-            $route->setTokenValidation($validation);
-        }
-        foreach ($this->post as $route) {
-            $route->setTokenValidation($validation);
-        }
-        foreach ($this->put as $route) {
-            $route->setTokenValidation($validation);
-        }
-        foreach ($this->delete as $route) {
-            $route->setTokenValidation($validation);
-        }
-    }
-
-    /**
-     * Get-ers
-     * --------
-     * getName()
-     * - returns the name of the controller
-     * 
-     * getTokenValidation()
-     * - returns the token validation assigned
-     *  it by the server to pass on to controller
-     *  actions
-     */
-
-    public function getName() {
-        return $this->name;
-    }
-
-    public function getTokenValidation() {
-        return $this->tokenValidation;
-    }
-
-    /**
-     * addAction(string, function, bool)
-     * - instantiates a new action with a name
-     * assigns the new action a callback function
-     * written by the developer of the controller
-     * 
-     * - adds the action to its array record of actions
-     * 
-     * - depending on the action validation can be 
-     * supplied to remedy how the aciton should
-     * handle token validation.
-     * 
-     * @param string $actionName
-     * @param function $actionFunc
-     * @param boolean $howToValidate
-     */
     public function get($route, $callback, $howToValidate = FALSE) {
-        $this->get[$route] = new Route($route, $callback, $howToValidate);
+        array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
     public function post($route, $callback, $howToValidate = FALSE) {
-        $this->post[$route] = new Route($route, $callback, $howToValidate);
+        array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
     }
     public function put($route, $callback, $howToValidate = FALSE) {
-        $this->put[$route] = new Route($route, $callback, $howToValidate);
+        array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
+    }
+    public function patch($route, $callback, $howToValidate = FALSE) {
+        array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
     }
     public function delete($route, $callback, $howToValidate = FALSE) {
-        $this->delete[$route] = new Route($route, $callback, $howToValidate);
+        array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
     }
+
+    public function getRoutes() {
+        return $this->routes;
+    }
+
 
     /**
      * filterPayload(array) static function
@@ -195,57 +129,5 @@ class Controller
                 exit;
             }
         }
-    }
-
-    /**
-     * callAction(string, array)
-     *  - iterates over avaliable actions
-     * once the correct one is encounted
-     * that action is executed and the 
-     * parameters for that funcion are sent along
-     * 
-     * @param string $action
-     * @param array $params
-     */
-
-    public function callRoute($req) {
-        switch($req->method) {
-            case "GET":
-                foreach ($this->get as $route) {
-                    if($route->getRoute() === $req->route) {
-                        return $route->callback($req);   
-                    }
-                    return Response::err("Undefined get route.");
-                }
-            break;
-            case "POST":
-                foreach ($this->post as $route) {
-                    if($route->getRoute() === $req->route) {
-                        return $route->callback($req);   
-                    }
-                    return Response::err("Undefined post route.");
-                }
-            break;
-            case "PUT":
-                foreach ($this->put as $route) {
-                    if($route->getRoute() === $req->route) {
-                        return $route->callback($req);   
-                    }
-                    return Response::err("Undefined put route.");
-                }
-            break;
-            case "DELETE":
-                foreach ($this->delete as $route) {
-                    if($route->getRoute() === $req->route) {
-                        return $route->callback($req);   
-                    }
-                    return Response::err("Undefined delete route.");
-                }
-            break;
-            default:
-                return Response::err("The illegal http method.");
-            break;
-        }
-
     }
 }
