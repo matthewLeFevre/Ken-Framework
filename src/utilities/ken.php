@@ -70,9 +70,9 @@ class Ken {
      * Checks to see if the action running does not require a token
      */
 
-    private function isActionExemption($reqAction) {
-        foreach($this->routeExemptions as $action) {
-            if ($action == $reqAction) {
+    private function isRouteExemption($reqRoute) {
+        foreach($this->routeExemptions as $route) {
+            if ($route == $reqRoute) {
                 return TRUE;
             }
         }
@@ -184,6 +184,10 @@ class Request {
         /** 
          *  This is not scalable and only a temporary solution
          *  to remedie complex api endpoints
+         * 
+         * This function is adding id to the end of the param name
+         * so id is the only thing that can be passed in a route other 
+         * than the resource name
          * 
          *  @todo  find a dynamic way to work with endpoints
          */ 

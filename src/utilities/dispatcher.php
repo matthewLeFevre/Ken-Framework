@@ -9,7 +9,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * previous method of having a function for
  * each model action dynamic
  * 
- * @todo test the dispatcher against more actions - testing is underway
  * @todo make the dispatch more abstract and less rigid - Options were added
  *       we may need some for of dynamic query builder
  * @todo clean up code so that it looks nicer
@@ -31,11 +30,8 @@ class Dispatcher
    */
   
   public static function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false]) {
-    $fields = array();
     // parse the sql and find the required fields
-    // $pattern = "/[:^](\S*)[$,|$)]/";
-    // $pattern = "/[:^](\S+)/";
-    $pattern = "/[:^]([A-z]+)/";
+    $pattern = "/[:^]([A-z0-9]+)/";
     preg_match_all($pattern, $sql, $matches_out);
     $fields = $matches_out[1];
     $db = dbConnect();

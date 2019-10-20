@@ -6,6 +6,13 @@ Actions represent a single operation that a user undertakes, this could be regis
 
 # Change Log
 
+## v0.5.2
+
+### More In Code Documentation
+
+  - Additional comments added to the request object in the ken.php file.
+  - Response object now sends correct http status codes back to the client instead of always returning 200
+
 ## v0.5.1
 
 ### Working On Stabalizing API
@@ -17,9 +24,9 @@ Actions represent a single operation that a user undertakes, this could be regis
 
 ### Complete API overhaul
 
-- Actions are now called routes and can be created by specifying get, post, put, or delte in the controller
+- Actions are now called routes and can be created by specifying get, post, put, or delte in the controller.
 - Request parameters are now much simpler to define and are more traditional in use.
-- Functionality updates to the dispatcher class
+- Functionality updates to the dispatcher class.
 
 ## v0.4.2
 
