@@ -7,32 +7,38 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * and specify endpoints
  */
 
- $Account = new Controller('account');
+$Account = new Controller('account');
 
- // GET endpoints
+// GET endpoints
 
- $Account->get('/accounts', function($req) {
+$Account->get('/accounts', function($req) {
+    return Response::data(AccountModel::get($req));
+}, TRUE);
 
- }, TRUE);
-
- $Account->get('/accounts/:id', function($req) {
-
- }, TRUE);
+$Account->get('/accounts/:id', function($req) {
+    $data = ['account_id' => $req->params['id']];
+    return Response::data(AccountModel::getOne($data));
+}, TRUE);
 
 // POST endpoints
 
- $Account->post('/accounts', function($req) {
+$Account->post('/accounts', function($req) {
 
- }, TRUE);
+}, TRUE);
 
- // PUT endpoints
+// PUT endpoints
 
- $Account->put('/accounts/:id', function($req) {
+$Account->put('/accounts/:id', function($req) {
 
- }, TRUE);
+}, TRUE);
 
- // DELETE endpoints
+// DELETE endpoints
 
- $Account->delete('/accounts/:id', function($req) {
+$Account->delete('/accounts/:id', function($req) {
 
- }, TRUE);
+}, TRUE);
+
+$Account->post('/seedAccounts', function($req) {
+    seedAccounts();
+    return Response::success();
+});

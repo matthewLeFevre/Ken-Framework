@@ -22,5 +22,6 @@ header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
 $app = new Ken();
 
 $app->integrate($Test->getRoutes());
+$app->integrate($Account->getRoutes());
 
 $app->start();

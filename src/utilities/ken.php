@@ -198,6 +198,7 @@ class Request {
                 break;
             case 2:
                 $this->route = "/$params[0]/:id";
+                $this->params['id'] = $this->params[1];
                 break;
             case 3: 
                 $this->route = "/$params[0]/:id/$params[2]";
