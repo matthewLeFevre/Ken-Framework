@@ -6,4 +6,4 @@ depricated_code
 src/standard/
 vendor/
 index.html
-
+.env

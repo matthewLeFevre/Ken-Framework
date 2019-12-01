@@ -1,7 +1,9 @@
 <?php
 
-class AccountModel {
-  public static function seed($data) {
+class AccountModel
+{
+  public static function seed($data)
+  {
     $id = Dispatcher::dispatch(
       "INSERT INTO account 
       (account_name, account_created)
@@ -28,7 +30,8 @@ class AccountModel {
       $data
     );
   }
-  public static function get($data) {
+  public static function get($data)
+  {
     return Dispatcher::dispatch(
       "SELECT account.*, email.email_address, email.email_status FROM account
       INNER JOIN email
@@ -37,7 +40,8 @@ class AccountModel {
       ['fetchConstant' => 'fetchAll']
     );
   }
-  public static function getOne($data) {
+  public static function getOne($data)
+  {
     return Dispatcher::dispatch(
       "SELECT account.*, email.email_address, email.email_status FROM account
       INNER JOIN email
@@ -47,4 +51,6 @@ class AccountModel {
       ['fetchConstant' => 'fetch']
     );
   }
+  public static function create($data)
+  { }
 }

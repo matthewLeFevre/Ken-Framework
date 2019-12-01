@@ -14,7 +14,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  * 
  */
 
-class Ken {
+class Ken
+{
 
     /**
      *  Configuration
@@ -37,11 +38,12 @@ class Ken {
      *  @todo having the options specified like so could pose
      *        issues when all of them are not explicitely used
      */
-    public function __construct($options = ['tokenValidation' => FALSE, 'routeExemptions' => array()]) {
-        if(is_bool($options['tokenValidation'])) {
+    public function __construct($options = ['tokenValidation' => FALSE, 'routeExemptions' => array()])
+    {
+        if (is_bool($options['tokenValidation'])) {
             $this->tokenValidation = $options['tokenValidation'];
         }
-        if(!empty($options['routeExemptions'])) {
+        if (!empty($options['routeExemptions'])) {
             $this->routeExemptions = $options['routeExemptions'];
         }
     }
@@ -60,7 +62,8 @@ class Ken {
      *  @param boolean $tokenValidation
      */
 
-    protected function setTokenValidation($tokenValidation) {
+    protected function setTokenValidation($tokenValidation)
+    {
         $this->tokenValidation = $tokenValidation;
     }
 
@@ -70,15 +73,17 @@ class Ken {
      * Checks to see if the action running does not require a token
      */
 
-    private function isRouteExemption($reqRoute) {
-        foreach($this->routeExemptions as $route) {
+    private function isRouteExemption($reqRoute)
+    {
+        foreach ($this->routeExemptions as $route) {
             if ($route == $reqRoute) {
                 return TRUE;
             }
         }
     }
 
-    public function getRoutes() {
+    public function getRoutes()
+    {
         return $this->routes;
     }
 
@@ -94,26 +99,27 @@ class Ken {
      * in this class
      */
 
-    public function start() {
+    public function start()
+    {
 
-        foreach($this->routes as $route) {
+        foreach ($this->routes as $route) {
             $route->setTokenValidation($this->tokenValidation);
         }
 
         $route = str_replace(
-            '/api.php', 
-            "", 
+            '/api.php',
+            "",
             filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_STRING)
         );
-        
+
         $req = new Request(
-            $_SERVER['REQUEST_METHOD'], 
-            $route, 
-            getallheaders(), 
-            json_decode(file_get_contents('php://input'), true), 
+            $_SERVER['REQUEST_METHOD'],
+            $route,
+            getallheaders(),
+            json_decode(file_get_contents('php://input'), true),
             $_FILES
         );
-        
+
         echo json_encode($this->process($req));
     }
 
@@ -130,51 +136,59 @@ class Ken {
      * and executed.
      */
 
-    function process($req) {
+    function process($req)
+    {
         foreach ($this->routes as $route) {
-            if($route->getRoute() == $req->getRoute() && $route->getMethod() == $req->getMethod()) {
+            if ($route->getRoute() == $req->getRoute() && $route->getMethod() == $req->getMethod()) {
                 return $route->callRoute($req);
-            } 
+            }
         }
-        return Response::err("The " . $req->getMethod() ." " . $req->getRoute() . " route does not exist");
+        return Response::err("The " . $req->getMethod() . " " . $req->getRoute() . " route does not exist");
     }
 
-    public function get($route, $callback, $howToValidate = FALSE) {
+    public function get($route, $callback, $howToValidate = FALSE)
+    {
         array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
-    public function post($route, $callback, $howToValidate = FALSE) {
+    public function post($route, $callback, $howToValidate = FALSE)
+    {
         array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
     }
-    public function put($route, $callback, $howToValidate = FALSE) {
+    public function put($route, $callback, $howToValidate = FALSE)
+    {
         array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
     }
-    public function patch($route, $callback, $howToValidate = FALSE) {
+    public function patch($route, $callback, $howToValidate = FALSE)
+    {
         array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
     }
-    public function delete($route, $callback, $howToValidate = FALSE) {
+    public function delete($route, $callback, $howToValidate = FALSE)
+    {
         array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
     }
 
-    public function integrate(array $routes) {
+    public function integrate(array $routes)
+    {
         $this->routes = array_merge($this->routes, $routes);
     }
-
 }
 
-class Request {
-    public function __construct($method, $route, $headers, $body, $file) {
-        if(is_array($body) && is_array($file)) {
+class Request
+{
+    public function __construct($method, $route, $headers, $body, $file)
+    {
+        if (is_array($body) && is_array($file)) {
             $reqBody = array_merge($body, $file);
-        } elseif(!isset($file)) {
+        } elseif (!isset($file)) {
             $reqBody = $body;
-        } elseif(isset($file)) {
+        } elseif (isset($file)) {
             $reqBody = $file;
         } else {
             $reqBody = NULL;
         }
 
         $params = ltrim($route, '/');
-        $params = explode( '/', $params);
+        $params = explode('/', $params);
 
         $this->method = $method;
         $this->headers = $headers;
@@ -190,9 +204,9 @@ class Request {
          * than the resource name
          * 
          *  @todo  find a dynamic way to work with endpoints
-         */ 
+         */
 
-        switch(count($params)) {
+        switch (count($params)) {
             case 1:
                 $this->route = $route;
                 break;
@@ -200,7 +214,7 @@ class Request {
                 $this->route = "/$params[0]/:id";
                 $this->params['id'] = $this->params[1];
                 break;
-            case 3: 
+            case 3:
                 $this->route = "/$params[0]/:id/$params[2]";
                 break;
             case 4:
@@ -212,13 +226,16 @@ class Request {
         }
     }
 
-    public function getRoute() {
+    public function getRoute()
+    {
         return $this->route;
     }
-    public function getBody() {
+    public function getBody()
+    {
         return $this->body;
     }
-    public function getMethod() {
+    public function getMethod()
+    {
         return $this->method;
     }
 }
