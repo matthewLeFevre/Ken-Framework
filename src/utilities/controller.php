@@ -153,16 +153,16 @@ class Controller
         $oneExists = FALSE;
         foreach ($inputArr as $input) {
             if (isset($body[$input])) {
-                if($oneExists == FALSE) {
+                if ($oneExists == FALSE) {
                     $oneExists = TRUE;
                 } else {
-                    echo json_encode(Responsed::err("More than one value submitted"))
+                    echo json_encode(Response::err("More than one value submitted"));
                     exit;
                 }
             }
         }
 
-        if($oneExists == FALSE) {
+        if ($oneExists == FALSE) {
             echo json_encode(Response::err("A required input was not submitted"));
         }
     }

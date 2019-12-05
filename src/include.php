@@ -21,7 +21,7 @@ $secret = $_ENV['KEN_SECRET'];
  * This db_connect_local is the file used locally for development
  * of php generic and can be deleted if downloading from github.
  */
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/dbConnect.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/response.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/jwt.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/ken.php';
