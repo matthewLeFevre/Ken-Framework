@@ -9,7 +9,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
  */
 $dotenv = Dotenv\Dotenv::create(__DIR__ . '/../');
 $dotenv->load();
-$secret = $_ENV['KEN_SECRET'];
 
 /**
  *  Configure this db_connect file to connect to the database you have

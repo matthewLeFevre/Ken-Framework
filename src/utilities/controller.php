@@ -113,6 +113,14 @@ class Controller
         return $filterVar;
     }
 
+    /**
+     * Filter Text
+     * -------------
+     * 
+     * If the client has sent a variable that is 
+     * a string you can filter and sanitize it
+     * with this function.
+     */
     public static function filterText($payloadVar)
     {
         if (gettype($payloadVar) == "string") {
@@ -122,6 +130,56 @@ class Controller
         }
 
         return $filterVar;
+    }
+
+    /**
+     * Filter Email
+     * ------------
+     * 
+     * If the client has sent an email
+     * sanitize and filter it with with command. 
+     */
+
+    public static function filterEmail($email)
+    {
+        $sanEmail = filter_var($email, FILTER_SANITIZE_EMAIL);
+        $valEmail = filter_var($sanEmail, FILTER_VALIDATE_EMAIL);
+        return $valEmail;
+    }
+
+    /**
+     * Is Email
+     * ---------
+     * 
+     * Returns a boolean that reflects whether
+     * or not a string is an email. This can
+     * very easily be tricked in its current state.
+     * 
+     * @todo make more reliable with regex
+     */
+
+    public static function isEmail($input)
+    {
+        $key = stripos($input, '@');
+        if ($key) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check Password Hash
+     * --------------------
+     * 
+     * Supply the password hash of the account
+     * if and the password sent by the client.
+     * When the hashes match authenticate the user.
+     */
+
+    public static function checkPass($pass, $hash)
+    {
+        return password_verify($pass, $hash);
     }
 
     /**

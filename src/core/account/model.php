@@ -33,9 +33,8 @@ class AccountModel
   public static function get($data)
   {
     return Dispatcher::dispatch(
-      "SELECT account.*, email.email_address, email.email_status FROM account
-      INNER JOIN email
-      ON account.account_id = email.account_id",
+      "SELECT * FROM account
+      ON id = id",
       $data,
       ['fetchConstant' => 'fetchAll']
     );
@@ -43,14 +42,38 @@ class AccountModel
   public static function getOne($data)
   {
     return Dispatcher::dispatch(
-      "SELECT account.*, email.email_address, email.email_status FROM account
-      INNER JOIN email
-      ON account.account_id = email.account_id
-      WHERE account.account_id = :account_id",
+      "SELECT * FROM account
+      WHERE id = :id",
       $data,
       ['fetchConstant' => 'fetch']
     );
   }
   public static function create($data)
-  { }
+  {
+    return Dispatcher::dispatch(
+      "INSERT INTO account 
+      (email, passHash, `name`)
+      VALUES
+      (:email, :passHash, :name)",
+      $data
+    );
+  }
+  public static function getByEmail($data)
+  {
+    return Dispatcher::dispatch(
+      "SELECT * FROM account WHERE email = :email",
+      $data,
+      ['fetchConstant' => 'fetch']
+    );
+  }
+  public static function getAuthData($data)
+  {
+    return Dispatcher::dispatch(
+      "SELECT id, email, `name`, created, verification 
+      FROM account 
+      WHERE id = :id",
+      $data,
+      ['fetchConstant' => 'fetch']
+    );
+  }
 }
