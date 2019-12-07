@@ -30,5 +30,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/dispatcher.php';
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/core/test/controller.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/core/account/controller.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/core/account/endpoints.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/core/account/model.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/core/account/seed.php';

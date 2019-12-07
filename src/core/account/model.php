@@ -33,8 +33,7 @@ class AccountModel
   public static function get($data)
   {
     return Dispatcher::dispatch(
-      "SELECT * FROM account
-      ON id = id",
+      "SELECT * FROM account",
       $data,
       ['fetchConstant' => 'fetchAll']
     );

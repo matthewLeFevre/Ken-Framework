@@ -1,6 +1,7 @@
 {
   "require": {
-      "rbdwllr/reallysimplejwt": "^2.0",
-    "vlucas/phpdotenv": "^3.6"
+    "rbdwllr/reallysimplejwt": "^2.0",
+    "vlucas/phpdotenv": "^3.6",
+    "phpmailer/phpmailer": "^6.1"
   }
 }

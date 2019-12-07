@@ -2,124 +2,49 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
 
-use ReallySimpleJWT\Token;
+
 use ReallySimpleJWT\Jwt;
 use ReallySimpleJWT\Parse;
 use ReallySimpleJWT\Validate;
 use ReallySimpleJWT\Encode;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 
 /**
  * Instantiat a new controller
  * and specify endpoints
  */
 
-$Account = new Controller('account');
+class Account extends Controller
+{
+    public $mail;
 
-/**
- * Get all accounts
- * /accounts - admin protected
- */
-$Account->get('/accounts', function ($req) {
-    return Response::data(AccountModel::get($req));
-}, TRUE);
-
-/**
- * Get account by Id
- * /accounts/:id - admin protected
- * @param int id
- */
-$Account->get('/accounts/:id', function ($req) {
-    $data = ['account_id' => $req->params['id']];
-    return Response::data(AccountModel::getOne($data));
-}, TRUE);
-
-/**
- * Create account
- * /accounts - protected w/ captcha
- * @param string email
- * @param string password
- * @param string username - optional
- * 
- * @todo check to see if email is already in use
- * @todo hash password and store the hash
- */
-$Account->post('/accounts', function ($req) {
-    $filteredBody = Controller::filterPayload($req->getBody());
-    Controller::required(['email', 'password', 'name'], $filteredBody);
-
-    if (!Controller::isEmail($filteredBody['email'])) {
-        return Response::err("Invalid Email");
+    public function __construct()
+    {
+        $this->mail = new PHPMailer(true);
+        // $this->mail->SMTPDebug = SMTP::DEBUG_SERVER; comment back in if you want debug information
+        $this->mail->isSMTP();
+        $this->mail->Host = $_ENV['KEN_MAIL_HOST'];
+        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mail->SMTPAuth = true;
+        $this->mail->Username = $_ENV['KEN_MAIL_USERNAME'];  // SMTP username (your email account)
+        $this->mail->Password = $_ENV['KEN_MAIL_PASSWORD'];          // SMTP password
+        $this->mail->Port = $_ENV['KEN_MAIL_PORT'];
+        $this->mail->IsHTML(true);                     // set email format to HTML
     }
-
-    $filteredBody['email'] = Controller::filterEmail($filteredBody['email']);
-    $accountData = AccountModel::getByEmail($filteredBody['email']);
-    if (isset($accountData['id'])) {
-        return Response::err('That email address is already in use. Please try to log in with a current account or try a new email address.');
+    /**
+     * Check Password Hash
+     * --------------------
+     * 
+     * Supply the password hash of the account
+     * if and the password sent by the client.
+     * When the hashes match authenticate the user.
+     */
+    public static function checkPass($pass, $hash)
+    {
+        if (!password_verify($pass, $hash)) {
+            echo Response::err("Username or Password is incorrect");
+            exit;
+        }
     }
-
-    $filteredBody['passHash'] = password_hash($filteredBody['password'], PASSWORD_DEFAULT);
-
-    if (AccountModel::create($filteredBody) == 1) {
-        return Response::success();
-    }
-    return Response::err();
-});
-
-/**
- * Authenticate account
- * /authenticate - protected by brute force login
- * @param string password
- * @param string email
- */
-$Account->post('/authenticate', function ($req) {
-    $filteredBody = Controller::filterPayload($req->getBody());
-    Controller::required(['password', 'email'], $filteredBody);
-
-    $filteredBody['email'] = Controller::filterEmail($filteredBody['email']);
-
-    $accountData = AccountModel::getByEmail($filteredBody);
-    if (!isset($accountData['id'])) {
-        return Response::err("No account information found. Try creating a new account or using a different email.");
-    }
-
-    if (!Controller::checkPass($filteredBody['password'], $accountData['passHash'])) {
-        return Response::err("Username or Password Incorrect");
-    }
-
-    // Create a new JWT to send back
-    $accountAuthData = AccountModel::getAuthData($accountData);
-    $accountAuthData["token"] = Token::create(
-        $accountData['id'],
-        $_ENV['KEN_SECRET'],
-        time() + 3600 * 24 * 7,
-        $_ENV['KEN_DOMAIN']
-    );
-
-    return Response::data($accountAuthData, "Welcome back " . $accountAuthData['name'] . "!");
-});
-
-/**
- * Update account
- * /accounts/:id - admin protected or token protected
- * @param int id
- * @param string email - optional
- * @param string password - optional
- * @param string username - optional
- */
-$Account->put('/accounts/:id', function ($req) { }, TRUE);
-
-/**
- * Reset Password
- * /resetPassword
- * @param password
- */
-$Account->put('/accounts/:id', function ($req) { }, TRUE);
-
-// DELETE endpoints
-
-$Account->delete('/accounts/:id', function ($req) { }, TRUE);
-
-$Account->post('/seedAccounts', function ($req) {
-    seedAccounts();
-    return Response::success();
-});
+}

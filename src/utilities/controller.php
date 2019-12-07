@@ -169,20 +169,6 @@ class Controller
     }
 
     /**
-     * Check Password Hash
-     * --------------------
-     * 
-     * Supply the password hash of the account
-     * if and the password sent by the client.
-     * When the hashes match authenticate the user.
-     */
-
-    public static function checkPass($pass, $hash)
-    {
-        return password_verify($pass, $hash);
-    }
-
-    /**
      * required(array, array) static funciton
      * - used to quickly check if inputs sent in the
      * filtered request are present and not empty.
