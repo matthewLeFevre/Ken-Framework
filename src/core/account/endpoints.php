@@ -10,6 +10,10 @@ $Account = new Account('account');
  * /accounts - admin protected
  */
 $Account->get('/accounts', function ($req) {
+  Account::checkRole([
+    'token' => $req->headers['token'],
+    'role' => "admin"
+  ]);
   return Response::data(AccountModel::get($req));
 }, TRUE);
 
@@ -19,8 +23,13 @@ $Account->get('/accounts', function ($req) {
  * @param int id
  */
 $Account->get('/accounts/:id', function ($req) {
-  $data = ['account_id' => $req->params['id']];
-  return Response::data(AccountModel::getOne($data));
+  $filteredParams = Controller::filterPayload($req->params);
+  Controller::required(['id'], $filteredParams);
+  Account::checkRole([
+    'token' => $req->headers['token'],
+    'role' => "admin"
+  ]);
+  return Response::data(AccountModel::getOne(['id' => $filteredParams['id']]));
 }, TRUE);
 
 /**
@@ -83,14 +92,17 @@ $Account->post('/authenticate', function ($req) {
     return Response::err("No account information found. Try creating a new account or using a different email.");
   }
 
-  Controller::checkPass($filteredBody['password'], $accountData['passHash']);
+  Account::checkPass($filteredBody['password'], $accountData['passHash']);
 
   // Create a new JWT to send back
   $accountAuthData = AccountModel::getAuthData($accountData);
   $accountAuthData["token"] = Token::create(
     $accountData['id'],
     $_ENV['KEN_SECRET'],
-    time() + 3600 * 24 * 7,
+    // time() + 3600 * 24 * 7, one week
+    // time() + 3600 * 24, one day
+    // time() + 3600 * 1, one hour
+    time() + 3600 * 1,
     $_ENV['KEN_DOMAIN']
   );
 
@@ -105,7 +117,27 @@ $Account->post('/authenticate', function ($req) {
  * @param string password - optional
  * @param string username - optional
  */
-$Account->put('/accounts/:id', function ($req) { }, TRUE);
+$Account->put('/accounts/:id', function ($req) {
+  $filteredParams = Controller::filterPayload($req->params);
+  $filteredBody = Controller::filterPayload($req->body);
+  Controller::required(['id'], $filteredParams);
+  Account::checkId($req->headers['token'], $filteredParams['id']);
+  $filteredBody['id'] = (int) $filteredParams['id'];
+
+  if (isset($filteredBody['email'])) {
+    Account::checkEmail($filteredBody['email']);
+  }
+
+  if (isset($filteredBody['password'])) {
+    $filteredBody['passHash'] = password_hash($filteredBody['password'], PASSWORD_DEFAULT);
+  }
+
+  if (AccountModel::update($filteredBody) != 1) {
+    return Response::err("Account did not update");
+  }
+
+  return Response::success("Account updated successfully");
+}, TRUE);
 
 /**
  * Reset Password

@@ -33,7 +33,7 @@ class AccountModel
   public static function get($data)
   {
     return Dispatcher::dispatch(
-      "SELECT * FROM account",
+      "SELECT id, `name`, email, created, verification, `role` FROM account",
       $data,
       ['fetchConstant' => 'fetchAll']
     );
@@ -41,7 +41,7 @@ class AccountModel
   public static function getOne($data)
   {
     return Dispatcher::dispatch(
-      "SELECT * FROM account
+      "SELECT id, `name`, email, created, verification, `role` FROM account
       WHERE id = :id",
       $data,
       ['fetchConstant' => 'fetch']
@@ -73,6 +73,14 @@ class AccountModel
       WHERE id = :id",
       $data,
       ['fetchConstant' => 'fetch']
+    );
+  }
+  public static function update($data)
+  {
+    $optionalValues = Dispatcher::optionalUpdateValues(['name', 'email', 'passHash'], $data);
+    return Dispatcher::dispatch(
+      "UPDATE account SET $optionalValues WHERE id = :id",
+      $data
     );
   }
 }
