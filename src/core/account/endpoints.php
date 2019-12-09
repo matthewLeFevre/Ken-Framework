@@ -57,13 +57,21 @@ $Account->post('/accounts', function ($req) {
   }
 
   $filteredBody['passHash'] = password_hash($filteredBody['password'], PASSWORD_DEFAULT);
+
+  $verificationToken = Token::create(
+    $accountData['id'],
+    $_ENV['KEN_SECRET'],
+    time() + 3600 * 24,
+    $_ENV['KEN_DOMAIN']
+  );
+
   global $Account;
   if (AccountModel::create($filteredBody) == 1) {
     try {
       $Account->mail->setFrom('admin@matthew-lefevre.com');
       $Account->mail->addAddress($filteredBody['email']);
       $Account->mail->Subject = "Account created for " . $filteredBody['name'];
-      $Account->mail->Body = "<h1>Verify Your account</h1><div><a href='#'>Verify Account</a></div>";
+      $Account->mail->Body = "<h1>Verify Your account</h1><div><a href='http://site2/api.php/verify?token=$verificationToken'>Verify Account</a></div>";
       $Account->mail->send();
     } catch (Exception $e) {
       return Response::err($e->message);
@@ -148,9 +156,29 @@ $Account->put('/accounts/:id', function ($req) { }, TRUE);
 
 // DELETE endpoints
 
-$Account->delete('/accounts/:id', function ($req) { }, TRUE);
+$Account->delete('/accounts/:id', function ($req) {
+  $filteredParams = Controller::filterPayload($req->params);
+  Controller::required(['id'], $filteredParams);
+  Account::checkId($req->headers['token'], $filteredParams['id']);
+  if (AccountModel::delete(['id' => $filteredParams['id']]) != 1) {
+    return Response::err("Account did not delete");
+  }
+
+  return Response::success("Account deleted successfully");
+}, TRUE);
 
 $Account->post('/seedAccounts', function ($req) {
   seedAccounts();
   return Response::success();
+});
+
+// Verify email account
+$Account->get('/verify', function ($req) {
+  $id = Token::getPayload($req->params['id'], $_ENV['KEN_SECRET']);
+  var_dump($id);
+  if (AccountModel::verify(['id' => $id, 'verification' => 'verified']) != 1) {
+    return Response::err("Account did not verify correctly");
+  }
+
+  return Response::err("Account verified");
 });

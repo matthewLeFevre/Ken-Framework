@@ -93,7 +93,9 @@ class Dispatcher
         return PDO::PARAM_INT;
         break;
       default:
-        return Response::err("$key was not of type integer, double, or string.");
+        $type = gettype($value);
+        echo json_encode(Response::err("$key was not of type integer, double, or string. Was type: $type ."));
+        exit;
         break;
     }
   }

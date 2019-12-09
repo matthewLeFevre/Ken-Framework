@@ -68,7 +68,7 @@ class AccountModel
   public static function getAuthData($data)
   {
     return Dispatcher::dispatch(
-      "SELECT id, email, `name`, created, verification 
+      "SELECT id, email, `name`, created, verification , `role`
       FROM account 
       WHERE id = :id",
       $data,
@@ -80,6 +80,22 @@ class AccountModel
     $optionalValues = Dispatcher::optionalUpdateValues(['name', 'email', 'passHash'], $data);
     return Dispatcher::dispatch(
       "UPDATE account SET $optionalValues WHERE id = :id",
+      $data
+    );
+  }
+  public static function delete($data)
+  {
+    return Dispatcher::dispatch(
+      "DELETE FROM account WHERE id = :id",
+      $data
+    );
+  }
+  public static function verify($data)
+  {
+    return Dispatcher::dispatch(
+      "UPDATE account 
+      SET verification = :verification 
+      WHERE id = :id",
       $data
     );
   }
