@@ -24,6 +24,6 @@ header("Content-Type: application/json");
 // Instantiate app
 $app = new Ken();
 $app->integrate($Test->getRoutes());
-// $app->integrate($Account->getRoutes());
+$app->integrate($Account->getRoutes());
 // var_dump($app->getRoutes());
 $app->start();

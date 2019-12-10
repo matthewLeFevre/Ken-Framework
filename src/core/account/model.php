@@ -33,9 +33,7 @@ class AccountModel
   public static function get($data)
   {
     return Dispatcher::dispatch(
-      "SELECT account.*, email.email_address, email.email_status FROM account
-      INNER JOIN email
-      ON account.account_id = email.account_id",
+      "SELECT id, `name`, email, created, verification, `role` FROM account",
       $data,
       ['fetchConstant' => 'fetchAll']
     );
@@ -43,14 +41,62 @@ class AccountModel
   public static function getOne($data)
   {
     return Dispatcher::dispatch(
-      "SELECT account.*, email.email_address, email.email_status FROM account
-      INNER JOIN email
-      ON account.account_id = email.account_id
-      WHERE account.account_id = :account_id",
+      "SELECT id, `name`, email, created, verification, `role` FROM account
+      WHERE id = :id",
       $data,
       ['fetchConstant' => 'fetch']
     );
   }
   public static function create($data)
-  { }
+  {
+    return Dispatcher::dispatch(
+      "INSERT INTO account 
+      (email, passHash, `name`)
+      VALUES
+      (:email, :passHash, :name)",
+      $data
+    );
+  }
+  public static function getByEmail($data)
+  {
+    return Dispatcher::dispatch(
+      "SELECT * FROM account WHERE email = :email",
+      $data,
+      ['fetchConstant' => 'fetch']
+    );
+  }
+  public static function getAuthData($data)
+  {
+    return Dispatcher::dispatch(
+      "SELECT id, email, `name`, created, verification , `role`
+      FROM account 
+      WHERE id = :id",
+      $data,
+      ['fetchConstant' => 'fetch']
+    );
+  }
+  public static function update($data)
+  {
+    $optionalValues = Dispatcher::optionalUpdateValues(['name', 'email', 'passHash'], $data);
+    return Dispatcher::dispatch(
+      "UPDATE account SET $optionalValues WHERE id = :id",
+      $data
+    );
+  }
+  public static function delete($data)
+  {
+    return Dispatcher::dispatch(
+      "DELETE FROM account WHERE id = :id",
+      $data
+    );
+  }
+  public static function verify($data)
+  {
+    return Dispatcher::dispatch(
+      "UPDATE account 
+      SET verification = :verification 
+      WHERE id = :id",
+      $data
+    );
+  }
 }

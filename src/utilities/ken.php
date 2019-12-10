@@ -117,7 +117,8 @@ class Ken
             $route,
             getallheaders(),
             json_decode(file_get_contents('php://input'), true),
-            $_FILES
+            $_FILES,
+            $_SERVER['QUERY_STRING']
         );
 
         echo json_encode($this->process($req));
@@ -175,7 +176,7 @@ class Ken
 
 class Request
 {
-    public function __construct($method, $route, $headers, $body, $file)
+    public function __construct($method, $route, $headers, $body, $file, $queryString = null)
     {
         if (is_array($body) && is_array($file)) {
             $reqBody = array_merge($body, $file);
@@ -190,10 +191,13 @@ class Request
         $params = ltrim($route, '/');
         $params = explode('/', $params);
 
+        var_dump($queryString);
+
         $this->method = $method;
         $this->headers = $headers;
         $this->body = $reqBody;
         $this->params = $params;
+        $this->queryString = $queryString;
 
         /** 
          *  This is not scalable and only a temporary solution

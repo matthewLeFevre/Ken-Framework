@@ -113,6 +113,14 @@ class Controller
         return $filterVar;
     }
 
+    /**
+     * Filter Text
+     * -------------
+     * 
+     * If the client has sent a variable that is 
+     * a string you can filter and sanitize it
+     * with this function.
+     */
     public static function filterText($payloadVar)
     {
         if (gettype($payloadVar) == "string") {
@@ -122,6 +130,42 @@ class Controller
         }
 
         return $filterVar;
+    }
+
+    /**
+     * Filter Email
+     * ------------
+     * 
+     * If the client has sent an email
+     * sanitize and filter it with with command. 
+     */
+
+    public static function filterEmail($email)
+    {
+        $sanEmail = filter_var($email, FILTER_SANITIZE_EMAIL);
+        $valEmail = filter_var($sanEmail, FILTER_VALIDATE_EMAIL);
+        return $valEmail;
+    }
+
+    /**
+     * Is Email
+     * ---------
+     * 
+     * Returns a boolean that reflects whether
+     * or not a string is an email. This can
+     * very easily be tricked in its current state.
+     * 
+     * @todo make more reliable with regex
+     */
+
+    public static function isEmail($input)
+    {
+        $key = stripos($input, '@');
+        if ($key) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -153,16 +197,16 @@ class Controller
         $oneExists = FALSE;
         foreach ($inputArr as $input) {
             if (isset($body[$input])) {
-                if($oneExists == FALSE) {
+                if ($oneExists == FALSE) {
                     $oneExists = TRUE;
                 } else {
-                    echo json_encode(Responsed::err("More than one value submitted"))
+                    echo json_encode(Response::err("More than one value submitted"));
                     exit;
                 }
             }
         }
 
-        if($oneExists == FALSE) {
+        if ($oneExists == FALSE) {
             echo json_encode(Response::err("A required input was not submitted"));
         }
     }
