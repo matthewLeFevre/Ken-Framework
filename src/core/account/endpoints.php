@@ -109,13 +109,28 @@ $Account->post('/authenticate', function ($req) {
     $_ENV['KEN_SECRET'],
     // time() + 3600 * 24 * 7, one week
     // time() + 3600 * 24, one day
-    // time() + 3600 * 1, one hour
-    time() + 3600 * 1,
+    time() + 3600 * 1, // One hour
     $_ENV['KEN_DOMAIN']
   );
 
   return Response::data($accountAuthData, "Welcome back " . $accountAuthData['name'] . "!");
 });
+
+/**
+ * keep authenticated
+ * /keepAuthenticated - send every 59 minutes or so
+ * token is good for one hour
+ */
+$Account->post('/keepAuthenticated', function ($req) {
+  $id = Token::getPayload($req->headers['token'], $_ENV['KEN_SECRET']);
+  $token = Token::create(
+    $id,
+    $_ENV['KEN_SECRET'],
+    time() + 3600 * 1, // One Hour
+    $_ENV['KEN_DOMAIN']
+  );
+  return Response::data(['token' => $token], "Account may persist");
+}, TRUE);
 
 /**
  * Update account
@@ -175,7 +190,6 @@ $Account->post('/seedAccounts', function ($req) {
 // Verify email account
 $Account->get('/verify', function ($req) {
   $id = Token::getPayload($req->params['id'], $_ENV['KEN_SECRET']);
-  var_dump($id);
   if (AccountModel::verify(['id' => $id, 'verification' => 'verified']) != 1) {
     return Response::err("Account did not verify correctly");
   }

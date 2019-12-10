@@ -11,15 +11,10 @@ $dotenv = Dotenv\Dotenv::create(__DIR__ . '/../');
 $dotenv->load();
 
 /**
- *  Configure this db_connect file to connect to the database you have
+ *  Configure this dbConnect file to connect to the database you have
  *  created.
  */
-// require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/db_connect.php';
 
-/**
- * This db_connect_local is the file used locally for development
- * of php generic and can be deleted if downloading from github.
- */
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/dbConnect.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/response.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/utilities/jwt.php';
