@@ -1,5 +1,9 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
+
+namespace KenFramework\Utilities;
+
+use PDO;
+
 /**
  * Dispatcher
  * -----------
@@ -13,7 +17,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  *       we may need some for of dynamic query builder
  * @todo clean up code so that it looks nicer
  */
-class Dispatcher 
+class Model
 {
   /**
    * Specify details that the dispatch can 
@@ -28,8 +32,9 @@ class Dispatcher
    * 
    * @todo Provide documentation and descriptions for all methods
    */
-  
-  public static function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false]) {
+
+  public static function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false])
+  {
     // parse the sql and find the required fields
     $pattern = "/[:^]([A-z0-9]+)/";
     preg_match_all($pattern, $sql, $matches_out);
@@ -37,11 +42,11 @@ class Dispatcher
     $db = dbConnect();
     $stmt = $db->prepare($sql);
     // put in a try catch here
-    if(!empty($data)) { 
-      foreach($data AS $key => $value) {
-        foreach($fields AS $field) {
-          if($key == $field) {
-            
+    if (!empty($data)) {
+      foreach ($data as $key => $value) {
+        foreach ($fields as $field) {
+          if ($key == $field) {
+
             $stmt->bindValue(":$key", $value, self::pdoConstant($value, $key));
           }
         }
@@ -50,9 +55,9 @@ class Dispatcher
       return Response::err();
     }
     $stmt->execute();
-    if(isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
+    if (isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
       $data = "";
-      switch($options['fetchConstant']) {
+      switch ($options['fetchConstant']) {
         case "fetch":
           $data = $stmt->fetch(PDO::FETCH_NAMED);
           break;
@@ -79,20 +84,72 @@ class Dispatcher
       return $rowsChanged;
     }
   }
-  private static function pdoConstant($value, $key) {
-    switch(gettype($value)) {
+
+  /**
+   * Private function that defines the type of the bound
+   * value for storage in the database
+   */
+  private static function pdoConstant($value, $key)
+  {
+    switch (gettype($value)) {
       case 'string':
         return PDO::PARAM_STR;
-      break;
+        break;
       case 'integer':
         return PDO::PARAM_INT;
-      break;
+        break;
       case 'double':
         return PDO::PARAM_INT;
-      break;
+        break;
       default:
-        return Response::err("$key was not of type integer, double, or string.");
-      break;
+        $type = gettype($value);
+        echo json_encode(Response::err("$key was not of type integer, double, or string. Was type: $type ."));
+        exit;
+        break;
     }
+  }
+
+  /**
+   * Optional Columns
+   * ----------------
+   * 
+   * Optional columns returns two strings
+   * for respective columns and values in 
+   * a dynamically build sql string.
+   */
+  public static function optionalColumns($options, $payload)
+  {
+    $columns = "";
+    $values = "";
+    foreach ($payload as $key => $value) {
+      foreach ($options as $opt) {
+        if ($key == $opt) {
+          $columns .= ", $key";
+          $values .= ", :$key";
+        }
+      }
+    }
+    return ['columns' => $columns, 'values' => $values];
+  }
+
+  /**
+   * Optional Update Values
+   * ----------------------
+   * 
+   * Same as optional columns but instead
+   * defines a string for updating instead
+   * of selecting. Only returns one string.
+   */
+  public static function optionalUpdateValues($columns, $payload)
+  {
+    $sql = "";
+    foreach ($payload as $key => $value) {
+      foreach ($columns as $col) {
+        if ($key == $col) {
+          $sql .= "$key = :$key,";
+        }
+      }
+    }
+    return rtrim($sql, ",");
   }
 }

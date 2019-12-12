@@ -1,9 +1,2 @@
-src/utilities/db_connect_local.php
-src/modules/
-src/features/
-server_assets/
-depricated_code
-src/standard/
 vendor/
-index.html
 .env

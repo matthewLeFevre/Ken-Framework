@@ -7,7 +7,7 @@
  * server file.
  */
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
+use KenFramework\Utilities\Ken;
 
 // CSRF (cross-site request forgery) vulnerability
 // due to serving spa's on seprate local server for 
@@ -23,7 +23,5 @@ header("Content-Type: application/json");
 
 // Instantiate app
 $app = new Ken();
-$app->integrate($Test->getRoutes());
-// $app->integrate($Account->getRoutes());
-// var_dump($app->getRoutes());
+$app->integrate($Account->getRoutes());
 $app->start();
