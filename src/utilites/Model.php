@@ -1,5 +1,9 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
+
+namespace KenFramework\Utilities;
+
+use PDO;
+
 /**
  * Dispatcher
  * -----------
@@ -13,7 +17,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
  *       we may need some for of dynamic query builder
  * @todo clean up code so that it looks nicer
  */
-class Dispatcher
+class Model
 {
   /**
    * Specify details that the dispatch can 
@@ -80,6 +84,11 @@ class Dispatcher
       return $rowsChanged;
     }
   }
+
+  /**
+   * Private function that defines the type of the bound
+   * value for storage in the database
+   */
   private static function pdoConstant($value, $key)
   {
     switch (gettype($value)) {
