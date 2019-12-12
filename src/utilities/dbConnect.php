@@ -2,6 +2,9 @@
 
 namespace KenFramework\Utilities;
 
+use PDO;
+use PDOException;
+
 /**
  * Uses variables defined in the .env.example file be sure
  * to configure that file before using this function or you will
