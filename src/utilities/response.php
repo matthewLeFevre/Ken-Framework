@@ -1,20 +1,27 @@
-<?php 
+<?php
 
-class Response {
-  public static function resp($status, $message, $code = 200) {
+namespace KenFramework\Utilities;
+
+class Response
+{
+  public static function resp($status, $message, $code = 200)
+  {
     http_response_code($code);
     return ["status" => $status, "message" => $message];
   }
-  public static function success ($message = "Request was successfully executed") {
+  public static function success($message = "Request was successfully executed")
+  {
     http_response_code(200);
-    return ["status"=>"success", "message"=>$message];
+    return ["status" => "success", "message" => $message];
   }
-  public static function err($message = "An error was thrown") {
+  public static function err($message = "An error was thrown")
+  {
     http_response_code(400);
     return ["status" => "failure", "message" => $message];
   }
-  public static function data($data, $message = "Data Retrieved Successfully", $status = "success") {
+  public static function data($data, $message = "Data Retrieved Successfully", $status = "success")
+  {
     http_response_code(200);
-    return ["status"=> $status, "data"=> $data, "message"=>$message];
+    return ["status" => $status, "data" => $data, "message" => $message];
   }
 }

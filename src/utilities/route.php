@@ -1,16 +1,18 @@
-<?php 
+<?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/src/include.php';
+namespace KenFramework\Utilities;
 
 use ReallySimpleJWT\Token;
 
-class Route {
+class Route
+{
     private $route;
     private $callback;
     private $tokenValidation;
     private $howToValidate;
 
-    public function __construct($method, $route, $callback, $howToValidate = FALSE) {
+    public function __construct($method, $route, $callback, $howToValidate = FALSE)
+    {
         $this->route = $route;
         $this->callback = $callback;
         $this->howToValidate = $howToValidate;
@@ -27,7 +29,8 @@ class Route {
      *  @param boolean $tokenValidation
      */
 
-    public function setTokenValidation($tokenValidation) {
+    public function setTokenValidation($tokenValidation)
+    {
         $this->tokenValidation = $tokenValidation;
     }
 
@@ -38,11 +41,13 @@ class Route {
      * - retrieves the name of the Action
      */
 
-    public function getRoute() {
+    public function getRoute()
+    {
         return $this->route;
     }
 
-    public function getMethod() {
+    public function getMethod()
+    {
         return $this->method;
     }
 
@@ -68,16 +73,17 @@ class Route {
      * @param array $arguments
      */
 
-    public function __call($route, $req) {
+    public function __call($route, $req)
+    {
         global $secret;
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
-        if($this->tokenValidation && $this->howToValidate && !isset($req[0]->headers['Authorization'])) {
+        if ($this->tokenValidation && $this->howToValidate && !isset($req[0]->headers['Authorization'])) {
             return Response::err("Api token missing, please contact your web administrator");
             exit;
         }
-        if($this->tokenValidation && $this->howToValidate && !Token::validate($req[0]->headers['Authorization'], $secret)) {
-            return Response::err("Invalid token sent to api, error encountered in ". $this->route ." action ,please contact your web administrator");
+        if ($this->tokenValidation && $this->howToValidate && !Token::validate($req[0]->headers['Authorization'], $secret)) {
+            return Response::err("Invalid token sent to api, error encountered in " . $this->route . " action ,please contact your web administrator");
             exit;
         }
 
