@@ -4,7 +4,6 @@
   "description": "Ken is a backend rest api framework for single page applications.",
   "require": {
     "rbdwllr/reallysimplejwt": "^2.1",
-    "vlucas/phpdotenv": "^4.0",
     "php": ">=7.1.0"
   },
   "require-dev": {
