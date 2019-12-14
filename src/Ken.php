@@ -63,6 +63,10 @@ class Ken
         $this->tokenValidation = $tokenValidation;
     }
 
+    public function getTokenValidation()
+    {
+        return $this->tokenValidation;
+    }
     /**
      * isActionExemption()
      * -------------------
@@ -141,27 +145,6 @@ class Ken
             }
         }
         return Response::err("The " . $req->getMethod() . " " . $req->getRoute() . " route does not exist");
-    }
-
-    public function get($route, $callback, $howToValidate = FALSE)
-    {
-        array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
-    }
-    public function post($route, $callback, $howToValidate = FALSE)
-    {
-        array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
-    }
-    public function put($route, $callback, $howToValidate = FALSE)
-    {
-        array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
-    }
-    public function patch($route, $callback, $howToValidate = FALSE)
-    {
-        array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
-    }
-    public function delete($route, $callback, $howToValidate = FALSE)
-    {
-        array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
     }
 
     public function integrate(array $routes)

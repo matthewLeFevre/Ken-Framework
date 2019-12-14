@@ -58,7 +58,7 @@ class Route
      * - This function executes the user generated function
      *  assigned to this action through the controller
      * 
-     * - the method being called is the `$this->action` 
+     * - the method being called is the `$this->callback` 
      * method that was assigned to this aciton object
      * at the point of instantiation.
      * 
@@ -75,6 +75,7 @@ class Route
 
     public function __call($route, $req)
     {
+        var_dump($route);
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
         if ($this->tokenValidation && $this->howToValidate && !isset($req[0]->headers['Authorization'])) {
