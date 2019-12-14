@@ -1,6 +1,6 @@
 # Ken Framework
 
-![Ken Framework Logo](https://raw.githubusercontent.com/matthewlefevre/ken-framework/Ken Logo.png)
+![Ken Framework Logo](https://github.com/matthewLeFevre/Ken-Framework/blob/master/Ken%20Logo.png)
 
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/matthewLeFevre/Ken-Framework/blob/master/LICENSE)
 
