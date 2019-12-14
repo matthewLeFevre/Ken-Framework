@@ -1,8 +1,9 @@
 <?php
 
-namespace KenFramework\Utilities;
+namespace KenFramework;
 
 use PDO;
+use PDOException;
 
 /**
  * Dispatcher
@@ -39,7 +40,7 @@ class Model
     $pattern = "/[:^]([A-z0-9]+)/";
     preg_match_all($pattern, $sql, $matches_out);
     $fields = $matches_out[1];
-    $db = dbConnect();
+    $db = self::dbConnect();
     $stmt = $db->prepare($sql);
     // put in a try catch here
     if (!empty($data)) {
@@ -151,5 +152,22 @@ class Model
       }
     }
     return rtrim($sql, ",");
+  }
+
+  private static function dbConnect()
+  {
+    $server = $_ENV['KEN_SERVER']; // Most likely localhost
+    $database = $_ENV['KEN_DB'];
+    $user = $_ENV['KEN_DB_USER'];
+    $password = $_ENV['KEN_DB_PASSWORD'];
+    $dsn = "mysql:host=$server; dbname=$database";
+    $options = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+    try {
+      $genericLink = new PDO($dsn, $user, $password, $options);
+      return $genericLink;
+    } catch (PDOException $ex) {
+      echo $ex;
+      exit;
+    }
   }
 }
