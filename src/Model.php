@@ -20,6 +20,22 @@ use PDOException;
  */
 class Model
 {
+  protected static function dbConnect()
+  {
+    $server = $_ENV['KEN_SERVER']; // Most likely localhost
+    $database = $_ENV['KEN_DB'];
+    $user = $_ENV['KEN_DB_USER'];
+    $password = $_ENV['KEN_DB_PASSWORD'];
+    $dsn = "mysql:host=$server; dbname=$database";
+    $options = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+    try {
+      $genericLink = new PDO($dsn, $user, $password, $options);
+      return $genericLink;
+    } catch (PDOException $ex) {
+      echo $ex;
+      exit;
+    }
+  }
   /**
    * Specify details that the dispatch can 
    * execute against the database.
@@ -152,22 +168,5 @@ class Model
       }
     }
     return rtrim($sql, ",");
-  }
-
-  private static function dbConnect()
-  {
-    $server = $_ENV['KEN_SERVER']; // Most likely localhost
-    $database = $_ENV['KEN_DB'];
-    $user = $_ENV['KEN_DB_USER'];
-    $password = $_ENV['KEN_DB_PASSWORD'];
-    $dsn = "mysql:host=$server; dbname=$database";
-    $options = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
-    try {
-      $genericLink = new PDO($dsn, $user, $password, $options);
-      return $genericLink;
-    } catch (PDOException $ex) {
-      echo $ex;
-      exit;
-    }
   }
 }
