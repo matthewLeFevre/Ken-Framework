@@ -75,7 +75,6 @@ class Route
 
     public function __call($route, $req)
     {
-        var_dump($route);
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
         if ($this->tokenValidation && $this->howToValidate && !isset($req[0]->headers['Authorization'])) {

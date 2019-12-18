@@ -6,23 +6,17 @@ use PDO;
 use PDOException;
 
 /**
- * Dispatcher
- * -----------
+ * Model
  * 
- * This dispatcher is currently undergoing
- * testing its function is to make the 
- * previous method of having a function for
- * each model action dynamic
- * 
- * @todo make the dispatch more abstract and less rigid - Options were added
- *       we may need some for of dynamic query builder
- * @todo clean up code so that it looks nicer
+ * An extendable class for processing
+ * sql queries on the database
  */
 class Model
 {
+  // Connects to database specified in enviornment variables
   protected static function dbConnect()
   {
-    $server = $_ENV['KEN_SERVER']; // Most likely localhost
+    $server = $_ENV['KEN_SERVER'];
     $database = $_ENV['KEN_DB'];
     $user = $_ENV['KEN_DB_USER'];
     $password = $_ENV['KEN_DB_PASSWORD'];
@@ -36,6 +30,7 @@ class Model
       exit;
     }
   }
+
   /**
    * Specify details that the dispatch can 
    * execute against the database.
@@ -58,7 +53,6 @@ class Model
     $fields = $matches_out[1];
     $db = self::dbConnect();
     $stmt = $db->prepare($sql);
-    // put in a try catch here
     if (!empty($data)) {
       foreach ($data as $key => $value) {
         foreach ($fields as $field) {

@@ -19,8 +19,6 @@ class Request
     $params = ltrim($route, '/');
     $params = explode('/', $params);
 
-    var_dump($queryString);
-
     $this->method = $method;
     $this->headers = $headers;
     $this->body = $reqBody;

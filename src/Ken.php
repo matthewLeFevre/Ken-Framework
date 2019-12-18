@@ -101,7 +101,6 @@ class Ken
 
     public function start()
     {
-
         foreach ($this->routes as $route) {
             $route->setTokenValidation($this->tokenValidation);
         }
@@ -112,13 +111,19 @@ class Ken
             filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_STRING)
         );
 
+        $route = explode("?", $route, 2);
+
+        $queryParameters = array();
+
+        parse_str($_SERVER['QUERY_STRING'], $queryParameters);
+
         $req = new Request(
             $_SERVER['REQUEST_METHOD'],
-            $route,
+            $route[0],
             getallheaders(),
             json_decode(file_get_contents('php://input'), true),
             $_FILES,
-            $_SERVER['QUERY_STRING']
+            $queryParameters
         );
 
         echo json_encode($this->process($req));
