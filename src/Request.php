@@ -16,8 +16,7 @@ class Request
       $reqBody = NULL;
     }
 
-    $params = ltrim($route, '/');
-    $params = explode('/', $params);
+    $params = Ken::extractParams($route);
 
     $this->method = $method;
     $this->headers = $headers;
@@ -36,25 +35,31 @@ class Request
      * @todo find a dynamic way to work with endpoints
      */
 
-    switch (count($params)) {
-      case 1:
-        $this->route = $route;
-        break;
-      case 2:
-        $this->route = "/$params[0]/:id";
-        $this->params['id'] = $this->params[1];
-        break;
-      case 3:
-        $this->route = "/$params[0]/:id/$params[2]";
-        break;
-      case 4:
-        $this->route = "/$params[0]/:id/$params[2]/:id";
-        break;
-      default:
-        return Response::err("Error analyzing request");
-        break;
-    }
+    // switch (count($params)) {
+    //   case 1:
+    //     $this->route = $route;
+    //     break;
+    //   case 2:
+    //     $this->route = "/$params[0]/:id";
+    //     $this->params['id'] = $this->params[1];
+    //     break;
+    //   case 3:
+    //     $this->route = "/$params[0]/:id/$params[2]";
+    //     break;
+    //   case 4:
+    //     $this->route = "/$params[0]/:id/$params[2]/:id";
+    //     break;
+    //   default:
+    //     return Response::err("Error analyzing request");
+    //     break;
+    // }
   }
+
+  /**
+   * Acceptable routes
+   * /item/item/item/:id
+   * /item/item/item/:id/item
+   */
 
   public function getRoute()
   {
@@ -67,5 +72,14 @@ class Request
   public function getMethod()
   {
     return $this->method;
+  }
+  public function getParams()
+  {
+    return $this->params;
+  }
+
+  public function setParams(array $params)
+  {
+    $this->params = $params;
   }
 }

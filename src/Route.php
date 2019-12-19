@@ -10,10 +10,14 @@ class Route
     private $callback;
     private $tokenValidation;
     private $howToValidate;
+    private $params;
 
     public function __construct($method, $route, $callback, $howToValidate = FALSE)
     {
+        $params = Ken::extractParams($route);
+
         $this->route = $route;
+        $this->params = $params;
         $this->callback = $callback;
         $this->howToValidate = $howToValidate;
         $this->method = $method;
@@ -49,6 +53,11 @@ class Route
     public function getMethod()
     {
         return $this->method;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
     }
 
     /**

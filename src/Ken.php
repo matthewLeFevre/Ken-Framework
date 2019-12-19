@@ -142,18 +142,132 @@ class Ken
      * and executed.
      */
 
-    function process($req)
+    private function process($req)
     {
-        foreach ($this->routes as $route) {
-            if ($route->getRoute() == $req->getRoute() && $route->getMethod() == $req->getMethod()) {
-                return $route->callRoute($req);
-            }
+
+        $matchedRoute = $this->matchRoute($req);
+
+        if ($matchedRoute) {
+            return $matchedRoute->callRoute($req);
+        } else {
+            return Response::err("The " . $req->getMethod() . " " . $req->getRoute() . " route does not exist");
         }
-        return Response::err("The " . $req->getMethod() . " " . $req->getRoute() . " route does not exist");
     }
 
     public function integrate(array $routes)
     {
         $this->routes = array_merge($this->routes, $routes);
+    }
+
+    /**
+     * Match Route
+     * 
+     * Takes in a route and compares it to the route parsed from the request
+     * object.
+     */
+
+    private function matchRoute($req)
+    {
+        // var_dump($req->getParams());
+        // exit;
+        // get routes with same http method
+        $httpMethodRoutes = array();
+        foreach ($this->routes as $route) {
+            if ($route->getMethod() == $req->getMethod()) {
+                array_push($httpMethodRoutes, $route);
+            }
+        }
+
+        // echo ("=========Http Method Routes=============");
+        // var_dump($httpMethodRoutes);
+        // exit;
+        // find routes with same number of parameters
+        $numParamsRoutes = array();
+        foreach ($httpMethodRoutes as $route) {
+            // var_dump(count($req->getParams()) . " = " . count($route->getParams()));
+            if (count($route->getParams()) == count($req->getParams())) {
+                array_push($numParamsRoutes, $route);
+            }
+        }
+        // echo ("=========Param Count=============");
+        // var_dump($numParamsRoutes);
+        // exit;
+        // find out how many matches in param each route has
+        $numMatchingParamsRoutes = array();
+        foreach ($numParamsRoutes as $route) {
+            $routeMatches = [
+                "numMatches" => 0,
+                "route" => $route
+            ];
+            foreach ($route->getParams() as $param) {
+                foreach ($req->getParams() as $reqParam) {
+                    if ($param == $reqParam) {
+                        $routeMatches['numMatches'] += 1;
+                    }
+                }
+            }
+            array_push($numMatchingParamsRoutes, $routeMatches);
+        }
+
+        // echo ("=========Matching Param Count=============");
+        // var_dump($numMatchingParamsRoutes);
+        // exit;
+        // find route that has the most matches
+        $counter = 0;
+        $matchedRoute = null;
+        foreach ($numMatchingParamsRoutes as $route) {
+            if ($route['numMatches'] > $counter) {
+                $matchedRoute = $route['route'];
+            }
+        }
+
+
+
+        // echo ("=========HIghest Matching Param Count=============");
+        // var_dump($matchedRoute);
+        // exit;
+        $boundParams = $this->bindParams($req, $matchedRoute);
+        $req->setParams($boundParams);
+        return $matchedRoute;
+    }
+
+    /**
+     * Bind Params
+     * 
+     * Identifies the parameters that must be bound
+     * an creates a new array with which the route
+     * can access params.
+     */
+
+    private function bindParams($req, $matchedRoute)
+    {
+        $params = array();
+        $pattern = "/[:^]([A-z0-9]+)/";
+        foreach ($matchedRoute->getParams() as $index => $param) {
+            preg_match($pattern, $param, $hits);
+            if (count($hits) > 0) {
+                $params[$this->trimColon($param)] = $req->getParams()[$index];
+            }
+        }
+        return $params;
+    }
+
+    private function trimColon(string $key)
+    {
+        return ltrim($key, ":");
+    }
+
+    /**
+     * Extract params
+     * 
+     * Takes a route string and converts it to
+     * an array to be analyzed more closely
+     */
+
+    public static function extractParams($route)
+    {
+        $params = ltrim($route, '/');
+        $params = explode('/', $params);
+        return $params;
     }
 }
