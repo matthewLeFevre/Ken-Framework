@@ -4,7 +4,7 @@
 
 ### Massive changes to the structure of the library
 
-- Now using PSR-4 autoloading. No need for a massible include file.
+- Now using PSR-4 autoloading. No need for a massive include file.
 - Dispatcher class renamed to model class. Intended to be extended by features to create models.
 - Controller class now intended to be extended to describe feature controllers.
 - Ken core will be its own project and files have been removed.

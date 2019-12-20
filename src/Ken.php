@@ -226,7 +226,7 @@ class Ken
         // echo ("=========HIghest Matching Param Count=============");
         // var_dump($matchedRoute);
         // exit;
-        $boundParams = $this->bindParams($req, $matchedRoute);
+        $boundParams = self::bindParams($req, $matchedRoute);
         $req->setParams($boundParams);
         return $matchedRoute;
     }
@@ -235,24 +235,24 @@ class Ken
      * Bind Params
      * 
      * Identifies the parameters that must be bound
-     * an creates a new array with which the route
+     * and creates a new array with which the route
      * can access params.
      */
 
-    private function bindParams($req, $matchedRoute)
+    public static function bindParams($req, $matchedRoute)
     {
         $params = array();
         $pattern = "/[:^]([A-z0-9]+)/";
         foreach ($matchedRoute->getParams() as $index => $param) {
             preg_match($pattern, $param, $hits);
             if (count($hits) > 0) {
-                $params[$this->trimColon($param)] = $req->getParams()[$index];
+                $params[self::trimColon($param)] = $req->getParams()[$index];
             }
         }
         return $params;
     }
 
-    private function trimColon(string $key)
+    private static function trimColon(string $key)
     {
         return ltrim($key, ":");
     }
