@@ -1,5 +1,11 @@
 # Change Log
 
+## v0.6.1
+
+### Changes to binding parameters function
+
+- Fixed a bug where routes that don't have params weren't run
+
 ## v0.6.0
 
 ### Massive changes to the structure of the library

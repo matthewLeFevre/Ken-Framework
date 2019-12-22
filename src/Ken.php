@@ -243,10 +243,12 @@ class Ken
     {
         $params = array();
         $pattern = "/[:^]([A-z0-9]+)/";
-        foreach ($matchedRoute->getParams() as $index => $param) {
-            preg_match($pattern, $param, $hits);
-            if (count($hits) > 0) {
-                $params[self::trimColon($param)] = $req->getParams()[$index];
+        if (null !== $matchedRoute->getParams()) {
+            foreach ($matchedRoute->getParams() as $index => $param) {
+                preg_match($pattern, $param, $hits);
+                if (count($hits) > 0) {
+                    $params[self::trimColon($param)] = $req->getParams()[$index];
+                }
             }
         }
         return $params;
