@@ -2,6 +2,18 @@
 
 namespace KenFramework;
 
+/**
+ * Response
+ * --------
+ * 
+ * The most common methods to respond to
+ * client requests.
+ * 
+ * 1. Custom response
+ * 2. Success response
+ * 3. Error response
+ * 4. Data payload response
+ */
 class Response
 {
   public static function resp($status, $msg, $code = 200)
