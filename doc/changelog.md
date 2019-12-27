@@ -1,5 +1,12 @@
 # Change Log
 
+## v0.6.2
+
+### Added clarifying comments
+
+- Comments are not entirely done but more have been added and updated
+- The model class can now accept null or an empty array for the \$data parameter and will not throw an error
+
 ## v0.6.1
 
 ### Changes to binding parameters function

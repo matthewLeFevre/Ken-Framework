@@ -2,17 +2,17 @@
 
 # Ken Framework
 
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/matthewLeFevre/Ken-Framework/blob/master/LICENSE) ![version](https://img.shields.io/badge/version-0.6.0-green.svg)
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/matthewLeFevre/Ken-Framework/blob/master/LICENSE) ![version](https://img.shields.io/badge/version-0.6.2-green.svg)
 
-Ken is a simple PHP framework adapted to create custom REST API's. Ken supplies middleware tools to developers to simplify web application creation. In a nutshell Ken uses an api file to handle requests from a client, the request has to be sent with specific criteria to be able to preform an action.
-
-Actions represent a single operation that a user undertakes, this could be registering an account, logging in, or uploading a file.
+Ken is a simple PHP framework adapted to create custom REST API's. Ken supplies middleware tools to developers to simplify web application creation.
 
 ## Table of Contents
 
 - [Installation](#user-content-installation)
 - [Usage](#user-content-usage)
   - [Setup](#user-content-setup)
+- [Contributing](#user-content-contributing)
+- [License](#user-content-license)
 
 ## Installation
 
@@ -74,3 +74,18 @@ KEN_DB_USER=""
 KEN_DB_PASSWORD=""
 KEN_SERVER=""
 ```
+
+4. Ensure that you have phpMyAdmin installed and configured in your local enviornment. The built in model class is only compatable with mySQL.
+
+- Create a new database
+- Fill in the correct enviornment variables
+
+5. If you have XAMPP installed either require composer into your htdocs folder. If you don't have XAMPP installed or do not want to run the server on localhost be sure to create virtual hosts on your operating system and in your apache server configuration.
+
+## Contributing
+
+Pull requests are welcome!
+
+## License
+
+Take a look at the `LICENSE.md`

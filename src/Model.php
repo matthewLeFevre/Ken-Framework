@@ -5,15 +5,14 @@ namespace KenFramework;
 use PDO;
 use PDOException;
 
-/**
- * Model
- * 
- * An extendable class for processing
- * sql queries on the database
- */
 class Model
 {
-  // Connects to database specified in enviornment variables
+  /**
+   * Database Connect
+   * ----------------
+   * 
+   * Connects to the database configured by the enviornment variables.
+   */
   protected static function dbConnect()
   {
     $server = $_ENV['KEN_SERVER'];
@@ -32,20 +31,20 @@ class Model
   }
 
   /**
-   * Specify details that the dispatch can 
-   * execute against the database.
+   * Dispatch
+   * --------
    * 
-   * Iterates over each key and binds the
-   * value to the PDO object.
+   * Connects to the database and analyzes an 
+   * SQL string for dynamic variables. Binds 
+   * dynamic variables and executes the query.
+   * Evaluates options and returns rowcount of
+   * affected records and or new record id.
    * 
-   * @param string $sql
-   * @param array $data
-   * @param string $fetchConstant
-   * 
-   * @todo Provide documentation and descriptions for all methods
+   * @param string $sql - sql statement with dynamic variables prefixed with ":"
+   * @param array  $data - name value pairs of data to be entered into the database
+   * @param array $options - additional options that manipulate how the data is returned 
    */
-
-  public static function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false])
+  public static function dispatch($sql, $data = [], $options = ['fetchConstant' => false, 'returnId' => false])
   {
     // parse the sql and find the required fields
     $pattern = "/[:^]([A-z0-9]+)/";
@@ -57,13 +56,10 @@ class Model
       foreach ($data as $key => $value) {
         foreach ($fields as $field) {
           if ($key == $field) {
-
             $stmt->bindValue(":$key", $value, self::pdoConstant($value, $key));
           }
         }
       }
-    } else {
-      return Response::err();
     }
     $stmt->execute();
     if (isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
@@ -97,8 +93,11 @@ class Model
   }
 
   /**
-   * Private function that defines the type of the bound
-   * value for storage in the database
+   * PDO Constant Type
+   * -----------------
+   * 
+   * Defines type of value bein inserted into
+   * the database.
    */
   private static function pdoConstant($value, $key)
   {

@@ -4,21 +4,26 @@ namespace KenFramework;
 
 /**
  * Controller
+ * -----------
  * 
- * Description: 
  * An extendable class that contains methods
  * that integrate with an instance of the main 
- * app class.
+ * ken class.
  */
 
 class Controller
 {
     // routes are used to integrate with an instance of the app
     private $routes = array();
+    private $routeSegments = array();
+    private $pattern = "/[\/:^]([A-z0-9]+)/";
 
     // http method functions add an endpoint of that type to the routes
     public function get($route, $callback, $howToValidate = FALSE)
     {
+        $segments = preg_replace($this->pattern, '', $route);
+        $segments = Ken::extractParams($segments);
+        array_push($this->routeSegments, $segments);
         array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
     public function post($route, $callback, $howToValidate = FALSE)
@@ -41,6 +46,11 @@ class Controller
     public function getRoutes()
     {
         return $this->routes;
+    }
+
+    public function getRouteSegments()
+    {
+        return $this->routeSegments;
     }
 
     /**

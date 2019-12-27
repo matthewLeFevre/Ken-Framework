@@ -22,7 +22,6 @@ class Ken
      */
     private $routes = array();
     private $tokenValidation;
-    private $routeExemptions = array();
 
     /**
      *  class constructor
@@ -34,7 +33,7 @@ class Ken
      *  @todo having the options specified like so could pose
      *        issues when all of them are not explicitely used
      */
-    public function __construct($options = ['tokenValidation' => FALSE, 'routeExemptions' => array()])
+    public function __construct($options = ['tokenValidation' => FALSE])
     {
         if (is_bool($options['tokenValidation'])) {
             $this->tokenValidation = $options['tokenValidation'];
@@ -66,20 +65,6 @@ class Ken
     public function getTokenValidation()
     {
         return $this->tokenValidation;
-    }
-    /**
-     * isActionExemption()
-     * -------------------
-     * Checks to see if the action running does not require a token
-     */
-
-    private function isRouteExemption($reqRoute)
-    {
-        foreach ($this->routeExemptions as $route) {
-            if ($route == $reqRoute) {
-                return TRUE;
-            }
-        }
     }
 
     public function getRoutes()
@@ -154,6 +139,11 @@ class Ken
         }
     }
 
+    /**
+     * @todo change to not only store the routes but also store
+     * pieces of route urls that are not dynamic so dynamic
+     * variables can be identified.
+     */
     public function integrate(array $routes)
     {
         $this->routes = array_merge($this->routes, $routes);
@@ -168,8 +158,6 @@ class Ken
 
     private function matchRoute($req)
     {
-        // var_dump($req->getParams());
-        // exit;
         // get routes with same http method
         $httpMethodRoutes = array();
         foreach ($this->routes as $route) {
@@ -178,10 +166,7 @@ class Ken
             }
         }
 
-        // echo ("=========Http Method Routes=============");
-        // var_dump($httpMethodRoutes);
-        // exit;
-        // find routes with same number of parameters
+        //=========Http Method Routes=============
         $numParamsRoutes = array();
         foreach ($httpMethodRoutes as $route) {
             // var_dump(count($req->getParams()) . " = " . count($route->getParams()));
@@ -189,10 +174,7 @@ class Ken
                 array_push($numParamsRoutes, $route);
             }
         }
-        // echo ("=========Param Count=============");
-        // var_dump($numParamsRoutes);
-        // exit;
-        // find out how many matches in param each route has
+        //=========Param Count=============
         $numMatchingParamsRoutes = array();
         foreach ($numParamsRoutes as $route) {
             $routeMatches = [
@@ -209,10 +191,8 @@ class Ken
             array_push($numMatchingParamsRoutes, $routeMatches);
         }
 
-        // echo ("=========Matching Param Count=============");
-        // var_dump($numMatchingParamsRoutes);
-        // exit;
-        // find route that has the most matches
+        //=========Matching Param Count=============
+
         $counter = 0;
         $matchedRoute = null;
         foreach ($numMatchingParamsRoutes as $route) {
@@ -221,11 +201,11 @@ class Ken
             }
         }
 
+        if ($matchedRoute === null) {
+            return false;
+        }
 
-
-        // echo ("=========HIghest Matching Param Count=============");
-        // var_dump($matchedRoute);
-        // exit;
+        //=========HIghest Matching Param Count=============
         $boundParams = self::bindParams($req, $matchedRoute);
         $req->setParams($boundParams);
         return $matchedRoute;
