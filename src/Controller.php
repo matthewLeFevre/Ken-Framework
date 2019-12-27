@@ -1,13 +1,29 @@
 <?php
 
-namespace KenFramework\Utilities;
+namespace KenFramework;
+
+/**
+ * Controller
+ * -----------
+ * 
+ * An extendable class that contains methods
+ * that integrate with an instance of the main 
+ * ken class.
+ */
 
 class Controller
 {
+    // routes are used to integrate with an instance of the app
     private $routes = array();
+    private $routeSegments = array();
+    private $pattern = "/[\/:^]([A-z0-9]+)/";
 
+    // http method functions add an endpoint of that type to the routes
     public function get($route, $callback, $howToValidate = FALSE)
     {
+        $segments = preg_replace($this->pattern, '', $route);
+        $segments = Ken::extractParams($segments);
+        array_push($this->routeSegments, $segments);
         array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
     public function post($route, $callback, $howToValidate = FALSE)
@@ -32,53 +48,58 @@ class Controller
         return $this->routes;
     }
 
+    public function getRouteSegments()
+    {
+        return $this->routeSegments;
+    }
 
     /**
-     * filterPayload(array) static function
-     * - used to expedite the filter and sanitize functions
-     * only caters to two data types. Strings and Numerics.
+     * FilterData
      * 
-     * @param array $payload
-     * @param array $exemptions
+     * Description:
+     * Takes an assosiative array of the body or params of the request
+     * or in the params of the request. It is recommended that you 
+     * filterData from the request object in the body and params
+     * to ensure that data is vetted and clean.
+     * 
+     * Params:
+     *  @param Array $payload
+     *  @param Array $exemptions
      */
 
-    public static function filterPayload($payload, $exemptions = [])
+    public static function filterData($payload, $exemptions = [])
     {
-        $filterLoad = array();
+        $cleanData = array();
 
-        /**
-         * Iterate through the payload
-         * ---------------------------
-         * 
-         * If there are exemptions that are specified
-         * iterate through all of the exemptions and 
-         * compate them to the key of each payload
-         * if there is a match assign that value 
-         * to the payload without being sanitized.
-         * 
-         * @todo this needs to be refactored to be dry
-         */
         foreach ($payload as $key => $value) {
             if (!empty($exemptions)) {
                 foreach ($exemptions as $exep) {
                     if ($key === $exep) {
-                        $filterLoad[$key] = $value;
+                        $cleanData[$key] = $value;
                     } else {
-                        $filterLoad[$key] = Self::valueFilter($value);
+                        $cleanData[$key] = Self::valueFilter($value);
                     }
                 }
             } else {
-                $filterLoad[$key] = Self::valueFilter($value);
+                $cleanData[$key] = Self::valueFilter($value);
             }
         }
-        return $filterLoad;
+        return $cleanData;
     }
 
     /**
-     * valueFilter($value) - utility function for
-     * - used in filter payload.
+     * ValueFilter
+     * 
+     * Description:
+     * Determins the type of data passed and applies
+     * the correct sanatizing filter. Only filters
+     * strings or integers.
+     * 
+     * Params:
+     * @param Any $value
      */
-    public static function valueFilter($value)
+
+    private static function valueFilter($value)
     {
         switch (gettype($value)) {
             case "integer":
@@ -111,61 +132,6 @@ class Controller
         }
 
         return $filterVar;
-    }
-
-    /**
-     * Filter Text
-     * -------------
-     * 
-     * If the client has sent a variable that is 
-     * a string you can filter and sanitize it
-     * with this function.
-     */
-    public static function filterText($payloadVar)
-    {
-        if (gettype($payloadVar) == "string") {
-            $filterVar = filter_var($payloadVar, FILTER_SANITIZE_STRING);
-        } else {
-            return Response::err("The var to be filtered to plain text was not a string.");
-        }
-
-        return $filterVar;
-    }
-
-    /**
-     * Filter Email
-     * ------------
-     * 
-     * If the client has sent an email
-     * sanitize and filter it with with command. 
-     */
-
-    public static function filterEmail($email)
-    {
-        $sanEmail = filter_var($email, FILTER_SANITIZE_EMAIL);
-        $valEmail = filter_var($sanEmail, FILTER_VALIDATE_EMAIL);
-        return $valEmail;
-    }
-
-    /**
-     * Is Email
-     * ---------
-     * 
-     * Returns a boolean that reflects whether
-     * or not a string is an email. This can
-     * very easily be tricked in its current state.
-     * 
-     * @todo make more reliable with regex
-     */
-
-    public static function isEmail($input)
-    {
-        $key = stripos($input, '@');
-        if ($key) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

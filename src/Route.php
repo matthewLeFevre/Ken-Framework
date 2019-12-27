@@ -1,6 +1,6 @@
 <?php
 
-namespace KenFramework\Utilities;
+namespace KenFramework;
 
 use ReallySimpleJWT\Token;
 
@@ -10,10 +10,14 @@ class Route
     private $callback;
     private $tokenValidation;
     private $howToValidate;
+    private $params;
 
     public function __construct($method, $route, $callback, $howToValidate = FALSE)
     {
+        $params = Ken::extractParams($route);
+
         $this->route = $route;
+        $this->params = $params;
         $this->callback = $callback;
         $this->howToValidate = $howToValidate;
         $this->method = $method;
@@ -51,6 +55,11 @@ class Route
         return $this->method;
     }
 
+    public function getParams()
+    {
+        return $this->params;
+    }
+
     /**
      * __call(string, array) magic method
      * reference: http://php.net/manual/en/language.oop5.overloading.php#object.call
@@ -58,7 +67,7 @@ class Route
      * - This function executes the user generated function
      *  assigned to this action through the controller
      * 
-     * - the method being called is the `$this->action` 
+     * - the method being called is the `$this->callback` 
      * method that was assigned to this aciton object
      * at the point of instantiation.
      * 

@@ -1,58 +1,65 @@
 <?php
 
-namespace KenFramework\Utilities;
+namespace KenFramework;
 
 use PDO;
+use PDOException;
 
-/**
- * Dispatcher
- * -----------
- * 
- * This dispatcher is currently undergoing
- * testing its function is to make the 
- * previous method of having a function for
- * each model action dynamic
- * 
- * @todo make the dispatch more abstract and less rigid - Options were added
- *       we may need some for of dynamic query builder
- * @todo clean up code so that it looks nicer
- */
 class Model
 {
   /**
-   * Specify details that the dispatch can 
-   * execute against the database.
+   * Database Connect
+   * ----------------
    * 
-   * Iterates over each key and binds the
-   * value to the PDO object.
-   * 
-   * @param string $sql
-   * @param array $data
-   * @param string $fetchConstant
-   * 
-   * @todo Provide documentation and descriptions for all methods
+   * Connects to the database configured by the enviornment variables.
    */
+  protected static function dbConnect()
+  {
+    $server = $_ENV['KEN_SERVER'];
+    $database = $_ENV['KEN_DB'];
+    $user = $_ENV['KEN_DB_USER'];
+    $password = $_ENV['KEN_DB_PASSWORD'];
+    $dsn = "mysql:host=$server; dbname=$database";
+    $options = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+    try {
+      $genericLink = new PDO($dsn, $user, $password, $options);
+      return $genericLink;
+    } catch (PDOException $ex) {
+      echo $ex;
+      exit;
+    }
+  }
 
-  public static function dispatch($sql, $data, $options = ['fetchConstant' => false, 'returnId' => false])
+  /**
+   * Dispatch
+   * --------
+   * 
+   * Connects to the database and analyzes an 
+   * SQL string for dynamic variables. Binds 
+   * dynamic variables and executes the query.
+   * Evaluates options and returns rowcount of
+   * affected records and or new record id.
+   * 
+   * @param string $sql - sql statement with dynamic variables prefixed with ":"
+   * @param array  $data - name value pairs of data to be entered into the database
+   * @param array $options - additional options that manipulate how the data is returned 
+   */
+  public static function dispatch($sql, $data = [], $options = ['fetchConstant' => false, 'returnId' => false])
   {
     // parse the sql and find the required fields
     $pattern = "/[:^]([A-z0-9]+)/";
     preg_match_all($pattern, $sql, $matches_out);
     $fields = $matches_out[1];
-    $db = dbConnect();
+    $db = self::dbConnect();
     $stmt = $db->prepare($sql);
-    // put in a try catch here
     if (!empty($data)) {
       foreach ($data as $key => $value) {
         foreach ($fields as $field) {
           if ($key == $field) {
-
             $stmt->bindValue(":$key", $value, self::pdoConstant($value, $key));
           }
         }
       }
-    } else {
-      return Response::err();
     }
     $stmt->execute();
     if (isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
@@ -86,8 +93,11 @@ class Model
   }
 
   /**
-   * Private function that defines the type of the bound
-   * value for storage in the database
+   * PDO Constant Type
+   * -----------------
+   * 
+   * Defines type of value bein inserted into
+   * the database.
    */
   private static function pdoConstant($value, $key)
   {
