@@ -1,5 +1,13 @@
 # Change Log
 
+## v0.6.3
+
+### Added Controller functionality
+
+- The constructor of a controller now has an options array
+- The options array has one possible parameter called route
+  - route will be applied to all of the endpoint route strings saving the time of the developer by not forceing them to be repeated
+
 ## v0.6.2
 
 ### Added clarifying comments
