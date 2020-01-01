@@ -42,26 +42,31 @@ class Controller
         $segments = Ken::extractParams($segments);
         array_push($this->routeSegments, $segments);
         $route = $this->route ? $this->route . $route : $route;
+        $route = rtrim($route, '/');
         array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
     public function post($route, $callback, $howToValidate = FALSE)
     {
         $route = $this->route ? $this->route . $route : $route;
+        $route = rtrim($route, '/');
         array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
     }
     public function put($route, $callback, $howToValidate = FALSE)
     {
         $route = $this->route ? $this->route . $route : $route;
+        $route = rtrim($route, '/');
         array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
     }
     public function patch($route, $callback, $howToValidate = FALSE)
     {
         $route = $this->route ? $this->route . $route : $route;
+        $route = rtrim($route, '/');
         array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
     }
     public function delete($route, $callback, $howToValidate = FALSE)
     {
         $route = $this->route ? $this->route . $route : $route;
+        $route = rtrim($route, '/');
         array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
     }
 
