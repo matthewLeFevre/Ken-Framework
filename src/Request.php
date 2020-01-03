@@ -32,6 +32,7 @@ class Request
     $this->body = $reqBody;
     $this->params = $params;
     $this->queryString = $queryString;
+    $this->route = $route;
   }
 
   public function getRoute()

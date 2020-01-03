@@ -198,7 +198,7 @@ class Ken
         foreach ($numMatchingParamsRoutes as $route) {
             if ($route['numMatches'] > $counter) {
                 $matchedRoute = $route['route'];
-                $counter = $matchedRoute['numMatches'];
+                $counter = $route['numMatches'];
             }
         }
 
