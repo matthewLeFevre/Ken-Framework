@@ -135,7 +135,11 @@ class Ken
         if ($matchedRoute) {
             return $matchedRoute->callRoute($req);
         } else {
-            return Response::err("The " . $req->getMethod() . " " . $req->getRoute() . " route does not exist");
+            if ($req->getMethod() == "OPTIONS") {
+                return Response::success("You made a preflight response. Welcome to a Ken Server :D");
+            } else {
+                return Response::err("The " . $req->getMethod() . " " . $req->getRoute() . " route does not exist");
+            }
         }
     }
 

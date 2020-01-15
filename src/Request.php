@@ -13,6 +13,13 @@ namespace KenFramework;
 
 class Request
 {
+  private $method;
+  private $headers;
+  private $body;
+  private $params;
+  private $queryString;
+  private $route;
+
   public function __construct($method, $route, $headers, $body, $file, $queryString = null)
   {
     if (is_array($body) && is_array($file)) {
@@ -50,6 +57,14 @@ class Request
   public function getParams()
   {
     return $this->params;
+  }
+  public function getHeaders()
+  {
+    return $this->headers;
+  }
+  public function getQueryString()
+  {
+    return $this->queryString;
   }
 
   public function setParams(array $params)
