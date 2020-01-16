@@ -1,5 +1,12 @@
 # Change Log
 
+## v0.6.4 - v0.6.6
+
+### Small Bug Fixes
+
+- Improved route matching
+- Gracefully handle null values from the client
+
 ## v0.6.3
 
 ### Added Controller functionality

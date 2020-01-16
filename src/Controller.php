@@ -99,6 +99,7 @@ class Controller
         $cleanData = array();
 
         foreach ($payload as $key => $value) {
+            if ($value == null) break;
             if (!empty($exemptions)) {
                 foreach ($exemptions as $exep) {
                     if ($key === $exep) {
