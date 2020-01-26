@@ -87,14 +87,14 @@ class Route
         // on all actions that require a user to be authenticated adding token validation
         // is a smart idea for the purpose of single page applications.
         if ($this->tokenValidation && $this->howToValidate && !isset($req[0]->headers['Authorization'])) {
-            return Response::err("Api token missing, please contact your web administrator");
+            echo json_encode(Response::err("Api token missing, please contact your web administrator"));
             exit;
         }
         if ($this->tokenValidation && $this->howToValidate && !Token::validate($req[0]->headers['Authorization'], $_ENV['KEN_SECRET'])) {
-            return Response::err("Invalid token sent to api, error encountered in " . $this->route . " action ,please contact your web administrator");
+            echo json_encode(Response::err("Invalid token sent to api, error encountered in " . $this->route . " action ,please contact your web administrator"));
             exit;
         }
-
-        return call_user_func_array($this->callback, $req);
+        $res = new Response();
+        return call_user_func_array($this->callback, $req, $res);
     }
 }

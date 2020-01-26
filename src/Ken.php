@@ -146,7 +146,8 @@ class Ken
     /**
      * @todo change to not only store the routes but also store
      * pieces of route urls that are not dynamic so dynamic
-     * variables can be identified.
+     * variables can be identified and routes can be matched
+     * exactly.
      */
     public function integrate(array $routes)
     {
@@ -173,7 +174,6 @@ class Ken
         //=========Http Method Routes=============
         $numParamsRoutes = array();
         foreach ($httpMethodRoutes as $route) {
-            // var_dump(count($req->getParams()) . " = " . count($route->getParams()));
             if (count($route->getParams()) == count($req->getParams())) {
                 array_push($numParamsRoutes, $route);
             }

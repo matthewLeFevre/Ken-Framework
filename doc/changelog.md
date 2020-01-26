@@ -1,5 +1,11 @@
 # Change Log
 
+## v0.7.0
+
+### Alteration to the Endpoint API
+
+- Instead of having to import the response object it is now included in the route callback fundtion parameters.
+
 ## v0.6.4 - v0.6.6
 
 ### Small Bug Fixes
