@@ -5,6 +5,7 @@
 ### Alteration to the Endpoint API
 
 - Instead of having to import the response object it is now included in the route callback fundtion parameters.
+- The request object now has proper getters and the core variables have been made private. This will not be compatible with past iterations of the API.
 
 ## v0.6.4 - v0.6.6
 
@@ -63,7 +64,7 @@
 
 ### Complete API overhaul
 
-- Actions are now called routes and can be created by specifying get, post, put, or delte in the controller.
+- Actions are now called routes and can be created by specifying get, post, put, or delete in the controller.
 - Request parameters are now much simpler to define and are more traditional in use.
 - Functionality updates to the dispatcher class.
 
