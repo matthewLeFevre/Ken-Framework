@@ -98,6 +98,10 @@ class Ken
 
         $route = explode("?", $route, 2);
 
+        // In the event that a request is made with an extra
+        // slash it will be removed to match correct route
+        rtrim($route[0], "/");
+
         $queryParameters = array();
 
         parse_str($_SERVER['QUERY_STRING'], $queryParameters);

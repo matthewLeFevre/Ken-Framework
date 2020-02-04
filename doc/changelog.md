@@ -1,5 +1,12 @@
 # Change Log
 
+## v0.8.0
+
+### Changes to the Model and Response class APIs
+
+- Responses will now send data in json back to the client by using Response::json instead on of Response::data.
+- The model will now use action instead of fetchConstant when retrieving records.
+
 ## v0.7.0
 
 ### Alteration to the Endpoint API

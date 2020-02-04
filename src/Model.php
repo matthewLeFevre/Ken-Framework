@@ -44,7 +44,7 @@ class Model
    * @param array  $data - name value pairs of data to be entered into the database
    * @param array $options - additional options that manipulate how the data is returned 
    */
-  public static function dispatch($sql, $data = [], $options = ['fetchConstant' => false, 'returnId' => false])
+  public static function dispatch($sql, $data = [], $options = ['action' => false, 'id' => false])
   {
     // parse the sql and find the required fields
     $pattern = "/[:^]([A-z0-9]+)/";
@@ -52,7 +52,7 @@ class Model
     $fields = $matches_out[1];
     $db = self::dbConnect();
     $stmt = $db->prepare($sql);
-    if (!empty($data)) {
+    if (count($data) > 0) {
       foreach ($data as $key => $value) {
         foreach ($fields as $field) {
           if ($key == $field) {
@@ -62,9 +62,9 @@ class Model
       }
     }
     $stmt->execute();
-    if (isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE) {
+    if (isset($options['action']) && $options['action'] != FALSE) {
       $data = "";
-      switch ($options['fetchConstant']) {
+      switch ($options['action']) {
         case "fetch":
           $data = $stmt->fetch(PDO::FETCH_NAMED);
           break;
@@ -74,15 +74,18 @@ class Model
         case "fetchNum":
           $data = $stmt->fetch(PDO::FETCH_NUM);
           break;
+        case "fetchNumAll":
+          $data = $stmt->fetchAll(PDO::FETCH_NUM);
         default:
-          return Response::err("Options were not legally set.");
+          echo json_encode(Response::err("Options were not legally set."));
+          exit;
           break;
       }
       $stmt->closeCursor();
       return $data;
     } else {
       $rowsChanged = $stmt->rowCount();
-      if (isset($options['returnId']) && $options['returnId'] == TRUE) {
+      if (isset($options['id']) && $options['id'] == TRUE) {
         $id = $db->lastInsertId();
         $stmt->closeCursor();
         return ["rows" => $rowsChanged, "id" => $id];

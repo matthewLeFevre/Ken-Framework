@@ -99,7 +99,7 @@ class Controller
         $cleanData = array();
 
         foreach ($payload as $key => $value) {
-            if ($value == null) break;
+            if ($value == null) continue;
             if (!empty($exemptions)) {
                 foreach ($exemptions as $exep) {
                     if ($key === $exep) {
@@ -173,7 +173,7 @@ class Controller
     public static function required($inputArr, $payload)
     {
         foreach ($inputArr as $input) {
-            if (empty($payload[$input])) {
+            if (empty($payload[$input]) && $payload[$input] != 0) {
                 echo json_encode(Response::err("$input is required to execute that request and was not found."));
                 exit;
             }
