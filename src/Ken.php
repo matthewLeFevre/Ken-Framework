@@ -22,6 +22,7 @@ class Ken
      */
     private $routes = array();
     private $tokenValidation;
+    private $routeSegments;
 
     /**
      *  class constructor
@@ -153,9 +154,26 @@ class Ken
      * variables can be identified and routes can be matched
      * exactly.
      */
-    public function integrate(array $routes)
+    public function integrate(Controller $controller)
     {
-        $this->routes = array_merge($this->routes, $routes);
+        // 1. loop through routes
+        $this->routes = array_merge($this->routes, $controller->getRoutes());
+        // 2. loop through route segments and look for matches if no
+        //    match is found add the segment to the list
+        $routeSegments = $controller->getRouteSegments();
+        foreach ($routeSegments as $segment) {
+            $doNotAdd = false;
+            foreach ($this->routeSegments as $seg) {
+                if ($segment === $seg) {
+                    $doNotAdd = TRUE;
+                }
+            }
+            if (!$doNotAdd) {
+                array_push($this->routeSegments, $segment);
+            } else {
+                $doNotAdd = TRUE;
+            }
+        }
     }
 
     /**

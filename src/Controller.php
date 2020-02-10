@@ -53,18 +53,27 @@ class Controller
     }
     public function put($route, $callback, $howToValidate = FALSE)
     {
+        $segments = preg_replace($this->pattern, '', $route);
+        $segments = Ken::extractParams($segments);
+        array_push($this->routeSegments, $segments);
         $route = $this->route ? $this->route . $route : $route;
         $route = rtrim($route, '/');
         array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
     }
     public function patch($route, $callback, $howToValidate = FALSE)
     {
+        $segments = preg_replace($this->pattern, '', $route);
+        $segments = Ken::extractParams($segments);
+        array_push($this->routeSegments, $segments);
         $route = $this->route ? $this->route . $route : $route;
         $route = rtrim($route, '/');
         array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
     }
     public function delete($route, $callback, $howToValidate = FALSE)
     {
+        $segments = preg_replace($this->pattern, '', $route);
+        $segments = Ken::extractParams($segments);
+        array_push($this->routeSegments, $segments);
         $route = $this->route ? $this->route . $route : $route;
         $route = rtrim($route, '/');
         array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
@@ -75,6 +84,9 @@ class Controller
         return $this->routes;
     }
 
+    /**
+     * Route segments are used for matching routes
+     */
     public function getRouteSegments()
     {
         return $this->routeSegments;

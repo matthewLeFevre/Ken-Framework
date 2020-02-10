@@ -4,8 +4,13 @@
 
 ### Changes to the Model and Response class APIs
 
-- Responses will now send data in json back to the client by using Response::json instead on of Response::data.
+- Responses will now send data in json back to the client by using Response::json instead of Response::data.
 - The model will now use action instead of fetchConstant when retrieving records.
+
+### Changes to the router to improve the accuracy of matching routes
+
+- Segments are now being actively developed to match routes as effectively as possible
+- The number of loops to narrow down selected routes has been decreased
 
 ## v0.7.0
 
