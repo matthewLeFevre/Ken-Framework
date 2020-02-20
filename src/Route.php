@@ -60,6 +60,19 @@ class Route
         return $this->params;
     }
 
+    public function getMagicRoute()
+    {
+        $magicRouteParams = array();
+        foreach ($this->params as $par) {
+            if (substr($par, 0, 1) === ":") {
+                array_push($magicRouteParams, ":wild");
+            } else {
+                array_push($magicRouteParams, $par);
+            }
+        }
+        return $magicRouteParams;
+    }
+
     /**
      * __call(string, array) magic method
      * reference: http://php.net/manual/en/language.oop5.overloading.php#object.call
@@ -94,6 +107,7 @@ class Route
             echo json_encode(Response::err("Invalid token sent to api, error encountered in " . $this->route . " action ,please contact your web administrator"));
             exit;
         }
-        return call_user_func_array($this->callback, $req);
+        $res = new Response();
+        return call_user_func_array($this->callback, [$req, $res]);
     }
 }

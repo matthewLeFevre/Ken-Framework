@@ -71,4 +71,34 @@ class Request
   {
     $this->params = $params;
   }
+
+  /**
+   * Get Magic Route
+   * 
+   * Takes all of the parameters of the route
+   * and compares them to all of the segments
+   * it then reconstructs the route and applies
+   * :wild to where the dynamic variables are
+   * it then returns this string for comparison
+   */
+  public function getMagicRoute($segments)
+  {
+    $magicRouteParams = array();
+    foreach ($this->params as $par) {
+      $found = false;
+      foreach ($segments as $seg) {
+        if ($par === $seg) {
+          $found = TRUE;
+          break;
+        }
+      }
+      if ($found) {
+        array_push($magicRouteParams, $par);
+        $found = FALSE;
+      } else {
+        array_push($magicRouteParams, ":wild");
+      }
+    }
+    return $magicRouteParams;
+  }
 }

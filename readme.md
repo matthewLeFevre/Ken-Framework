@@ -33,6 +33,8 @@ Use Ken Framework to create rest applications with php. The following steps can 
 ```php
 <?php
 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+
 /**
  * Sample Server File
  *
@@ -40,7 +42,7 @@ Use Ken Framework to create rest applications with php. The following steps can 
  * server file.
  */
 
-use KenFramework\Utilities\Ken;
+use KenFramework\Ken;
 
 // CSRF (cross-site request forgery) vulnerability
 // due to serving spa's on seprate local server for

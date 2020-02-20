@@ -12,11 +12,15 @@
 - Segments are now being actively developed to match routes as effectively as possible
 - The number of loops to narrow down selected routes has been decreased
 
+### Some fatal changes in v0.7.0 were fixed
+
+- The response object is not passed to the callable function in the route as another parameter but the $req and now $res are both passed in as the indecies of an array an array
+
 ## v0.7.0
 
 ### Alteration to the Endpoint API
 
-- Instead of having to import the response object it is now included in the route callback fundtion parameters.
+- Instead of having to import the response object it is now included in the route callback function parameters.
 - The request object now has proper getters and the core variables have been made private. This will not be compatible with past iterations of the API.
 
 ## v0.6.4 - v0.6.6

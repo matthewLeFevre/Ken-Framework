@@ -38,15 +38,21 @@ class Controller
          * segments will be collected by Ken to help
          * find a matching route.
          */
-        $segments = preg_replace($this->pattern, '', $route);
-        $segments = Ken::extractParams($segments);
-        array_push($this->routeSegments, $segments);
+        $segments = Ken::extractParams($route);
+        foreach ($segments as $seg) {
+            if (substr($seg, 0, 1) !== ":") {
+                array_push($this->routeSegments, $seg);
+            }
+        }
         $route = $this->route ? $this->route . $route : $route;
         $route = rtrim($route, '/');
         array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
     public function post($route, $callback, $howToValidate = FALSE)
     {
+        $segments = preg_replace($this->pattern, '', $route);
+        $segments = Ken::extractParams($segments);
+        array_push($this->routeSegments, $segments);
         $route = $this->route ? $this->route . $route : $route;
         $route = rtrim($route, '/');
         array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
