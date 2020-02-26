@@ -2,9 +2,9 @@
 
 # Ken Framework
 
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/matthewLeFevre/Ken-Framework/blob/master/LICENSE) ![version](https://img.shields.io/badge/version-0.8.0-green.svg)
+![version](https://img.shields.io/badge/version-0.8.0-green.svg)
 
-Ken is a simple PHP framework adapted to create custom REST API's. Ken supplies middleware tools to developers to simplify web application creation.
+Ken is a simple PHP framework adapted to create custom REST API's. Ken provides a simple way to create secure API endpoints and the space needed to build out business logic in a scalable way. This Framework is still in a rapid development stage and we have not created a base stable version as of yet.
 
 ## Table of Contents
 
