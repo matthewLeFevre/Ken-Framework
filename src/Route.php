@@ -15,7 +15,6 @@ class Route
     public function __construct($method, $route, $callback, $howToValidate = FALSE)
     {
         $params = Ken::extractParams($route);
-
         $this->route = $route;
         $this->params = $params;
         $this->callback = $callback;
@@ -95,6 +94,7 @@ class Route
      * @param array $arguments
      */
 
+    // Don't forget that $req is a freaking array and you need the first index
     public function __call($route, $req)
     {
         // on all actions that require a user to be authenticated adding token validation
@@ -108,6 +108,6 @@ class Route
             exit;
         }
         $res = new Response();
-        return call_user_func_array($this->callback, [$req, $res]);
+        return call_user_func_array($this->callback, [$req[0], $res]);
     }
 }

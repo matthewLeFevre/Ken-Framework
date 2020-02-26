@@ -6,6 +6,7 @@
 
 - Responses will now send data in json back to the client by using Response::json instead of Response::data.
 - The model will now use action instead of fetchConstant when retrieving records.
+- Efforts have been made to make this version backwords compatible with everything v0.6.0+;
 
 ### Changes to the router to improve the accuracy of matching routes
 

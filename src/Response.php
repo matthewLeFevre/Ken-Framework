@@ -36,4 +36,10 @@ class Response
     http_response_code(200);
     return ["success" => $status, "data" => $data, "msg" => $msg];
   }
+  // for backwards compatability
+  public static function data($data, $msg = "Data Retrieved Successfully", $status = "success")
+  {
+    http_response_code(200);
+    return ["success" => $status, "data" => $data, "msg" => $msg];
+  }
 }

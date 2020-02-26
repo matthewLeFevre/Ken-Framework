@@ -17,16 +17,21 @@ class Controller
     private $routes = array();
     private $routeSegments = array();
     private $pattern = "/[\/:^]([A-z0-9]+)/";
-    private $route = null;
+    private $path = null;
 
     /**
      * @param array $options
      * @param string $options['route']
      */
 
-    public function __construct($options = ['route' => null])
+    public function __construct($options = ['route' => null, 'path' => null])
     {
-        $this->route = $options['route'];
+        // backwards compatability changes for v0.8.0
+        if (isset($options['path'])) {
+            $this->path = $options['path'];
+        } else if (isset($options['route'])) {
+            $this->path = $options['route'];
+        }
     }
 
     // http method functions add an endpoint of that type to the routes
@@ -38,50 +43,65 @@ class Controller
          * segments will be collected by Ken to help
          * find a matching route.
          */
+        $route = $this->path ? $this->path . $route : $route;
+        $route = rtrim($route, '/');
         $segments = Ken::extractParams($route);
         foreach ($segments as $seg) {
             if (substr($seg, 0, 1) !== ":") {
                 array_push($this->routeSegments, $seg);
             }
         }
-        $route = $this->route ? $this->route . $route : $route;
-        $route = rtrim($route, '/');
         array_push($this->routes, new Route('GET', $route, $callback, $howToValidate));
     }
     public function post($route, $callback, $howToValidate = FALSE)
     {
-        $segments = preg_replace($this->pattern, '', $route);
-        $segments = Ken::extractParams($segments);
-        array_push($this->routeSegments, $segments);
-        $route = $this->route ? $this->route . $route : $route;
+        $route = $this->path ? $this->path . $route : $route;
         $route = rtrim($route, '/');
+        $segments = Ken::extractParams($route);
+        foreach ($segments as $seg) {
+            if (substr($seg, 0, 1) !== ":") {
+                array_push($this->routeSegments, $seg);
+            }
+        }
         array_push($this->routes, new Route('POST', $route, $callback, $howToValidate));
     }
     public function put($route, $callback, $howToValidate = FALSE)
     {
-        $segments = preg_replace($this->pattern, '', $route);
-        $segments = Ken::extractParams($segments);
-        array_push($this->routeSegments, $segments);
-        $route = $this->route ? $this->route . $route : $route;
+        $route = $this->path ? $this->path . $route : $route;
         $route = rtrim($route, '/');
+        $segments = Ken::extractParams($route);
+        foreach ($segments as $seg) {
+            if (substr($seg, 0, 1) !== ":") {
+                array_push($this->routeSegments, $seg);
+            }
+        }
+
         array_push($this->routes, new Route('PUT', $route, $callback, $howToValidate));
     }
     public function patch($route, $callback, $howToValidate = FALSE)
     {
-        $segments = preg_replace($this->pattern, '', $route);
-        $segments = Ken::extractParams($segments);
-        array_push($this->routeSegments, $segments);
-        $route = $this->route ? $this->route . $route : $route;
+        $route = $this->path ? $this->path . $route : $route;
         $route = rtrim($route, '/');
+        $segments = Ken::extractParams($route);
+        foreach ($segments as $seg) {
+            if (substr($seg, 0, 1) !== ":") {
+                array_push($this->routeSegments, $seg);
+            }
+        }
+
         array_push($this->routes, new Route('PATCH', $route, $callback, $howToValidate));
     }
     public function delete($route, $callback, $howToValidate = FALSE)
     {
-        $segments = preg_replace($this->pattern, '', $route);
-        $segments = Ken::extractParams($segments);
-        array_push($this->routeSegments, $segments);
-        $route = $this->route ? $this->route . $route : $route;
+        $route = $this->path ? $this->path . $route : $route;
         $route = rtrim($route, '/');
+        $segments = Ken::extractParams($route);
+        foreach ($segments as $seg) {
+            if (substr($seg, 0, 1) !== ":") {
+                array_push($this->routeSegments, $seg);
+            }
+        }
+
         array_push($this->routes, new Route('DELETE', $route, $callback, $howToValidate));
     }
 

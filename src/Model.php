@@ -44,27 +44,44 @@ class Model
    * @param array  $data - name value pairs of data to be entered into the database
    * @param array $options - additional options that manipulate how the data is returned 
    */
-  public static function dispatch($sql, $data = [], $options = ['action' => false, 'id' => false])
-  {
+  public static function dispatch(
+    $sql,
+    $data = [],
+    // Backwords compatability elements
+    $options = ['action' => false, 'id' => false, 'fetchConstant' => false, 'returnId' => false]
+  ) {
     // parse the sql and find the required fields
     $pattern = "/[:^]([A-z0-9]+)/";
     preg_match_all($pattern, $sql, $matches_out);
     $fields = $matches_out[1];
     $db = self::dbConnect();
     $stmt = $db->prepare($sql);
-    if (count($data) > 0) {
-      foreach ($data as $key => $value) {
-        foreach ($fields as $field) {
-          if ($key == $field) {
-            $stmt->bindValue(":$key", $value, self::pdoConstant($value, $key));
+    if ($data !== null) {
+      if (count($data) > 0) {
+        foreach ($data as $key => $value) {
+          foreach ($fields as $field) {
+            if ($key == $field) {
+              $stmt->bindValue(":$key", $value, self::pdoConstant($value, $key));
+            }
           }
         }
       }
     }
     $stmt->execute();
-    if (isset($options['action']) && $options['action'] != FALSE) {
+    if ((isset($options['action']) && $options['action'] != FALSE) ||
+      // backwords compatability for fetchConstant
+      isset($options['fetchConstant']) && $options['fetchConstant'] != FALSE
+    ) {
       $data = "";
-      switch ($options['action']) {
+
+      // backwards compatability for v0.8.0
+      $type = "fetch";
+      if (isset($options['action'])) {
+        $type = $options['action'];
+      } else if (isset($options['fetchConstant'])) {
+        $type = $options['fetchConstant'];
+      }
+      switch ($type) {
         case "fetch":
           $data = $stmt->fetch(PDO::FETCH_NAMED);
           break;
@@ -85,7 +102,10 @@ class Model
       return $data;
     } else {
       $rowsChanged = $stmt->rowCount();
-      if (isset($options['id']) && $options['id'] == TRUE) {
+      // backwords compatibility for returnId
+      if ((isset($options['id']) && $options['id'] == TRUE) ||
+        (isset($options['returnId']) && $options['returnId'] == TRUE)
+      ) {
         $id = $db->lastInsertId();
         $stmt->closeCursor();
         return ["rows" => $rowsChanged, "id" => $id];

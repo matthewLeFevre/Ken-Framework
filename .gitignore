@@ -2,3 +2,4 @@ vendor/
 .env
 app/
 composer.lock
+api.php

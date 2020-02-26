@@ -3,25 +3,44 @@
 namespace KenFramework;
 
 /**
- * Ken Class
+ * Introduction
  * 
- * Description:
- * Listens to requests that are made to the server
- * and proccesses them based on http verbs.
+ * Yeah maybe I am breaking some rules by including
+ * a vast amount of the documentation in the code. I 
+ * am banking on the fact that my future self will 
+ * thank me.
+ */
+
+/**
+ * Ken
+ * 
+ * This class takes care of routing integrating
+ * with controllers and has several utility functions.
+ * It probably does a lot more than it should. It is also
+ * the gatekeeper of configuration.
+ * 
+ * @todo consider moving utilit functions out to 
+ * a utilities class.
  */
 
 class Ken
 {
 
   /**
-   *  Configuration
-   * 
-   *  @var boolean $tokenValidation
-   *  @var array $controller
-   * 
+   * By nature Json Web Token authentication
+   * is tightly coupled with the Ken Framework.
+   * For better or for worse it is a key configuration
+   * element for the framework. You can either opt
+   * out or use token validation. 
    */
-  private $routes = array();
+
+  /**
+   *  @var boolean $tokenValidation
+   *  @var array   $routes
+   *  @var array   $routeSegments
+   */
   private $tokenValidation;
+  private $routes = array();
   private $routeSegments = array();
 
   /**
@@ -42,25 +61,6 @@ class Ken
     if (!empty($options['routeExemptions'])) {
       $this->routeExemptions = $options['routeExemptions'];
     }
-  }
-
-  /**
-   * Setters
-   *-----------------
-   * setTokenValidation(boolean) - 
-   *
-   * if boolean is true token validation will 
-   * be required for all protected requests
-   *
-   * if boolean is false token validation will 
-   * never be required.
-   *
-   *  @param boolean $tokenValidation
-   */
-
-  protected function setTokenValidation($tokenValidation)
-  {
-    $this->tokenValidation = $tokenValidation;
   }
 
   public function getTokenValidation()
@@ -134,9 +134,7 @@ class Ken
 
   private function process($req)
   {
-
     $matchedRoute = $this->matchRoute($req);
-
     if ($matchedRoute) {
       return $matchedRoute->callRoute($req);
     } else {
