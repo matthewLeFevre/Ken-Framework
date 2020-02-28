@@ -112,7 +112,7 @@ class Ken
       $route[0],
       getallheaders(),
       json_decode(file_get_contents('php://input'), true),
-      $_FILES,
+      array_merge($_FILES, $_POST),
       $queryParameters
     );
 
