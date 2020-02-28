@@ -1,5 +1,12 @@
 # Change Log
 
+## v0.8.1
+
+### Additional backwards compatability and bug fixes
+
+- Fixed an issue inside of the Route class that accessed a none existent property on the class
+- Added backwards compatability to the Request class by changing many propertys to public this will be removed in further versions and the properties will re turn to private.
+
 ## v0.8.0
 
 ### Changes to the Model and Response class APIs
