@@ -6,6 +6,7 @@
 
 - Fixed an issue inside of the Route class that accessed a none existent property on the class
 - Added backwards compatability to the Request class by changing many propertys to public this will be removed in further versions and the properties will re turn to private.
+- Fixed an issue where only ints and strings were bing filtered. Now floats/doubles are as well.
 
 ## v0.8.0
 
