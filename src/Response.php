@@ -31,13 +31,13 @@ class Response
     http_response_code(400);
     return ["success" => false, "msg" => $msg];
   }
-  public static function json($data, $msg = "Data Retrieved Successfully", $status = "success")
+  public static function json($data, $msg = "Data Retrieved Successfully", $status = true)
   {
     http_response_code(200);
     return ["success" => $status, "data" => $data, "msg" => $msg];
   }
   // for backwards compatability
-  public static function data($data, $msg = "Data Retrieved Successfully", $status = "success")
+  public static function data($data, $msg = "Data Retrieved Successfully", $status = true)
   {
     http_response_code(200);
     return ["success" => $status, "data" => $data, "msg" => $msg];
