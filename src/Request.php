@@ -13,12 +13,13 @@ namespace KenFramework;
 
 class Request
 {
-  private $method;
-  private $headers;
-  private $body;
-  private $params;
-  private $queryString;
-  private $route;
+  // Changing public to private for backwards compatability
+  public $method;
+  public $headers;
+  public $body;
+  public $params;
+  public $queryString;
+  public $route;
 
   public function __construct($method, $route, $headers, $body, $file, $queryString = null)
   {
