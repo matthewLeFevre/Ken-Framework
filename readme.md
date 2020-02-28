@@ -2,7 +2,7 @@
 
 # Ken Framework
 
-![version](https://img.shields.io/badge/version-0.8.3-green.svg)
+![version](https://img.shields.io/badge/version-0.8.4-green.svg)
 
 Ken is a simple PHP framework adapted to create custom REST API's. Ken provides a simple way to create secure API endpoints and the space needed to build out business logic in a scalable way. This Framework is still in a rapid development stage and we have not created a base stable version as of yet.
 

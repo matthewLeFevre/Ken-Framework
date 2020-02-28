@@ -93,6 +93,7 @@ class Model
           break;
         case "fetchNumAll":
           $data = $stmt->fetchAll(PDO::FETCH_NUM);
+          break;
         default:
           echo json_encode(Response::err("Options were not legally set."));
           exit;
